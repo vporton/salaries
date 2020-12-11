@@ -5,5 +5,8 @@
   "main": "index.js",
   "repository": "git@github.com:vporton/salaries.git",
   "author": "Victor Porton <porton@narod.ru>",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@gnosis.pm/conditional-tokens-contracts": "git+ssh://git@github.com/vporton/conditional-tokens-contracts"
+  }
 }
