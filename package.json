@@ -1,0 +1,9 @@
+{
+  "name": "@porton/salaries",
+  "version": "0.0.1",
+  "description": "Clever system for salaries of scientists and free software developers in Ethereum blockchain",
+  "main": "index.js",
+  "repository": "git@github.com:vporton/salaries.git",
+  "author": "Victor Porton <porton@narod.ru>",
+  "license": "GPL-3.0"
+}
