@@ -46,7 +46,7 @@ function isRealNumber(v: string): boolean { // TODO: called twice
 
 function App() {
   const [donateFor, setDonateFor] = useState('');
-  const [paymentKind, setPaymentKind] = useState('bequestAll');
+  const [paymentKind, setPaymentKind] = useState('bequestTokens');
   const [tokenKind, setTokenKind] = useState('');
   const [bequestDate, setBequestDate] = useState(new Date());
   const [tokenAddress, setTokenAddress] = useState('');
@@ -78,9 +78,15 @@ function App() {
           </label>
           {' '}
           <label>
-            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestAll')} checked={paymentKind === 'bequestAll'}/>
+            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestTokens')} checked={paymentKind === 'bequestTokens'}/>
             {' '}
             Bequest token(s) I have
+          </label>
+          {' '}
+          <label>
+            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestGnosis')} checked={paymentKind === 'bequestGnosis'}/>
+            {' '}
+            Bequest funds on a Gnosis Safe smart wallet
           </label>
         </p>
         <p>
@@ -91,11 +97,12 @@ function App() {
           <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc20')}/> ERC-20</label>
         </p>
         <p>
-          Token address:
+          <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>Wallet address:</span>
+          <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>Token address:</span>
           {' '}
           <Address value={tokenAddress} onChange={async (e: Event) => await setTokenAddress((e.target as HTMLInputElement).value as string)}/>
         </p>
-        <div style={{display: paymentKind !== 'bequestAll' ? 'block' : 'none'}}>
+        <div style={{display: !/bequest/.test(paymentKind) ? 'block' : 'none'}}>
           <p style={{display: tokenKind === 'erc1155' ? 'block' : 'none'}}>
             Token ID:
             {' '}
@@ -109,7 +116,7 @@ function App() {
             <button>Donate</button>
           </p>
         </div>
-        <div style={{display: paymentKind === 'bequestAll' ? 'block' : 'none'}}>
+        <div style={{display: /bequest/.test(paymentKind) ? 'block' : 'none'}}>
           <p>
             Date bequest can be withdrawn:
             <br/>
