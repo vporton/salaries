@@ -111,7 +111,7 @@ function App() {
             Date bequest can be withdrawn:
             <br/>
             <span style={{display: 'inline-block'}}>
-              <Calendar value={bequestDate}/>
+              <Calendar onChange={e => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
             </span>
           </p>
           <p>
