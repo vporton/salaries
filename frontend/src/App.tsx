@@ -80,7 +80,7 @@ function App() {
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestAll')} checked={paymentKind === 'bequestAll'}/>
             {' '}
-            Bequest all funds
+            Bequest token(s) I have
           </label>
         </p>
         <p>
