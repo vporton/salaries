@@ -9,6 +9,7 @@
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0",
-    "@gnosis.pm/conditional-tokens-contracts": "git+ssh://git@github.com/vporton/conditional-tokens-contracts.git#salary-0.1.0"
+    "@gnosis.pm/conditional-tokens-contracts": "git+ssh://git@github.com/vporton/conditional-tokens-contracts.git#salary-0.1.0",
+    "vporton/wrap-tokens": "git+ssh://git@github.com/vporton/wrap-tokens.git#v3.0.0"
   }
 }
