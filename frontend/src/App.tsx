@@ -89,7 +89,7 @@ function App() {
             Bequest funds on a Gnosis Safe smart wallet
           </label>
         </p>
-        <p>
+        <p style={{display: paymentKind !== 'bequestGnosis' ? 'block' : 'none'}}>
           Donation in:
           {' '}
           <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc1155')}/> ERC-1155</label> (recommended)
