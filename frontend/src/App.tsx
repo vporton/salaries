@@ -49,6 +49,9 @@ function App() {
   const [paymentKind, setPaymentKind] = useState('bequestAll');
   const [tokenKind, setTokenKind] = useState('');
   const [bequestDate, setBequestDate] = useState(new Date());
+  const [tokenAddress, setTokenAddress] = useState('');
+  const [tokenId, setTokenId] = useState('');
+  const [amount, setAmount] = useState('');
 
   return (
     <div className="App">
@@ -88,17 +91,17 @@ function App() {
           <p>
             Token address:
             {' '}
-            <Address/>
+            <Address value={tokenAddress} onChange={async (e: Event) => await setTokenAddress((e.target as HTMLInputElement).value as string)}/>
           </p>
           <p style={{display: tokenKind === 'erc1155' ? 'block' : 'none'}}>
             Token ID:
             {' '}
-            <Uint256/>
+            <Uint256 value={tokenId} onChange={async (e: Event) => await setTokenId((e.target as HTMLInputElement).value as string)}/>
           </p>
           <p>
             Donation amount:
             {' '}
-            <Amount/>
+            <Amount value={amount} onChange={async (e: Event) => await setAmount((e.target as HTMLInputElement).value as string)}/>
             {' '}
             <button>Donate</button>
           </p>
