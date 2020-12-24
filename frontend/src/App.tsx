@@ -92,9 +92,13 @@ function App() {
         <p style={{display: paymentKind !== 'bequestGnosis' ? 'block' : 'none'}}>
           Donation in:
           {' '}
-          <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc1155')}/> ERC-1155</label> (recommended)
+          <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc1155')}/> ERC-1155</label>
+          {' '}
+          <small>(recommended)</small>
           {' '}
           <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc20')}/> ERC-20</label>
+          <br/>
+          <small>(Don't use stablecoins for long-time funding.)</small>
         </p>
         <p>
           <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>Wallet address:</span>
