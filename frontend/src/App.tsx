@@ -80,7 +80,7 @@ function App() {
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestAll')} checked={paymentKind === 'bequestAll'}/>
             {' '}
-            Bequest all funds on your account
+            Bequest all funds
           </label>
         </p>
         <p>
@@ -90,12 +90,12 @@ function App() {
           {' '}
           <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc20')}/> ERC-20</label>
         </p>
+        <p>
+          Token address:
+          {' '}
+          <Address value={tokenAddress} onChange={async (e: Event) => await setTokenAddress((e.target as HTMLInputElement).value as string)}/>
+        </p>
         <div style={{display: paymentKind !== 'bequestAll' ? 'block' : 'none'}}>
-          <p>
-            Token address:
-            {' '}
-            <Address value={tokenAddress} onChange={async (e: Event) => await setTokenAddress((e.target as HTMLInputElement).value as string)}/>
-          </p>
           <p style={{display: tokenKind === 'erc1155' ? 'block' : 'none'}}>
             Token ID:
             {' '}
