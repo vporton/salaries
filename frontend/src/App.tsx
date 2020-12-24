@@ -57,8 +57,11 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Donate / Bequest</h1>
-        <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore, donate or bequest here for the software
-          and the free market to choose the best donation recepient.</p>
+        <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore,
+          {' '}
+          <em>donate or bequest</em>
+          {' '}
+          here for the software and the free market to choose the best donation recepient.</p>
         <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
         <p>
           Donate for:

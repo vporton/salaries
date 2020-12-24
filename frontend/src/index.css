@@ -25,3 +25,7 @@ code {
 .donateButton:hover {
   color: green;
 }
+
+em, strong {
+  color: green;
+}
