@@ -5,6 +5,7 @@ import {
   HashRouter
 } from "react-router-dom";
 import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import './App.css';
 import Web3 from 'web3';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
