@@ -1,2 +1,2 @@
 # salaries
-Clever system for salaries of scientists and free software developers in Ethereum blockchain
+Clever system for carbon accounting and salaries of scientists and free software developers in Ethereum blockchain
