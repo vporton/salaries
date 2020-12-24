@@ -119,7 +119,7 @@ function App() {
         <div style={{display: /bequest/.test(paymentKind) ? 'block' : 'none'}}>
           <p>
             Date bequest can be withdrawn:
-            <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>{bequestDate}</span>
+            <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}> {bequestDate.toString()}</span>
             <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
               <br/>
               <span style={{display: 'inline-block'}}>
