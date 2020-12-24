@@ -16,3 +16,8 @@ code {
   background: red;
   color: white;
 }
+
+.donateButton {
+  font-size: 200%;
+  border: 3px inset gray;
+}

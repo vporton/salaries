@@ -53,7 +53,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Donate</h1>
+        <h1>Donate / Bequest</h1>
+        <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore, donate or bequest here for the software
+          and the free market to choose the best donation recepient.</p>
         <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
         <p>
           Donate for:
@@ -105,9 +107,8 @@ function App() {
           Date bequest can be withdrawn:
           {' '}
           <Calendar value={bequestDate}/>
-          {' '}
-          <button>Bequest</button>
         </p>
+        <p><button className="donateButton">Bequest</button></p>
       </header>
     </div>
   );
