@@ -8,6 +8,7 @@
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",
-    "ethers": "^5.0.0"
+    "ethers": "^5.0.0",
+    "@gnosis.pm/conditional-tokens-contracts": "git+ssh://git@github.com/vporton/conditional-tokens-contracts.git#salary-0.1.0"
   }
 }
