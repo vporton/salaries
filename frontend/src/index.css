@@ -21,3 +21,7 @@ code {
   font-size: 200%;
   border: 3px inset gray;
 }
+
+.donateButton:hover {
+  color: green;
+}

@@ -106,8 +106,10 @@ function App() {
         <div style={{display: paymentKind === 'bequestAll' ? 'block' : 'none'}}>
           <p>
             Date bequest can be withdrawn:
-            {' '}
-            <Calendar value={bequestDate}/>
+            <br/>
+            <span style={{display: 'inline-block'}}>
+              <Calendar value={bequestDate}/>
+            </span>
           </p>
           <p>
             <button className="donateButton">Bequest!</button>
