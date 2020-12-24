@@ -53,7 +53,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Donate</h1>
-        <p>This is demo version for a testnet. Contracts are not audited yet.</p>
+        <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
         <p>
           Donate for:
           {' '}
@@ -63,13 +63,13 @@ function App() {
         </p>
         <p>
           <label>
-            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')}/>
+            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')} checked={paymentKind === 'donate'}/>
             {' '}
             Donate a sum
           </label>
           {' '}
           <label>
-            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestAll')} checked={true}/>
+            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestAll')} checked={paymentKind === 'bequestAll'}/>
             {' '}
             Bequest all funds on your account
           </label>
