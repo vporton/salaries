@@ -1,26 +1,152 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import {
+  Route,
+  NavLink,
+  HashRouter
+} from "react-router-dom";
+import Calendar from 'react-calendar';
 import './App.css';
+import Web3 from 'web3';
+// MEWConnect does not work on Firefox 84.0 for Ubuntu.
+// import Web3Modal from "web3modal";
+// import MewConnect from '@myetherwallet/mewconnect-web-client';
+const { toBN, fromWei, toWei } = Web3.utils;
+
+let _web3Provider: any = null;
+
+let myWeb3: any = null;
+
+async function baseGetWeb3() {
+  if(myWeb3) return myWeb3;
+
+  _web3Provider = Web3.givenProvider; //await getWeb3Provider();
+  return myWeb3 = _web3Provider ? new Web3(_web3Provider) : null;
+}
+
+async function getChainId(): Promise<any> { // TODO: more specific type
+  const web3 = await baseGetWeb3();
+  if (!web3) {
+    return null;
+  }
+  return await (web3 as any).eth.getChainId();
+}
+
+function isAddressValid(v: string): boolean { // TODO: called twice
+  return Web3.utils.isAddress(v);
+}
+
+function isUint256Valid(v: string): boolean { // TODO: called twice
+  return /^[0-9]+$/.test(v) && toBN(v).lt(toBN(2).pow(toBN(256)));
+}
+
+function isRealNumber(v: string): boolean { // TODO: called twice
+  return /^[0-9]+(\.[0-9]+)?$/.test(v);
+}
 
 function App() {
+  const [donateFor, setDonateFor] = useState('');
+  const [paymentKind, setPaymentKind] = useState('bequestAll');
+  const [tokenKind, setTokenKind] = useState('erc1155');
+  const [bequestDate, setBequestDate] = useState(new Date());
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <h1>Donate</h1>
+        <p>This is demo version for a testnet. Contracts are not audited yet.</p>
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Donate for:
+          {' '}
+          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science</label>
+          {' '}
+          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('climate')}/> Climate</label>
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <p>
+          <label>
+            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')}/>
+            {' '}
+            Donate a sum
+          </label>
+          {' '}
+          <label>
+            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestAll')} checked={true}/>
+            {' '}
+            Bequest all funds on an account
+          </label>
+        </p>
+        <p>
+          Donation in:
+          {' '}
+          <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc1155')}/> ERC-1155</label> (recommended)
+          {' '}
+          <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc20')}/> ERC-20</label>
+        </p>
+        <div style={{display: paymentKind !== 'bequestAll' ? 'block' : 'none'}}>
+          <p>
+            Token address:
+            {' '}
+            <Address/>
+          </p>
+          <p style={{display: tokenKind === 'erc1155' ? 'block' : 'none'}}>
+            Token ID:
+            {' '}
+            <Uint256/>
+          </p>
+          <p>
+            Donation amount:
+            {' '}
+            <Amount/>
+            {' '}
+            <button>Donate</button>
+          </p>
+        </div>
+        <p style={{display: paymentKind === 'bequestAll' ? 'block' : 'none'}}>
+          Date bequest can be withdrawn:
+          {' '}
+          <Calendar value={bequestDate}/>
+          {' '}
+          <button>Bequest</button>
+        </p>
       </header>
     </div>
   );
+}
+
+function Address({...props}) {
+  return (
+    <span className="Address">
+      <input type="text"
+             maxLength={42}
+             size={50}
+             value={props.value ? props.value : ""}
+             onChange={props.onChange}
+             className={isAddressValid(props.value) ? '' : 'error'}/>
+    </span>
+  )
+}
+
+function Uint256({...props}) {
+  return (
+    <span className="Uint256">
+      <input type="text"
+             maxLength={78}
+             size={92}
+             value={props.value}
+             onChange={props.onChange}
+             className={isUint256Valid(props.value) ? '' : 'error'}/>
+    </span>
+  )
+}
+
+function Amount({...props}  ) {
+  return (
+    <span className="Amount">
+      <input type="text"
+             value={props.value ? props.value : ""}
+             onChange={props.onChange}
+               className={isRealNumber(props.value) ? '' : 'error'}/>
+    </span>
+  )
 }
 
 export default App;
