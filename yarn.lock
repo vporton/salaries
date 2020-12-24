@@ -947,6 +947,22 @@
   dependencies:
     web3 "*"
 
+"@vporton/wrap-tokens@git+ssh://git@github.com/vporton/wrap-tokens.git#v3.1.0":
+  version "2.1.0"
+  resolved "git+ssh://git@github.com/vporton/wrap-tokens.git#d9b3a4e387d759bcc18273c5bd067efdc57d876b"
+  dependencies:
+    "@openzeppelin/contracts" "^3.3.0"
+    "@symfoni/hardhat-react" "^0.1.6"
+    chai-bignumber "^3.0.0"
+    eslint "^7.11.0"
+    hardhat "^2.0.5"
+    hardhat-deploy "^0.7.0-beta.38"
+    hardhat-deploy-ethers "^0.3.0-beta.7"
+    hardhat-typechain "^0.3.3"
+    ts-morph "^9.0.0"
+    typechain "^4.0.0"
+    typechain-target-ethers-v5 "^1.2.2"
+
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
@@ -8130,22 +8146,6 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
-
-"vporton/wrap-tokens@git+ssh://git@github.com/vporton/wrap-tokens.git#v3.1.0":
-  version "2.1.0"
-  resolved "git+ssh://git@github.com/vporton/wrap-tokens.git#d9b3a4e387d759bcc18273c5bd067efdc57d876b"
-  dependencies:
-    "@openzeppelin/contracts" "^3.3.0"
-    "@symfoni/hardhat-react" "^0.1.6"
-    chai-bignumber "^3.0.0"
-    eslint "^7.11.0"
-    hardhat "^2.0.5"
-    hardhat-deploy "^0.7.0-beta.38"
-    hardhat-deploy-ethers "^0.3.0-beta.7"
-    hardhat-typechain "^0.3.3"
-    ts-morph "^9.0.0"
-    typechain "^4.0.0"
-    typechain-target-ethers-v5 "^1.2.2"
 
 web3-bzz@1.2.11:
   version "1.2.11"
