@@ -71,7 +71,7 @@ function App() {
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestAll')} checked={true}/>
             {' '}
-            Bequest all funds on an account
+            Bequest all funds on your account
           </label>
         </p>
         <p>
