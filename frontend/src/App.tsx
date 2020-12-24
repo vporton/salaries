@@ -57,7 +57,7 @@ function App() {
         <p>
           Donate for:
           {' '}
-          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science</label>
+          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science and free software</label>
           {' '}
           <label><input type="radio" name="donateFor" onClick={() => setDonateFor('climate')}/> Climate</label>
         </p>
