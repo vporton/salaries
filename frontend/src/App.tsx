@@ -119,9 +119,12 @@ function App() {
         <div style={{display: /bequest/.test(paymentKind) ? 'block' : 'none'}}>
           <p>
             Date bequest can be withdrawn:
-            <br/>
-            <span style={{display: 'inline-block'}}>
-              <Calendar onChange={e => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
+            <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>{bequestDate}</span>
+            <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
+              <br/>
+              <span style={{display: 'inline-block'}}>
+                <Calendar onChange={e => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
+              </span>
             </span>
           </p>
           <p>
