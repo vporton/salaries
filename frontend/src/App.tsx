@@ -47,7 +47,7 @@ function isRealNumber(v: string): boolean { // TODO: called twice
 function App() {
   const [donateFor, setDonateFor] = useState('');
   const [paymentKind, setPaymentKind] = useState('bequestAll');
-  const [tokenKind, setTokenKind] = useState('erc1155');
+  const [tokenKind, setTokenKind] = useState('');
   const [bequestDate, setBequestDate] = useState(new Date());
 
   return (
@@ -103,12 +103,16 @@ function App() {
             <button>Donate</button>
           </p>
         </div>
-        <p style={{display: paymentKind === 'bequestAll' ? 'block' : 'none'}}>
-          Date bequest can be withdrawn:
-          {' '}
-          <Calendar value={bequestDate}/>
-        </p>
-        <p><button className="donateButton">Bequest</button></p>
+        <div style={{display: paymentKind === 'bequestAll' ? 'block' : 'none'}}>
+          <p>
+            Date bequest can be withdrawn:
+            {' '}
+            <Calendar value={bequestDate}/>
+          </p>
+          <p>
+            <button className="donateButton">Bequest!</button>
+          </p>
+        </div>
       </header>
     </div>
   );
