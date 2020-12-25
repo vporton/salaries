@@ -317,7 +317,12 @@ function App() {
           <Uint256 value={tokenId} onChange={async (e: Event) => await setTokenId((e.target as HTMLInputElement).value as string)}/>
         </p>
         <p style={{display: paymentKind !== 'donate' ? 'block' : 'none'}}>
-          The donation can be taken back before:
+          <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
+            The donation can be taken back before:
+          </span>
+          <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>
+            The bequest can be taken after:
+          </span>
           <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
           {' '}
           {bequestDate !== null ? bequestDate.toString() : ""}</span>
