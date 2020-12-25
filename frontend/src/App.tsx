@@ -98,6 +98,8 @@ function App() {
   const [tokenAddress, setTokenAddress] = useState('');
   const [tokenId, setTokenId] = useState('');
   const [amount, setAmount] = useState('');
+  const [marketId, setMarketId] = useState('0'); // FIXME
+  const [oracleId, setOracleId] = useState('0'); // FIXME
 
   async function getWeb3() {
     try {
@@ -183,8 +185,8 @@ function App() {
             await mySend(science, science.methods.donate,
               [collateralContractAddress,
                collateralTokenId,
-               0,
-               0,
+               marketId,
+               oracleId,
                wei,
                account,
                account,
@@ -196,8 +198,8 @@ function App() {
             await mySend(science, science.methods.bequestCollateral,
               [collateralContractAddress,
                collateralTokenId,
-               0,
-               0,
+               marketId,
+               oracleId,
                wei,
                account,
                []],
