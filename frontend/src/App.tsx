@@ -13,6 +13,25 @@ import Web3 from 'web3';
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
 const { toBN, fromWei, toWei } = Web3.utils;
 
+// TODO
+const CHAINS: { [id: string] : string } = {
+  '1': 'mainnet',
+  '3': 'ropsten',
+  '4': 'rinkeby',
+  '5': 'goerli',
+  '42': 'kovan',
+  '1337': 'local',
+  '122': 'fuse',
+  '80001': 'mumbai',
+  '137': 'matic',
+  '99': 'core',
+  '77': 'sokol',
+  '100': 'xdai',
+  '74': 'idchain',
+  '56': 'bsc',
+  '97': 'bsctest',
+}
+
 let _web3Provider: any = null;
 
 let myWeb3: any = null;
@@ -44,6 +63,32 @@ function isRealNumber(v: string): boolean { // TODO: called twice
   return /^[0-9]+(\.[0-9]+)?$/.test(v);
 }
 
+let _fetchedJsonPromises = new Map<string, Promise<any>>();
+let _fetched = new Map<string, any>();
+
+async function fetchOnceJsonPromise(url: string): Promise<Promise<any>> {
+  let promise = _fetchedJsonPromises.get(url);
+  if (promise) {
+    return promise;
+  } else {
+    const fetchResult = await fetch(url);
+    promise = fetchResult.json() as Promise<any>;
+    _fetchedJsonPromises.set(url, promise);
+    return await promise;
+  }
+}
+
+async function fetchOnceJson(url: string): Promise<any> {
+  let json = _fetched.get(url);
+  if (json) {
+    return json;
+  } else {
+    json = await fetchOnceJsonPromise(url);
+    _fetched.set(url, json);
+    return json;
+  }
+}
+
 function App() {
   const [donateFor, setDonateFor] = useState('');
   const [paymentKind, setPaymentKind] = useState('bequestTokens');
@@ -52,6 +97,105 @@ function App() {
   const [tokenAddress, setTokenAddress] = useState('');
   const [tokenId, setTokenId] = useState('');
   const [amount, setAmount] = useState('');
+
+  async function getWeb3() {
+    try {
+      (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
+    }
+    catch(_) { }
+    const web3 = await baseGetWeb3();
+    getAccounts().then((accounts) => {
+      // setConnectedToAccount(accounts.length !== 0); // TODO
+    });
+    return web3;
+  }
+
+  async function getABIs() {
+    return await fetchOnceJson(`abis.json`);
+  }
+
+  async function getAddresses() {
+    const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
+    return CHAINS[chainId] ? json[CHAINS[chainId]] : null;
+  }
+
+  async function getAccounts(): Promise<Array<string>> {
+    const web3 = await baseGetWeb3();
+    return web3 ? (web3 as any).eth.getAccounts() : null;
+  }
+
+  // FIXME: returns Promise?
+  async function mySend(contract: string, method: any, args: Array<any>, sendArgs: any, handler: any): Promise<any> {
+    sendArgs = sendArgs || {}
+    const account = (await getAccounts())[0];
+    return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
+        .then((estimatedGas: string) => {
+            const gas = String(Math.floor(Number(estimatedGas) * 1.15) + 24000);
+            if(handler !== null)
+                return method.bind(contract)(...args).send({gas, from: account, ...sendArgs}, handler);
+            else
+                return method.bind(contract)(...args).send({gas, from: account, ...sendArgs});
+        });
+  }
+  
+  async function getERC1155Token() {
+    let collateralContractAddress, collateralTokenId;
+    switch(tokenKind) {
+      case 'erc1155':
+        collateralContractAddress = tokenAddress;
+        collateralTokenId = tokenId;
+        break;
+      case 'erc20':
+        collateralContractAddress = (await getAddresses())["ERC1155OverERC20"].address;
+        collateralTokenId = Web3.utils.toHex(tokenAddress);
+        break;
+    }
+    return [collateralContractAddress, collateralTokenId];
+  }
+
+  async function donateForScience() {
+    const wei = toWei(amount);
+    const abi = (await getABIs()).ERC20LockedERC1155;
+    const web3 = await getWeb3();
+    if (web3 !== null) {
+      try {
+        const contractAddress = (await getAddresses())["SalaryWithDAO"].address;
+        const science = new (web3 as any).eth.Contract(abi as any, contractAddress);
+        const account = (await getAccounts())[0];
+        if(!account) {
+          // setConnectedToAccount(false); // TODO
+          return;
+        }
+        const [collateralContractAddress, collateralTokenId] = await getERC1155Token();
+        // FIXME: Specify market and oracle IDs.
+        await mySend(science, science.methods.donate,
+                     [collateralContractAddress,
+                      collateralTokenId,
+                      0,
+                      0,
+                      wei,
+                      account,
+                      account,
+                      []],
+                     {from: account}, null);
+          // .catch(e => alert(e.message));
+      }
+      catch(e) {
+        alert(e.message);
+      }
+    }
+  }
+
+  function donate() {
+    switch(donateFor) {
+      case 'science':
+        donateForScience();
+        break;
+      case 'climate':
+        alert('Climate donataions are not yet implemented.')
+        break;
+    }
+  }
 
   return (
     <div className="App">
@@ -80,13 +224,13 @@ function App() {
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestTokens')} checked={paymentKind === 'bequestTokens'}/>
             {' '}
-            Bequest token(s) I have
+            Donate but allow me to take money back
           </label>
           {' '}
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestGnosis')} checked={paymentKind === 'bequestGnosis'}/>
             {' '}
-            Bequest funds on a Gnosis Safe smart wallet
+            Bequest all funds on a Gnosis Safe smart wallet
           </label>
         </p>
         <p style={{display: paymentKind !== 'bequestGnosis' ? 'block' : 'none'}}>
@@ -117,7 +261,7 @@ function App() {
             {' '}
             <Amount value={amount} onChange={async (e: Event) => await setAmount((e.target as HTMLInputElement).value as string)}/>
             {' '}
-            <button>Donate</button>
+            <button onClick={donate}>Donate</button>
           </p>
         </div>
         <div style={{display: /bequest/.test(paymentKind) ? 'block' : 'none'}}>
