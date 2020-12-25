@@ -8,6 +8,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './App.css';
 import Web3 from 'web3';
+import erc1155Abi from './ERC1155Abi';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
@@ -159,14 +160,23 @@ function App() {
     if (web3 !== null) {
       try {
         const contractAddress = (await getAddresses()).SalaryWithDAO.address;
-        const abi = (await getABIs()).SalaryWithDAO;
-        const science = new (web3 as any).eth.Contract(abi as any, contractAddress);
+        const scienceAbi = (await getABIs()).SalaryWithDAO;
+        const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
         const account = (await getAccounts())[0];
         if(!account) {
           // setConnectedToAccount(false); // TODO
           return;
         }
         const [collateralContractAddress, collateralTokenId] = await getERC1155Token();
+        const collateralContract = new (web3 as any).eth.Contract(erc1155Abi as any, collateralContractAddress);
+        const approved = await collateralContract.methods.isApprovedForAll(account, contractAddress).call();
+        if (!approved) {
+          const tx = await mySend(
+            collateralContract, collateralContract.methods.setApprovalForAll,
+            [contractAddress, true], {from: account}, null
+          );
+          await tx;
+        }
         // FIXME: Specify market and oracle IDs.
         switch(paymentKind) {
           case 'donate':
@@ -181,7 +191,6 @@ function App() {
                []],
               {from: account}, null
             );
-              // .catch(e => alert(e.message));
             break;
           case 'bequestTokens':
             await mySend(science, science.methods.bequestCollateral,
@@ -194,7 +203,6 @@ function App() {
                []],
               {from: account}, null
             );
-              // .catch(e => alert(e.message));
             break;
         }
       }
