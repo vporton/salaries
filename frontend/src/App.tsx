@@ -179,7 +179,6 @@ function App() {
           );
           await tx;
         }
-        // FIXME: Specify market and oracle IDs.
         switch(paymentKind) {
           case 'donate':
             await mySend(science, science.methods.donate,
