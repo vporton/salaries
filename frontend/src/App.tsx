@@ -9,6 +9,7 @@ import 'react-calendar/dist/Calendar.css';
 import './App.css';
 import Web3 from 'web3';
 import erc1155Abi from './ERC1155Abi';
+import { METHODS } from 'http';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
@@ -156,6 +157,25 @@ function App() {
     return [collateralContractAddress, collateralTokenId];
   }
 
+  useEffect(() => {
+    async function updateInfo() {
+      const web3 = await getWeb3();
+      if (web3 !== null) {
+        const contractAddress = (await getAddresses()).SalaryWithDAO.address;
+        const scienceAbi = (await getABIs()).SalaryWithDAO;
+        const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
+        const account = (await getAccounts())[0];
+        if(!account) {
+          // setConnectedToAccount(false); // TODO
+          return;
+        }
+        setBequestDate(new Date(await science.methods.minFinishTime(oracleId).call() * 1000));
+      }
+    }
+
+    updateInfo();
+  }, [oracleId]);
+
   async function donateForScience() {
     const wei = toWei(amount);
     const web3 = await getWeb3();
@@ -284,8 +304,8 @@ function App() {
         </p>
         <p style={{display: paymentKind !== 'donate' ? 'block' : 'none'}}>
           The donation can be taken back before:
-          <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}> {bequestDate.toString()}</span>
-          <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
+          <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}> {bequestDate.toString()}</span>
+          <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>
             <br/>
             <span style={{display: 'inline-block'}}>
               <Calendar onChange={e => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
