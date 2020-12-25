@@ -244,6 +244,10 @@ function App() {
     }
   }
 
+  async function bequestAll() {
+    alert("Bequesting all funds is not yet supported!");
+  }
+
   function donateButtonDisabled() {
     return !isRealNumber(amount) || donateFor === '' || paymentKind === '' || tokenKind === '' ||
       !isAddressValid(tokenAddress) || (tokenKind === 'erc1155' && isUint256Valid(tokenId));
@@ -334,7 +338,7 @@ function App() {
           </p>
         </div>
         <p style={{display: paymentKind === 'bequestGnosis' ? 'block' : 'none'}}>
-          <button className="donateButton" disabled={bequestButtonDisabled()}>Bequest!</button>
+          <button className="donateButton" disabled={bequestButtonDisabled()} onClick={bequestAll}>Bequest!</button>
         </p>
       </header>
     </div>
