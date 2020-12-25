@@ -4,7 +4,9 @@
   },
   "dependencies": {
     "@openzeppelin/truffle-upgrades": "^1.3.1",
+    "@truffle/config": "^1.2.34",
     "@truffle/contract": "^4.3.3",
+    "@truffle/deployer": "^3.2.5",
     "abdk-libraries-solidity": "^2.4.0",
     "truffle": "^5.1.58"
   },
