@@ -168,17 +168,35 @@ function App() {
         }
         const [collateralContractAddress, collateralTokenId] = await getERC1155Token();
         // FIXME: Specify market and oracle IDs.
-        await mySend(science, science.methods.donate,
-                     [collateralContractAddress,
-                      collateralTokenId,
-                      0,
-                      0,
-                      wei,
-                      account,
-                      account,
-                      []],
-                     {from: account}, null);
-          // .catch(e => alert(e.message));
+        switch(paymentKind) {
+          case 'donate':
+            await mySend(science, science.methods.donate,
+              [collateralContractAddress,
+               collateralTokenId,
+               0,
+               0,
+               wei,
+               account,
+               account,
+               []],
+              {from: account}, null
+            );
+              // .catch(e => alert(e.message));
+            break;
+          case 'bequestTokens':
+            await mySend(science, science.methods.bequestCollateral,
+              [collateralContractAddress,
+               collateralTokenId,
+               0,
+               0,
+               wei,
+               account,
+               []],
+              {from: account}, null
+            );
+              // .catch(e => alert(e.message));
+            break;
+        }
       }
       catch(e) {
         alert(e.message);
