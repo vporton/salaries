@@ -268,6 +268,11 @@ function App() {
           {' '}
           <Address value={tokenAddress} onChange={async (e: Event) => await setTokenAddress((e.target as HTMLInputElement).value as string)}/>
         </p>
+        <p style={{display: paymentKind !== 'bequestGnosis' && tokenKind === 'erc1155' ? 'block' : 'none'}}>
+          Token ID:
+          {' '}
+          <Uint256 value={tokenId} onChange={async (e: Event) => await setTokenId((e.target as HTMLInputElement).value as string)}/>
+        </p>
         <p style={{display: paymentKind !== 'donate' ? 'block' : 'none'}}>
           The donation can be taken back before:
           <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}> {bequestDate.toString()}</span>
@@ -279,11 +284,6 @@ function App() {
           </span>
         </p>
         <div style={{display: paymentKind !== 'bequestGnosis' ? 'block' : 'none'}}>
-          <p style={{display: tokenKind === 'erc1155' ? 'block' : 'none'}}>
-            Token ID:
-            {' '}
-            <Uint256 value={tokenId} onChange={async (e: Event) => await setTokenId((e.target as HTMLInputElement).value as string)}/>
-          </p>
           <p>
             Donation amount:
             {' '}
