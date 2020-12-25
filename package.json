@@ -9,7 +9,7 @@
     "truffle": "^5.1.58"
   },
   "devDependencies": {
-    "@gnosis.pm/conditional-tokens-contracts": "git+ssh://git@github.com/vporton/conditional-tokens-contracts.git#salary-0.1.0",
+    "@gnosis.pm/conditional-tokens-contracts": "git+ssh://git@github.com/vporton/conditional-tokens-contracts.git#salary-0.1.1",
     "@vporton/wrap-tokens": "git+ssh://git@github.com/vporton/wrap-tokens.git#v3.1.0",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",

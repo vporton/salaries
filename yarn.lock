@@ -524,6 +524,14 @@
     abdk-libraries-solidity "^2.4.0"
     restorable-funds "git+ssh://git@github.com/vporton/restorable-funds"
 
+"@gnosis.pm/conditional-tokens-contracts@git+ssh://git@github.com/vporton/conditional-tokens-contracts.git#salary-0.1.1":
+  version "1.0.3"
+  resolved "git+ssh://git@github.com/vporton/conditional-tokens-contracts.git#e6c597e09891000262d2eeb5f7ba46bfa572e09e"
+  dependencies:
+    "@gnosis.pm/safe-contracts" "git+ssh://git@github.com/vporton/safe-contracts#solidity-0.7"
+    abdk-libraries-solidity "^2.4.0"
+    restorable-funds "git+ssh://git@github.com/vporton/restorable-funds"
+
 "@gnosis.pm/safe-contracts@git+ssh://git@github.com/vporton/safe-contracts#solidity-0.7":
   version "1.2.0"
   resolved "git+ssh://git@github.com/vporton/safe-contracts#ebae6cf892067343c2f43392ff51d5a528dbca80"
