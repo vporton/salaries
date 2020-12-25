@@ -19,11 +19,8 @@ code {
 
 .donateButton {
   font-size: 200%;
-  border: 3px inset gray;
-}
-
-.donateButton:hover {
-  color: green;
+  /* border: 3px outset gray;
+  color: green; */
 }
 
 em, strong {

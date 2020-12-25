@@ -95,7 +95,7 @@ function App() {
   const [donateFor, setDonateFor] = useState('');
   const [paymentKind, setPaymentKind] = useState('bequestTokens');
   const [tokenKind, setTokenKind] = useState('');
-  const [bequestDate, setBequestDate] = useState(new Date());
+  const [bequestDate, setBequestDate] = useState<Date | null>(null);
   const [tokenAddress, setTokenAddress] = useState('');
   const [tokenId, setTokenId] = useState('');
   const [amount, setAmount] = useState('');
@@ -244,6 +244,16 @@ function App() {
     }
   }
 
+  function donateButtonDisabled() {
+    return !isRealNumber(amount) || donateFor === '' || paymentKind === '' || tokenKind === '' ||
+      !isAddressValid(tokenAddress) || (tokenKind === 'erc1155' && isUint256Valid(tokenId));
+  }
+
+  function bequestButtonDisabled() {
+    console.log(!isAddressValid(tokenAddress), bequestDate === null)
+    return !isAddressValid(tokenAddress) || bequestDate === null;
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -304,7 +314,9 @@ function App() {
         </p>
         <p style={{display: paymentKind !== 'donate' ? 'block' : 'none'}}>
           The donation can be taken back before:
-          <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}> {bequestDate.toString()}</span>
+          <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
+          {' '}
+          {bequestDate !== null ? bequestDate.toString() : ""}</span>
           <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>
             <br/>
             <span style={{display: 'inline-block'}}>
@@ -318,11 +330,11 @@ function App() {
             {' '}
             <Amount value={amount} onChange={async (e: Event) => await setAmount((e.target as HTMLInputElement).value as string)}/>
             {' '}
-            <button onClick={donate}>Donate</button>
+            <button onClick={donate} disabled={donateButtonDisabled()}>Donate</button>
           </p>
         </div>
         <p style={{display: paymentKind === 'bequestGnosis' ? 'block' : 'none'}}>
-          <button className="donateButton">Bequest!</button>
+          <button className="donateButton" disabled={bequestButtonDisabled()}>Bequest!</button>
         </p>
       </header>
     </div>
@@ -361,7 +373,7 @@ function Amount({...props}  ) {
       <input type="text"
              value={props.value ? props.value : ""}
              onChange={props.onChange}
-               className={isRealNumber(props.value) ? '' : 'error'}/>
+             className={isRealNumber(props.value) ? '' : 'error'}/>
     </span>
   )
 }
