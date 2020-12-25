@@ -3,5 +3,6 @@
 // pragma solidity ^0.7.5;
 pragma solidity >=0.5.0;
 
-import "@gnosis.pm/conditional-tokens-contracts/contracts/BidOnAddresses.sol";
-import "@vporton/wrap-tokens/contracts/ERC1155OverERC20.sol";
+import { SalaryWithDAO } from "@gnosis.pm/conditional-tokens-contracts/contracts/SalaryWithDAO.sol";
+import { ERC1155OverERC20 } from "@vporton/wrap-tokens/contracts/ERC1155OverERC20.sol";
+import { DefaultDAOInterface } from "@gnosis.pm/conditional-tokens-contracts/contracts/DefaultDAOInterface.sol";
