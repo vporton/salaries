@@ -291,7 +291,7 @@ function App() {
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestGnosis')} checked={paymentKind === 'bequestGnosis'}/>
             {' '}
-            Bequest all funds on a Gnosis Safe smart wallet
+            Bequest a Gnosis Safe smart wallet
           </label>
         </p>
         <p style={{display: paymentKind !== 'bequestGnosis' ? 'block' : 'none'}}>
