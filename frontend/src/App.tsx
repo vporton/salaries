@@ -250,7 +250,17 @@ function App() {
           {' '}
           <Address value={tokenAddress} onChange={async (e: Event) => await setTokenAddress((e.target as HTMLInputElement).value as string)}/>
         </p>
-        <div style={{display: !/bequest/.test(paymentKind) ? 'block' : 'none'}}>
+        <p style={{display: paymentKind !== 'donate' ? 'block' : 'none'}}>
+          The donation can be taken back before:
+          <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}> {bequestDate.toString()}</span>
+          <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
+            <br/>
+            <span style={{display: 'inline-block'}}>
+              <Calendar onChange={e => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
+            </span>
+          </span>
+        </p>
+        <div style={{display: paymentKind !== 'bequestGnosis' ? 'block' : 'none'}}>
           <p style={{display: tokenKind === 'erc1155' ? 'block' : 'none'}}>
             Token ID:
             {' '}
@@ -264,21 +274,9 @@ function App() {
             <button onClick={donate}>Donate</button>
           </p>
         </div>
-        <div style={{display: /bequest/.test(paymentKind) ? 'block' : 'none'}}>
-          <p>
-            Date bequest can be withdrawn:
-            <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}> {bequestDate.toString()}</span>
-            <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
-              <br/>
-              <span style={{display: 'inline-block'}}>
-                <Calendar onChange={e => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
-              </span>
-            </span>
-          </p>
-          <p>
-            <button className="donateButton">Bequest!</button>
-          </p>
-        </div>
+        <p style={{display: paymentKind === 'bequestGnosis' ? 'block' : 'none'}}>
+          <button className="donateButton">Bequest!</button>
+        </p>
       </header>
     </div>
   );
