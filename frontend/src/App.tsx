@@ -155,11 +155,11 @@ function App() {
 
   async function donateForScience() {
     const wei = toWei(amount);
-    const abi = (await getABIs()).ERC20LockedERC1155;
     const web3 = await getWeb3();
     if (web3 !== null) {
       try {
-        const contractAddress = (await getAddresses())["SalaryWithDAO"].address;
+        const contractAddress = (await getAddresses()).SalaryWithDAO.address;
+        const abi = (await getABIs()).SalaryWithDAO;
         const science = new (web3 as any).eth.Contract(abi as any, contractAddress);
         const account = (await getAccounts())[0];
         if(!account) {
