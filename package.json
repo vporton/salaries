@@ -3,15 +3,16 @@
     "compile": "truffle compile"
   },
   "dependencies": {
+    "@gnosis.pm/safe-contracts": "git+ssh://git@github.com/vporton/safe-contracts.git#bequest",
     "@openzeppelin/truffle-upgrades": "^1.3.1",
     "@truffle/config": "^1.2.34",
     "@truffle/contract": "^4.3.3",
     "@truffle/deployer": "^3.2.5",
+    "@vporton/future-contracts": "git+ssh://git@github.com/vporton/future-contracts.git",
     "abdk-libraries-solidity": "^2.4.0",
     "truffle": "^5.1.58"
   },
   "devDependencies": {
-    "@gnosis.pm/conditional-tokens-contracts": "git+ssh://git@github.com/vporton/conditional-tokens-contracts.git#salary-0.1.1",
     "@vporton/wrap-tokens": "git+ssh://git@github.com/vporton/wrap-tokens.git#v3.1.0",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",

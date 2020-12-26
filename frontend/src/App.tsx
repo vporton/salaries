@@ -99,7 +99,6 @@ function App() {
   const [tokenAddress, setTokenAddress] = useState('');
   const [tokenId, setTokenId] = useState('');
   const [amount, setAmount] = useState('');
-  const [marketId, setMarketId] = useState('0'); // FIXME
   const [oracleId, setOracleId] = useState('0'); // FIXME
 
   async function getWeb3() {
@@ -150,8 +149,9 @@ function App() {
         collateralTokenId = tokenId;
         break;
       case 'erc20':
-        collateralContractAddress = (await getAddresses())["ERC1155OverERC20"].address;
-        collateralTokenId = Web3.utils.toHex(tokenAddress);
+        collateralContractAddress = (await getAddresses()).ERC1155OverERC20.address;
+        collateralTokenId = Web3.utils.toBN(tokenAddress).toString(); // Web3.utils.toHex(tokenAddress); // TODO: can hex?
+        console.log(collateralTokenId)
         break;
     }
     return [collateralContractAddress, collateralTokenId];
@@ -204,7 +204,6 @@ function App() {
             await mySend(science, science.methods.donate,
               [collateralContractAddress,
                collateralTokenId,
-               marketId,
                oracleId,
                wei,
                account,
@@ -217,7 +216,6 @@ function App() {
             await mySend(science, science.methods.bequestCollateral,
               [collateralContractAddress,
                collateralTokenId,
-               marketId,
                oracleId,
                wei,
                account,
@@ -250,7 +248,7 @@ function App() {
 
   function donateButtonDisabled() {
     return !isRealNumber(amount) || donateFor === '' || paymentKind === '' || tokenKind === '' ||
-      !isAddressValid(tokenAddress) || (tokenKind === 'erc1155' && isUint256Valid(tokenId));
+      !isAddressValid(tokenAddress) || (tokenKind === 'erc1155' && !isUint256Valid(tokenId));
   }
 
   function bequestButtonDisabled() {
