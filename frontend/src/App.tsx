@@ -9,7 +9,7 @@ import 'react-calendar/dist/Calendar.css';
 import './App.css';
 import Web3 from 'web3';
 import erc1155Abi from './ERC1155Abi';
-import { METHODS } from 'http';
+import erc20Abi from './ERC20Abi';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
@@ -141,7 +141,7 @@ function App() {
         });
   }
   
-  async function getERC1155Token() {
+  async function obtainERC1155Token() {
     let collateralContractAddress, collateralTokenId;
     switch(tokenKind) {
       case 'erc1155':
@@ -151,7 +151,23 @@ function App() {
       case 'erc20':
         collateralContractAddress = (await getAddresses()).ERC1155OverERC20.address;
         collateralTokenId = Web3.utils.toBN(tokenAddress).toString(); // Web3.utils.toHex(tokenAddress); // TODO: can hex?
-        console.log(collateralTokenId)
+
+        const web3 = await getWeb3();
+        // if (web3 === null) return;
+        const account = (await getAccounts())[0];
+        // if(!account) return;
+
+        // Approve ERC-20 spent
+        const erc20 = new (web3 as any).eth.Contract(erc20Abi as any, tokenAddress);
+        const allowanceStr = await erc20.methods.allowance(account, collateralContractAddress).call();
+        const allowance = toBN(allowanceStr);
+        const halfBig = toBN(2).pow(toBN(128));
+        if(allowance.lt(halfBig)) {
+          const big = toBN(2).pow(toBN(256)).sub(toBN(1));
+          const tx = await mySend(erc20, erc20.methods.approve, [collateralContractAddress, big.toString()], {from: account}, null)
+            // .catch(e => alert(e.message));
+          await tx;
+        }
         break;
     }
     return [collateralContractAddress, collateralTokenId];
@@ -189,7 +205,7 @@ function App() {
           // setConnectedToAccount(false); // TODO
           return;
         }
-        const [collateralContractAddress, collateralTokenId] = await getERC1155Token();
+        const [collateralContractAddress, collateralTokenId] = await obtainERC1155Token();
         const collateralContract = new (web3 as any).eth.Contract(erc1155Abi as any, collateralContractAddress);
         const approved = await collateralContract.methods.isApprovedForAll(account, contractAddress).call();
         if (!approved) {
@@ -252,7 +268,6 @@ function App() {
   }
 
   function bequestButtonDisabled() {
-    console.log(!isAddressValid(tokenAddress), bequestDate === null)
     return !isAddressValid(tokenAddress) || bequestDate === null;
   }
 
