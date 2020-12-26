@@ -173,31 +173,45 @@ function App() {
     return [collateralContractAddress, collateralTokenId];
   }
 
+  async function lockContract() {
+    const addresses = await getAddresses();
+    switch (donateFor) {
+      case 'science':
+        return addresses.SalaryWithDAO.address;
+      case 'climate':
+        return addresses.Lock.address;
+      default:
+        return '';
+    } 
+  }
+
   useEffect(() => {
     async function updateInfo() {
       const web3 = await getWeb3();
       if (web3 !== null) {
-        const contractAddress = (await getAddresses()).SalaryWithDAO.address;
-        const scienceAbi = (await getABIs()).SalaryWithDAO;
-        const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
-        const account = (await getAccounts())[0];
-        if(!account) {
-          // setConnectedToAccount(false); // TODO
-          return;
+        const contractAddress = await lockContract();
+        if (contractAddress !== '') {
+          const scienceAbi = (await getABIs()).SalaryWithDAO;
+          const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
+          const account = (await getAccounts())[0];
+          if(!account) {
+            // setConnectedToAccount(false); // TODO
+            return;
+          }
+          setBequestDate(new Date(await science.methods.minFinishTime(oracleId).call() * 1000));
         }
-        setBequestDate(new Date(await science.methods.minFinishTime(oracleId).call() * 1000));
       }
     }
 
     updateInfo();
   }, [oracleId]);
 
-  async function donateForScience() {
+  async function donate() {
     const wei = toWei(amount);
     const web3 = await getWeb3();
     if (web3 !== null) {
       try {
-        const contractAddress = (await getAddresses()).SalaryWithDAO.address;
+        const contractAddress = await lockContract();
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
         const account = (await getAccounts())[0];
@@ -244,17 +258,6 @@ function App() {
       catch(e) {
         alert(e.message);
       }
-    }
-  }
-
-  function donate() {
-    switch(donateFor) {
-      case 'science':
-        donateForScience();
-        break;
-      case 'climate':
-        alert('Climate donataions are not yet implemented.')
-        break;
     }
   }
 
