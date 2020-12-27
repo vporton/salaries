@@ -13,7 +13,7 @@ The project very well aligns with the Gnosis mission because:
 - The Gnosis mission is: "Gnosis builds new market mechanisms for decentralized finance." And this project is a new free market mechanism for finances of scientific/software and ecological projects (as well as other kinds of projects in the future), using decentralized finance.
 - This project plans to use Gnosis Safe (with [this new module](https://github.com/vporton/safe-modules/tree/master/bequest)) as its essential part.
 - This project uses a prediction market. It is a new kind of prediction markets, not the old Gnosis one. Both have advantages and disadvantages and both should be a part of Gnosis ecosystem.
-- The project contributes new idea to other Gnosis projects including the old prediction markets.
+- The project contributes new ideas to other Gnosis projects including the old prediction markets.
 
 Notes:
 
