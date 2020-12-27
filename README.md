@@ -1,5 +1,5 @@
 # salaries
-Clever system for carbon accounting and salaries of scientists and free software developers in Ethereum blockchain.
+Clever system for carbon accounting and salaries for scientists and free software developers in Ethereum blockchain.
 
 [Demo app](https://vporton.github.io/future-salary/)
 
