@@ -7,7 +7,7 @@ To run on your PC:
 
 ```sh
 yarn
-npx truffle deploy --network local
+TEST=1 TEST_ACCOUNT=0x... npx truffle deploy --network local
 cd frontend
 yarn start
 ```
