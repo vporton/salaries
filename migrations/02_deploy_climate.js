@@ -1,4 +1,4 @@
-const myDeploy = require('../lib/default-deployer');
+const { myDeploy } = require('../lib/default-deployer');
 
 module.exports = async function(deployer, network, accounts) {
   { // Deploy science.

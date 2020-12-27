@@ -1,5 +1,5 @@
 const ethers = require('ethers');
-const myDeploy = require('../lib/default-deployer');
+const { myDeploy } = require('../lib/default-deployer');
 const { parseEther } = ethers.utils;
 
 module.exports = async function(deployer, network, accounts) {

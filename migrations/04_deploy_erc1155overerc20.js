@@ -1,5 +1,5 @@
 const ethers = require('ethers');
-const myDeploy = require('../lib/default-deployer');
+const { myDeploy } = require('../lib/default-deployer');
 
 const uuid = '183db4f2-3dce-11eb-92a8-0b35ea444c93';
 
