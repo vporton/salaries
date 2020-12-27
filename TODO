@@ -7,3 +7,4 @@
 - Make possible to donate ETH directly to an address, so taking donations directly from sites like Binance.
 - Tests.
 - Integrate it into GitCoin codebase.
+- Show user's account address at "Register" page.
