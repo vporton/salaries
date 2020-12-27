@@ -381,7 +381,8 @@ function App() {
         const addresses = await getAddresses();
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new (web3 as any).eth.Contract(scienceAbi as any, addresses.SalaryWithDAO.address);
-        await mySend(science, science.methods.registerCustomer, [oracleId, []], {from: account}, null);
+        await mySend(science, science.methods.registerCustomer, [oracleId, []], {from: account}, null)
+          .catch(e => alert(e.message)); // TODO: Better error message for already registered users.
       }
     }
 
