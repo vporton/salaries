@@ -3,6 +3,13 @@ Clever system for carbon accounting and salaries of scientists and free software
 
 [Demo app](https://vporton.github.io/future-salary/)
 
+To run on your PC:
+
+```sh
+yarn
+yarn start
+```
+
 It was [proposed](https://github.com/gitcoinco/web/issues/8183) to integrate this project into [GitCoin](https://gitcoin.co).
 
 [Temporary project homepage.](https://reward.portonvictor.org)
