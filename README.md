@@ -7,6 +7,8 @@ To run on your PC:
 
 ```sh
 yarn
+npx truffle deploy --network local
+cd frontend
 yarn start
 ```
 
