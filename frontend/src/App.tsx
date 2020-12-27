@@ -92,105 +92,127 @@ async function fetchOnceJson(url: string): Promise<any> {
 }
 
 function App() {
-  const [donateFor, setDonateFor] = useState('');
-  const [paymentKind, setPaymentKind] = useState('bequestTokens');
-  const [tokenKind, setTokenKind] = useState('');
-  const [bequestDate, setBequestDate] = useState<Date | null>(null);
-  const [tokenAddress, setTokenAddress] = useState('');
-  const [tokenId, setTokenId] = useState('');
-  const [amount, setAmount] = useState('');
-  const [oracleId, setOracleId] = useState('0'); // FIXME
+  function Pay() {
+    const [donateFor, setDonateFor] = useState('');
+    const [paymentKind, setPaymentKind] = useState('bequestTokens');
+    const [tokenKind, setTokenKind] = useState('');
+    const [bequestDate, setBequestDate] = useState<Date | null>(null);
+    const [tokenAddress, setTokenAddress] = useState('');
+    const [tokenId, setTokenId] = useState('');
+    const [amount, setAmount] = useState('');
+    const [oracleId, setOracleId] = useState('0'); // FIXME
 
-  async function getWeb3() {
-    try {
-      (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
+    async function getWeb3() {
+      try {
+        (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
+      }
+      catch(_) { }
+      const web3 = await baseGetWeb3();
+      getAccounts().then((accounts) => {
+        // setConnectedToAccount(accounts.length !== 0); // TODO
+      });
+      return web3;
     }
-    catch(_) { }
-    const web3 = await baseGetWeb3();
-    getAccounts().then((accounts) => {
-      // setConnectedToAccount(accounts.length !== 0); // TODO
-    });
-    return web3;
-  }
 
-  async function getABIs() {
-    return await fetchOnceJson(`abis.json`);
-  }
+    async function getABIs() {
+      return await fetchOnceJson(`abis.json`);
+    }
 
-  async function getAddresses() {
-    const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
-    return CHAINS[chainId] ? json[CHAINS[chainId]] : null;
-  }
+    async function getAddresses() {
+      const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
+      return CHAINS[chainId] ? json[CHAINS[chainId]] : null;
+    }
 
-  async function getAccounts(): Promise<Array<string>> {
-    const web3 = await baseGetWeb3();
-    return web3 ? (web3 as any).eth.getAccounts() : null;
-  }
+    async function getAccounts(): Promise<Array<string>> {
+      const web3 = await baseGetWeb3();
+      return web3 ? (web3 as any).eth.getAccounts() : null;
+    }
 
-  // FIXME: returns Promise?
-  async function mySend(contract: string, method: any, args: Array<any>, sendArgs: any, handler: any): Promise<any> {
-    sendArgs = sendArgs || {}
-    const account = (await getAccounts())[0];
-    return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
-        .then((estimatedGas: string) => {
-            const gas = String(Math.floor(Number(estimatedGas) * 1.15) + 24000);
-            if(handler !== null)
-                return method.bind(contract)(...args).send({gas, from: account, ...sendArgs}, handler);
-            else
-                return method.bind(contract)(...args).send({gas, from: account, ...sendArgs});
-        });
-  }
-  
-  async function obtainERC1155Token() {
-    let collateralContractAddress, collateralTokenId;
-    switch(tokenKind) {
-      case 'erc1155':
-        collateralContractAddress = tokenAddress;
-        collateralTokenId = tokenId;
-        break;
-      case 'erc20':
-        collateralContractAddress = (await getAddresses()).ERC1155OverERC20.address;
-        collateralTokenId = Web3.utils.toBN(tokenAddress).toString(); // Web3.utils.toHex(tokenAddress); // TODO: can hex?
+    // FIXME: returns Promise?
+    async function mySend(contract: string, method: any, args: Array<any>, sendArgs: any, handler: any): Promise<any> {
+      sendArgs = sendArgs || {}
+      const account = (await getAccounts())[0];
+      return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
+          .then((estimatedGas: string) => {
+              const gas = String(Math.floor(Number(estimatedGas) * 1.15) + 24000);
+              if(handler !== null)
+                  return method.bind(contract)(...args).send({gas, from: account, ...sendArgs}, handler);
+              else
+                  return method.bind(contract)(...args).send({gas, from: account, ...sendArgs});
+          });
+    }
+    
+    async function obtainERC1155Token() {
+      let collateralContractAddress, collateralTokenId;
+      switch(tokenKind) {
+        case 'erc1155':
+          collateralContractAddress = tokenAddress;
+          collateralTokenId = tokenId;
+          break;
+        case 'erc20':
+          collateralContractAddress = (await getAddresses()).ERC1155OverERC20.address;
+          collateralTokenId = Web3.utils.toBN(tokenAddress).toString(); // Web3.utils.toHex(tokenAddress); // TODO: can hex?
 
+          const web3 = await getWeb3();
+          // if (web3 === null) return;
+          const account = (await getAccounts())[0];
+          // if(!account) return;
+
+          // Approve ERC-20 spent
+          const erc20 = new (web3 as any).eth.Contract(erc20Abi as any, tokenAddress);
+          const allowanceStr = await erc20.methods.allowance(account, collateralContractAddress).call();
+          const allowance = toBN(allowanceStr);
+          const halfBig = toBN(2).pow(toBN(128));
+          if(allowance.lt(halfBig)) {
+            const big = toBN(2).pow(toBN(256)).sub(toBN(1));
+            const tx = await mySend(erc20, erc20.methods.approve, [collateralContractAddress, big.toString()], {from: account}, null)
+              // .catch(e => alert(e.message));
+            await tx;
+          }
+          break;
+      }
+      return [collateralContractAddress, collateralTokenId];
+    }
+
+    async function lockContract() {
+      const addresses = await getAddresses();
+      switch (donateFor) {
+        case 'science':
+          return addresses.SalaryWithDAO.address;
+        case 'climate':
+          return addresses.Lock.address;
+        default:
+          return '';
+      } 
+    }
+
+    useEffect(() => {
+      async function updateInfo() {
         const web3 = await getWeb3();
-        // if (web3 === null) return;
-        const account = (await getAccounts())[0];
-        // if(!account) return;
-
-        // Approve ERC-20 spent
-        const erc20 = new (web3 as any).eth.Contract(erc20Abi as any, tokenAddress);
-        const allowanceStr = await erc20.methods.allowance(account, collateralContractAddress).call();
-        const allowance = toBN(allowanceStr);
-        const halfBig = toBN(2).pow(toBN(128));
-        if(allowance.lt(halfBig)) {
-          const big = toBN(2).pow(toBN(256)).sub(toBN(1));
-          const tx = await mySend(erc20, erc20.methods.approve, [collateralContractAddress, big.toString()], {from: account}, null)
-            // .catch(e => alert(e.message));
-          await tx;
+        if (web3 !== null) {
+          const contractAddress = await lockContract();
+          if (contractAddress !== '') {
+            const scienceAbi = (await getABIs()).SalaryWithDAO;
+            const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
+            const account = (await getAccounts())[0];
+            if(!account) {
+              // setConnectedToAccount(false); // TODO
+              return;
+            }
+            setBequestDate(new Date(await science.methods.minFinishTime(oracleId).call() * 1000));
+          }
         }
-        break;
-    }
-    return [collateralContractAddress, collateralTokenId];
-  }
+      }
 
-  async function lockContract() {
-    const addresses = await getAddresses();
-    switch (donateFor) {
-      case 'science':
-        return addresses.SalaryWithDAO.address;
-      case 'climate':
-        return addresses.Lock.address;
-      default:
-        return '';
-    } 
-  }
+      updateInfo();
+    }, [oracleId]);
 
-  useEffect(() => {
-    async function updateInfo() {
+    async function donate() {
+      const wei = toWei(amount);
       const web3 = await getWeb3();
       if (web3 !== null) {
-        const contractAddress = await lockContract();
-        if (contractAddress !== '') {
+        try {
+          const contractAddress = await lockContract();
           const scienceAbi = (await getABIs()).SalaryWithDAO;
           const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
           const account = (await getAccounts())[0];
@@ -198,99 +220,77 @@ function App() {
             // setConnectedToAccount(false); // TODO
             return;
           }
-          setBequestDate(new Date(await science.methods.minFinishTime(oracleId).call() * 1000));
+          const [collateralContractAddress, collateralTokenId] = await obtainERC1155Token();
+          const collateralContract = new (web3 as any).eth.Contract(erc1155Abi as any, collateralContractAddress);
+          const approved = await collateralContract.methods.isApprovedForAll(account, contractAddress).call();
+          if (!approved) {
+            const tx = await mySend(
+              collateralContract, collateralContract.methods.setApprovalForAll,
+              [contractAddress, true], {from: account}, null
+            );
+            await tx;
+          }
+          switch(paymentKind) {
+            case 'donate':
+              await mySend(science, science.methods.donate,
+                [collateralContractAddress,
+                collateralTokenId,
+                oracleId,
+                wei,
+                account,
+                account,
+                []],
+                {from: account}, null
+              );
+              break;
+            case 'bequestTokens':
+              await mySend(science, science.methods.bequestCollateral,
+                [collateralContractAddress,
+                collateralTokenId,
+                oracleId,
+                wei,
+                account,
+                []],
+                {from: account}, null
+              );
+              break;
+          }
+        }
+        catch(e) {
+          alert(e.message);
         }
       }
     }
 
-    updateInfo();
-  }, [oracleId]);
-
-  async function donate() {
-    const wei = toWei(amount);
-    const web3 = await getWeb3();
-    if (web3 !== null) {
-      try {
-        const contractAddress = await lockContract();
-        const scienceAbi = (await getABIs()).SalaryWithDAO;
-        const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
-        const account = (await getAccounts())[0];
-        if(!account) {
-          // setConnectedToAccount(false); // TODO
-          return;
-        }
-        const [collateralContractAddress, collateralTokenId] = await obtainERC1155Token();
-        const collateralContract = new (web3 as any).eth.Contract(erc1155Abi as any, collateralContractAddress);
-        const approved = await collateralContract.methods.isApprovedForAll(account, contractAddress).call();
-        if (!approved) {
-          const tx = await mySend(
-            collateralContract, collateralContract.methods.setApprovalForAll,
-            [contractAddress, true], {from: account}, null
-          );
-          await tx;
-        }
-        switch(paymentKind) {
-          case 'donate':
-            await mySend(science, science.methods.donate,
-              [collateralContractAddress,
-               collateralTokenId,
-               oracleId,
-               wei,
-               account,
-               account,
-               []],
-              {from: account}, null
-            );
-            break;
-          case 'bequestTokens':
-            await mySend(science, science.methods.bequestCollateral,
-              [collateralContractAddress,
-               collateralTokenId,
-               oracleId,
-               wei,
-               account,
-               []],
-              {from: account}, null
-            );
-            break;
-        }
-      }
-      catch(e) {
-        alert(e.message);
-      }
+    async function bequestAll() {
+      alert("Bequesting all funds is not yet supported!");
     }
-  }
 
-  async function bequestAll() {
-    alert("Bequesting all funds is not yet supported!");
-  }
+    function donateButtonDisabled() {
+      return !isRealNumber(amount) || donateFor === '' || paymentKind === '' || tokenKind === '' ||
+        !isAddressValid(tokenAddress) || (tokenKind === 'erc1155' && !isUint256Valid(tokenId));
+    }
 
-  function donateButtonDisabled() {
-    return !isRealNumber(amount) || donateFor === '' || paymentKind === '' || tokenKind === '' ||
-      !isAddressValid(tokenAddress) || (tokenKind === 'erc1155' && !isUint256Valid(tokenId));
-  }
+    function bequestButtonDisabled() {
+      return !isAddressValid(tokenAddress) || bequestDate === null;
+    }
 
-  function bequestButtonDisabled() {
-    return !isAddressValid(tokenAddress) || bequestDate === null;
-  }
-
-  return (
-    <div className="App">
+    return (
       <header className="App-header">
-        <h1>Donate / Bequest</h1>
-        <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore,
-          {' '}
-          <em>donate or bequest</em>
-          {' '}
-          here for the software and the free market to choose the best donation recepient.</p>
-        <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
-        <p>
-          Donate for:
-          {' '}
-          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science and free software</label>
-          {' '}
-          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('climate')}/> Climate</label>
-        </p>
+          <h1>Donate / Bequest</h1>
+          <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore,
+            {' '}
+            <em>donate or bequest</em>
+            {' '}
+            here for the software and the free market to choose the best donation recepient.</p>
+          <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
+          <p>
+            Donate for:
+            {' '}
+            <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science and free software</label>
+            {' '}
+            <label><input type="radio" name="donateFor" onClick={() => setDonateFor('climate')}/> Climate</label>
+          </p>
         <p>
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')} checked={paymentKind === 'donate'}/>
@@ -362,6 +362,14 @@ function App() {
           <button className="donateButton" disabled={bequestButtonDisabled()} onClick={bequestAll}>Bequest!</button>
         </p>
       </header>
+    );
+  }
+
+  return (
+    <div className="App">
+      <HashRouter>
+        <Pay/>
+      </HashRouter>
     </div>
   );
 }
