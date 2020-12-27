@@ -94,6 +94,10 @@ async function fetchOnceJson(url: string): Promise<any> {
 function App() {
   const [oracleId, setOracleId] = useState('0'); // FIXME
 
+  useEffect(() => {
+    document.title = "Future Software/Science Salaries + Donate/Bequest for Science and Climate";
+  }, []);
+ 
   async function getWeb3() {
     try {
       (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
