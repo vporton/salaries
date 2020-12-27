@@ -9,6 +9,7 @@ To run on your PC:
 yarn
 TEST=1 TEST_ACCOUNT=0x... npx truffle deploy --network local
 cd frontend
+yarn
 yarn start
 ```
 
