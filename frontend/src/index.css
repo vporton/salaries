@@ -12,6 +12,14 @@ code {
     monospace;
 }
 
+small {
+  font-size: 60%;
+}
+
+:link, :visited {
+  color: yellow;
+}
+
 .error {
   background: red;
   color: white;

@@ -277,6 +277,13 @@ function App() {
 
     return (
       <header className="App-header">
+        <p>
+          <small>Free software authors, scientists/inventors, and science/software publishers:</small>
+          {' '}
+          <NavLink to="/register">Register for a salary.</NavLink>
+          <br/>
+          <small>Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.</small>
+        </p>
         <h1>Donate / Bequest</h1>
         <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore,
           {' '}
