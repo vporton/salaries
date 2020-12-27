@@ -372,10 +372,43 @@ function App() {
     );
   }
 
+  function Register() {
+    return (
+      <header className="App-header">
+        <p>
+          <NavLink to="/">Donate/bequest for science, free software, or climate.</NavLink>
+          <br/> 
+          <small>Just bequest all your funds here.</small>
+        </p>
+        <p>
+          <small>Free software authors, scientists/inventors, and science/software publishers:</small>
+        </p>
+        <p>
+          <button className="donateButton">Register for a salary</button>
+        </p>
+        <p>
+          <small>
+            Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.
+          </small>
+          <br/>
+          <small>
+            No matter what happens, you will receive 1 token per second since the moment of registration till you die
+            (or go inopt for corporations).
+            <br/>
+            Your salary exchange rate will be "calculated" by free market based on future predictions of your performance,
+            {' '}
+            such as your expected citation count in the future.
+          </small>
+        </p>
+      </header>
+    );
+  }
+
   return (
     <div className="App">
       <HashRouter>
-        <Pay/>
+        <Route exact path="/" component={Pay}/>
+        <Route path="/register" component={Register}/>
       </HashRouter>
     </div>
   );
