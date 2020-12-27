@@ -92,6 +92,48 @@ async function fetchOnceJson(url: string): Promise<any> {
 }
 
 function App() {
+  const [oracleId, setOracleId] = useState('0'); // FIXME
+
+  async function getWeb3() {
+    try {
+      (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
+    }
+    catch(_) { }
+    const web3 = await baseGetWeb3();
+    getAccounts().then((accounts) => {
+      // setConnectedToAccount(accounts.length !== 0); // TODO
+    });
+    return web3;
+  }
+
+  async function getABIs() {
+    return await fetchOnceJson(`abis.json`);
+  }
+
+  async function getAddresses() {
+    const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
+    return CHAINS[chainId] ? json[CHAINS[chainId]] : null;
+  }
+
+  async function getAccounts(): Promise<Array<string>> {
+    const web3 = await baseGetWeb3();
+    return web3 ? (web3 as any).eth.getAccounts() : null;
+  }
+
+  // FIXME: returns Promise?
+  async function mySend(contract: string, method: any, args: Array<any>, sendArgs: any, handler: any): Promise<any> {
+    sendArgs = sendArgs || {}
+    const account = (await getAccounts())[0];
+    return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
+        .then((estimatedGas: string) => {
+            const gas = String(Math.floor(Number(estimatedGas) * 1.15) + 24000);
+            if(handler !== null)
+                return method.bind(contract)(...args).send({gas, from: account, ...sendArgs}, handler);
+            else
+                return method.bind(contract)(...args).send({gas, from: account, ...sendArgs});
+        });
+  }
+  
   function Pay() {
     const [donateFor, setDonateFor] = useState('');
     const [paymentKind, setPaymentKind] = useState('bequestTokens');
@@ -100,48 +142,7 @@ function App() {
     const [tokenAddress, setTokenAddress] = useState('');
     const [tokenId, setTokenId] = useState('');
     const [amount, setAmount] = useState('');
-    const [oracleId, setOracleId] = useState('0'); // FIXME
 
-    async function getWeb3() {
-      try {
-        (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
-      }
-      catch(_) { }
-      const web3 = await baseGetWeb3();
-      getAccounts().then((accounts) => {
-        // setConnectedToAccount(accounts.length !== 0); // TODO
-      });
-      return web3;
-    }
-
-    async function getABIs() {
-      return await fetchOnceJson(`abis.json`);
-    }
-
-    async function getAddresses() {
-      const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
-      return CHAINS[chainId] ? json[CHAINS[chainId]] : null;
-    }
-
-    async function getAccounts(): Promise<Array<string>> {
-      const web3 = await baseGetWeb3();
-      return web3 ? (web3 as any).eth.getAccounts() : null;
-    }
-
-    // FIXME: returns Promise?
-    async function mySend(contract: string, method: any, args: Array<any>, sendArgs: any, handler: any): Promise<any> {
-      sendArgs = sendArgs || {}
-      const account = (await getAccounts())[0];
-      return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
-          .then((estimatedGas: string) => {
-              const gas = String(Math.floor(Number(estimatedGas) * 1.15) + 24000);
-              if(handler !== null)
-                  return method.bind(contract)(...args).send({gas, from: account, ...sendArgs}, handler);
-              else
-                  return method.bind(contract)(...args).send({gas, from: account, ...sendArgs});
-          });
-    }
-    
     async function obtainERC1155Token() {
       let collateralContractAddress, collateralTokenId;
       switch(tokenKind) {
@@ -373,6 +374,17 @@ function App() {
   }
 
   function Register() {
+    async function register() {
+      const web3 = await getWeb3();
+      const account = (await getAccounts())[0];
+      if(web3 && account !== null ) {
+        const addresses = await getAddresses();
+        const scienceAbi = (await getABIs()).SalaryWithDAO;
+        const science = new (web3 as any).eth.Contract(scienceAbi as any, addresses.SalaryWithDAO.address);
+        await mySend(science, science.methods.registerCustomer, [oracleId, []], {from: account}, null);
+      }
+    }
+
     return (
       <header className="App-header">
         <p>
@@ -380,11 +392,18 @@ function App() {
           <br/> 
           <small>Just bequest all your funds here.</small>
         </p>
+        <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
         <p>
           <small>Free software authors, scientists/inventors, and science/software publishers:</small>
         </p>
         <p>
-          <button className="donateButton">Register for a salary</button>
+          <button className="donateButton" onClick={register}>Register for a salary</button>
+          <br/>
+          <small>
+            After you have been registered, see TODO to improve your rating.
+            <br/>
+            Remember, if you publish open source, your rating will tend to improve.
+          </small>
         </p>
         <p>
           <small>
@@ -397,7 +416,7 @@ function App() {
             <br/>
             Your salary exchange rate will be "calculated" by free market based on future predictions of your performance,
             {' '}
-            such as your expected citation count in the future.
+            such as your expected citations count in the future.
           </small>
         </p>
       </header>
