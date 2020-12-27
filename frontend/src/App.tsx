@@ -277,20 +277,20 @@ function App() {
 
     return (
       <header className="App-header">
-          <h1>Donate / Bequest</h1>
-          <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore,
-            {' '}
-            <em>donate or bequest</em>
-            {' '}
-            here for the software and the free market to choose the best donation recepient.</p>
-          <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
-          <p>
-            Donate for:
-            {' '}
-            <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science and free software</label>
-            {' '}
-            <label><input type="radio" name="donateFor" onClick={() => setDonateFor('climate')}/> Climate</label>
-          </p>
+        <h1>Donate / Bequest</h1>
+        <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore,
+          {' '}
+          <em>donate or bequest</em>
+          {' '}
+          here for the software and the free market to choose the best donation recepient.</p>
+        <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
+        <p>
+          Donate for:
+          {' '}
+          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science and free software</label>
+          {' '}
+          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('climate')}/> Climate</label>
+        </p>
         <p>
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')} checked={paymentKind === 'donate'}/>
