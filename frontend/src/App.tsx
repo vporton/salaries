@@ -116,7 +116,11 @@ function App() {
 
   async function getAddresses() {
     const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
-    return CHAINS[chainId] ? json[CHAINS[chainId]] : null;
+    if (!CHAINS[chainId] || !json[CHAINS[chainId]]) {
+      alert("The selected blockchain is not supported!");
+      return null;
+    }
+    return json[CHAINS[chainId]];
   }
 
   async function getAccounts(): Promise<Array<string>> {
@@ -381,12 +385,15 @@ function App() {
     async function register() {
       const web3 = await getWeb3();
       const account = (await getAccounts())[0];
-      if(web3 && account !== null ) {
+      if (web3 && account !== null) {
         const addresses = await getAddresses();
+        if (!addresses) return;
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new (web3 as any).eth.Contract(scienceAbi as any, addresses.SalaryWithDAO.address);
         await mySend(science, science.methods.registerCustomer, [oracleId, []], {from: account}, null)
-          .catch(e => alert(e.message)); // TODO: Better error message for already registered users.
+          .catch(e => {
+            alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
+          });
       }
     }
 
