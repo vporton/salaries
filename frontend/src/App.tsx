@@ -160,7 +160,7 @@ function App() {
           break;
         case 'erc20':
           collateralContractAddress = (await getAddresses()).ERC1155OverERC20.address;
-          collateralTokenId = Web3.utils.toBN(tokenAddress).toString(); // Web3.utils.toHex(tokenAddress); // TODO: can hex?
+          collateralTokenId = Web3.utils.toHex(tokenAddress);
 
           const web3 = await getWeb3();
           // if (web3 === null) return;
