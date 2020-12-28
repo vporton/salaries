@@ -214,6 +214,7 @@ function App() {
       }
 
       updateInfo();
+      // eslint-disable-next-line
     }, [oracleId]);
 
     async function donate() {
@@ -441,7 +442,7 @@ function App() {
         <Route exact path="/" component={Pay}/>
         <Route path="/register" component={Register}/>
         <p>
-          <a target="_blank" href="https://github.com/vporton/donations">
+          <a rel="noreferrer" target="_blank" href="https://github.com/vporton/donations">
             <img src="img/GitHub-Mark-32px.png" width="32" height="32" alt="Source at GitHub"/>
           </a>
         </p>
