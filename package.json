@@ -11,6 +11,7 @@
     "@truffle/deployer": "^3.2.5",
     "@vporton/future-contracts": "git+ssh://git@github.com/vporton/future-contracts.git",
     "abdk-libraries-solidity": "^2.4.0",
+    "eslint": "^7.16.0",
     "truffle": "^5.1.58"
   },
   "devDependencies": {
