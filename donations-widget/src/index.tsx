@@ -35,13 +35,11 @@ const CHAINS: { [id: string] : string } = {
 
 let _web3Provider: any = null;
 
-let myWeb3: any = null;
-
 async function baseGetWeb3() {
-  if(myWeb3) return myWeb3;
+  if ((window as any).web3 && (window as any).web3.chainId) return (window as any).web3;
 
   _web3Provider = Web3.givenProvider; //await getWeb3Provider();
-  return myWeb3 = _web3Provider ? new Web3(_web3Provider) : null;
+  return (window as any).web3 = _web3Provider ? new Web3(_web3Provider) : null;
 }
 
 async function getChainId(): Promise<any> { // TODO: more specific type
