@@ -1,4 +1,10 @@
 {
+  "name": "@vporton/donations",
+  "version": "0.0.1",
+  "description": "Clever system for salaries of scientists and free software developers in Ethereum blockchain",
+  "author": "vporton",
+  "license": "GPLv3",
+  "repository": "vporton/donations",
   "scripts": {
     "compile": "truffle compile"
   },
