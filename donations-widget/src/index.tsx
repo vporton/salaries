@@ -6,14 +6,13 @@ import {
 } from "react-router-dom";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import './App.css';
 import Web3 from 'web3';
 import erc1155Abi from './ERC1155Abi';
 import erc20Abi from './ERC20Abi';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
-const { toBN, fromWei, toWei } = Web3.utils;
+const { toBN, toWei } = Web3.utils;
 
 // TODO
 const CHAINS: { [id: string] : string } = {
@@ -91,12 +90,13 @@ async function fetchOnceJson(url: string): Promise<any> {
   }
 }
 
-function App() {
+function DonationsComponent() {
   const [oracleId, setOracleId] = useState('0'); // FIXME
 
   useEffect(() => {
     // FIXME: It should not be done when using this as a component.
     document.title = "Future Software/Science Salaries + Donate/Bequest for Science and Climate";
+    setOracleId('0'); // FIXME
   }, []);
  
   async function getWeb3() {
@@ -105,7 +105,7 @@ function App() {
     }
     catch(_) { }
     const web3 = await baseGetWeb3();
-    getAccounts().then((accounts) => {
+    getAccounts().then((/*accounts*/) => {
       // setConnectedToAccount(accounts.length !== 0); // TODO
     });
     return web3;
@@ -363,7 +363,7 @@ function App() {
           <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>
             <br/>
             <span style={{display: 'inline-block'}}>
-              <Calendar onChange={e => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
+              <Calendar onChange={(e: any) => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
             </span>
           </span>
         </p>
@@ -489,4 +489,5 @@ function Amount({...props}  ) {
   )
 }
 
-export default App;
+export const Donations = DonationsComponent;
+//export Donations;
