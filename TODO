@@ -12,3 +12,4 @@
 - Ability to choose the percents of a bequest that go for science and for climate.
 - Show statistics.
 - Bequest funds to several recipients using prediction markets.
+- Split the React component into several parts, to be able to place them on different pages.
