@@ -1214,7 +1214,7 @@
 
 "@vporton/future-contracts@git+ssh://git@github.com/vporton/future-contracts.git":
   version "0.0.1"
-  resolved "git+ssh://git@github.com/vporton/future-contracts.git#b293a2944dae86db78295522fae241887d415181"
+  resolved "git+ssh://git@github.com/vporton/future-contracts.git#f15adbc50e9a5e7906313dd4ab35a264b84228ab"
   dependencies:
     "@openzeppelin/contracts" "^3.3.0"
     abdk-libraries-solidity "^2.4.0"
