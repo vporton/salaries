@@ -8,8 +8,12 @@ To run on your PC:
 ```sh
 yarn
 TEST=1 TEST_ACCOUNT=0x... npx truffle deploy --network local
-cd frontend
+cd donations-widget
 yarn
+yarn start
+
+# In another terminal:
+cd example
 yarn start
 ```
 
