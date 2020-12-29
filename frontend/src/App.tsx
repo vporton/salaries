@@ -95,6 +95,7 @@ function App() {
   const [oracleId, setOracleId] = useState('0'); // FIXME
 
   useEffect(() => {
+    // FIXME: It should not be done when using this as a component.
     document.title = "Future Software/Science Salaries + Donate/Bequest for Science and Climate";
   }, []);
  
