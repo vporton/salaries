@@ -1,6 +1,6 @@
 {
   "name": "@vporton/donations-widget",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Clever system for salaries of scientists and free software developers in Ethereum blockchain",
   "author": "vporton",
   "license": "GPLv3",
@@ -12,9 +12,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepare": "run-s build",
+    "build": "cp public/* dist/ && microbundle-crl --no-compress --format modern,cjs",
+    "start": "cp public/* dist/ && microbundle-crl watch --no-compress --format modern,cjs",
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint .",
