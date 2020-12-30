@@ -1,5 +1,5 @@
 {
-  "name": "donations-widget",
+  "name": "@vporton/donations-widget",
   "version": "1.0.0",
   "description": "Clever system for salaries of scientists and free software developers in Ethereum blockchain",
   "author": "vporton",
