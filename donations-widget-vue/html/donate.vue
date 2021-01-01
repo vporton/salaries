@@ -1,3 +1,9 @@
+<script>
+    const Address = require('./components.vue');
+    console.log(Address);
+    //components.Address;
+</script>
+
 <template>
     <div>
         <p>

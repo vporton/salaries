@@ -50,10 +50,6 @@ async function getChainId(): Promise<any> { // TODO: more specific type
   return await (web3 as any).eth.getChainId();
 }
 
-function isAddressValid(v: string): boolean { // TODO: called twice
-  return Web3.utils.isAddress(v);
-}
-
 function isUint256Valid(v: string): boolean { // TODO: called twice
   return /^[0-9]+$/.test(v) && toBN(v).lt(toBN(2).pow(toBN(256)));
 }
