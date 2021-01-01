@@ -10,68 +10,67 @@
     <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore,
         <em>donate or bequest</em>
         here for the software and the free market to choose the best donation recepient.</p>
-    <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
+    <p style="color: red">This is demo version for a testnet. Contracts are not audited yet.</p>
     <p>
         Donate for:
-        <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science and free software</label>
-        <label><input type="radio" name="donateFor" onClick={() => setDonateFor('climate')}/> Climate</label>
+        <label><input type="radio" name="donateFor" onclick="setDonateFor('science')"/> Science and free software</label>
+        <label><input type="radio" name="donateFor" onclick="setDonateFor('climate')"/> Climate</label>
     </p>
     <p>
         <label>
-        <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')} checked={paymentKind === 'donate'}/>
+        <input type="radio" name="paymentKind" onclick="setPaymentKind('donate')" checked=""/>
         Donate a sum
         </label>
         <label>
-        <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestTokens')} checked={paymentKind === 'bequestTokens'}/>
+        <input type="radio" name="paymentKind" onclick="setPaymentKind('bequestTokens')" checked=""/>
         Donate but allow me to take money back
         </label>
         <label>
-        <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestGnosis')} checked={paymentKind === 'bequestGnosis'}/>
+        <input type="radio" name="paymentKind" onclick="setPaymentKind('bequestGnosis')" checked=""/>
         Bequest all funds on a Gnosis Safe smart wallet
         </label>
     </p>
-    <p style={{display: paymentKind !== 'bequestGnosis' ? 'block' : 'none'}}>
+    <p style="">
         Donation in:
-        <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc1155')}/> ERC-1155</label>
+        <label><input type="radio" name="tokenKind" onclick="setTokenKind('erc1155')"/> ERC-1155</label>
         <small>(recommended)</small>
-        <label><input type="radio" name="tokenKind" onClick={() => setTokenKind('erc20')}/> ERC-20</label>
+        <label><input type="radio" name="tokenKind" onclick="setTokenKind('erc20')"/> ERC-20</label>
         <br/>
         <small>(Don't use stablecoins for long-time funding.)</small>
     </p>
     <p>
-        <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>Wallet address:</span>
-        <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>Token address:</span>
-        <Address value={tokenAddress} onChange={async (e: Event) => await setTokenAddress((e.target as HTMLInputElement).value as string)}/>
+        <span style="">Wallet address:</span>
+        <span style="">Token address:</span>
+        <Address value="" onchange="await setTokenAddress(event.target.value)"/>
     </p>
-    <p style={{display: paymentKind !== 'bequestGnosis' && tokenKind === 'erc1155' ? 'block' : 'none'}}>
+    <p style="">
         Token ID:
-        <Uint256 value={tokenId} onChange={async (e: Event) => await setTokenId((e.target as HTMLInputElement).value as string)}/>
+        <Uint256 value="" onchange="await setTokenId(event.target.value)"/>
     </p>
-    <p style={{display: paymentKind !== 'donate' ? 'block' : 'none'}}>
-        <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
+    <p style="">
+        <span style="">
         The donation can be taken back before:
         </span>
-        <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>
+        <span style="">
         The bequest can be taken after:
         </span>
-        <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>
-        {bequestDate !== null ? bequestDate.toString() : ""}</span>
-        <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>
-        <br/>
-        <span style={{display: 'inline-block'}}>
-            <Calendar onChange={(e: any) => setBequestDate(e as Date)} value={bequestDate} minDate={new Date()}/>
-        </span>
+        <span style=""></span>
+        <span style="">
+            <br/>
+            <span style="display: inline-block">
+                <Calendar onchange="setBequestDate(e)" value="" minDate=""/>
+            </span>
         </span>
     </p>
-    <div style={{display: paymentKind !== 'bequestGnosis' ? 'block' : 'none'}}>
+    <div style="">
         <p>
         Donation amount:
-        <Amount value={amount} onChange={async (e: Event) => await setAmount((e.target as HTMLInputElement).value as string)}/>
-        <button onClick={donate} disabled={donateButtonDisabled()}>Donate</button>
+        <Amount value="" onchange="await setAmount(event.target.value)"/>
+        <button onclick="" disabled="">Donate</button>
         </p>
     </div>
-    <p style={{display: paymentKind === 'bequestGnosis' ? 'block' : 'none'}}>
-        <button className="donateButton" disabled={bequestButtonDisabled()} onClick={bequestAll}>Bequest!</button>
+    <p style="">
+        <button className="donateButton" disabled="" onclick="bequestAll()">Bequest!</button>
     </p>
 </div>
 </template>
