@@ -9,7 +9,7 @@ import { Address } from './components.vue';
   <div>
     <p>
       <small>Free software authors, scientists/inventors, and science/software publishers:</small>
-      <a a="#/register">Register for a salary.</a>
+      <a href="#/register">Register for a salary.</a>
       <br>
       <small>Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.</small>
     </p>

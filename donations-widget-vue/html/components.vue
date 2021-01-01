@@ -16,7 +16,7 @@ function isAddressValid(v) {
   return true; // Web3.utils.isAddress(v);
 }
 
-export default {
+export {
   Address: {
     name: "Address",
     props: ['onchange'],
