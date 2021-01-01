@@ -12,26 +12,26 @@
 </template>
 
 <script>
-    function isAddressValid(v) {
-        return true; //Web3.utils.isAddress(v);
-    }
+function isAddressValid(v) {
+  return true; // Web3.utils.isAddress(v);
+}
 
-    export default {
-        //Address: {
-            name: "Address",
-            props: ['onchange'],
-            data() {
-                return {
-                    value: "",
-                }
-            },
-            methods: {
-                onChange(value) {
-                    this.value = value;
-                },
-            },
-        //},
-    }
+export default {
+  Address: {
+    name: "Address",
+    props: ['onchange'],
+    data() {
+      return {
+         value: "",
+      }
+    },
+    methods: {
+      onChange(value) {
+        this.value = value;
+      },
+    },
+  },
+}
 </script>
 
 <style scoped>
