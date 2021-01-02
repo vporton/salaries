@@ -1,8 +1,15 @@
 <script>
-import { Address } from './components.vue';
+import { EthAddress } from './components.vue';
 // const components = require('./components.vue');
-// const Address = components.Address;
-// console.log(Address);
+// const EthAddress = components.EthAddress;
+// console.log(EthAddress);
+
+export default {
+  name: 'Donate',
+  components: {
+    EthAddress,
+  }
+}
 </script>
 
 <template>
@@ -95,9 +102,9 @@ import { Address } from './components.vue';
     <p>
       <span style="">Wallet address:</span>
       <span style="">Token address:</span>
-      <Address
+      <EthAddress
         value=""
-        onchange="await setTokenAddress(event.target.value)"/>
+        onchange="await setTokenEthAddress(event.target.value)"/>
     </p>
     <p style="">
       Token ID:

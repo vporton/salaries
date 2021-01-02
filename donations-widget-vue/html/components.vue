@@ -1,38 +1,37 @@
 <template>
-    <div>
-        <span className="Address">
-            <input type="text"
-                   maxLength="42"
-                   size="50"
-                   value="value"
-                   change="onChange(this.value)"
-                   className="isAddressValid(props.value) ? '' : 'error'"/>
-        </span>
-    </div>
+  <div>
+    <span class="EthAddress">
+      <input
+        type="text"
+        maxLength="42"
+        size="50"
+        value="value"
+        :class="{ error: isEthAddressValid(props.value) }"
+        @change="onChange"
+      />
+    </span>
+  </div>
 </template>
 
 <script>
-function isAddressValid(v) {
-  return true; // Web3.utils.isAddress(v);
+function isEthAddressValid(v) {
+  return window.web3.utils.isEthAddress(v)
 }
 
-export {
-  Address: {
-    name: "Address",
-    props: ['onchange'],
-    data() {
-      return {
-         value: "",
-      }
-    },
-    methods: {
-      onChange(value) {
-        this.value = value;
-      },
-    },
+const EthAddress = {
+  name: 'EthAddress',
+  props: ['onchange'],
+  data() {
+    return {
+      value: ''
+    }
   },
+  methods: {
+    onChange(value) {
+      this.value = value
+    }
+  }
 }
-</script>
 
-<style scoped>
-</style>
+export { EthAddress }
+</script>

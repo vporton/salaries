@@ -109,7 +109,7 @@ function DonationsComponent() {
     return await fetchOnceJson(`abis.json`);
   }
 
-  async function getAddresses() {
+  async function getEthAddresses() {
     const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
     if (!CHAINS[chainId] || !json[CHAINS[chainId]]) {
       alert("The selected blockchain is not supported!");
@@ -142,20 +142,20 @@ function DonationsComponent() {
     const [paymentKind, setPaymentKind] = useState('bequestTokens');
     const [tokenKind, setTokenKind] = useState('');
     const [bequestDate, setBequestDate] = useState<Date | null>(null);
-    const [tokenAddress, setTokenAddress] = useState('');
+    const [tokenEthAddress, setTokenEthAddress] = useState('');
     const [tokenId, setTokenId] = useState('');
     const [amount, setAmount] = useState('');
 
     async function obtainERC1155Token() {
-      let collateralContractAddress, collateralTokenId;
+      let collateralContractEthAddress, collateralTokenId;
       switch(tokenKind) {
         case 'erc1155':
-          collateralContractAddress = tokenAddress;
+          collateralContractEthAddress = tokenEthAddress;
           collateralTokenId = tokenId;
           break;
         case 'erc20':
-          collateralContractAddress = (await getAddresses()).ERC1155OverERC20.address;
-          collateralTokenId = Web3.utils.toHex(tokenAddress);
+          collateralContractEthAddress = (await getEthAddresses()).ERC1155OverERC20.address;
+          collateralTokenId = Web3.utils.toHex(tokenEthAddress);
 
           const web3 = await getWeb3();
           // if (web3 === null) return;
@@ -163,23 +163,23 @@ function DonationsComponent() {
           // if(!account) return;
 
           // Approve ERC-20 spent
-          const erc20 = new (web3 as any).eth.Contract(erc20Abi as any, tokenAddress);
-          const allowanceStr = await erc20.methods.allowance(account, collateralContractAddress).call();
+          const erc20 = new (web3 as any).eth.Contract(erc20Abi as any, tokenEthAddress);
+          const allowanceStr = await erc20.methods.allowance(account, collateralContractEthAddress).call();
           const allowance = toBN(allowanceStr);
           const halfBig = toBN(2).pow(toBN(128));
           if(allowance.lt(halfBig)) {
             const big = toBN(2).pow(toBN(256)).sub(toBN(1));
-            const tx = await mySend(erc20, erc20.methods.approve, [collateralContractAddress, big.toString()], {from: account}, null)
+            const tx = await mySend(erc20, erc20.methods.approve, [collateralContractEthAddress, big.toString()], {from: account}, null)
               // .catch(e => alert(e.message));
             await tx;
           }
           break;
       }
-      return [collateralContractAddress, collateralTokenId];
+      return [collateralContractEthAddress, collateralTokenId];
     }
 
     async function lockContract() {
-      const addresses = await getAddresses();
+      const addresses = await getEthAddresses();
       switch (donateFor) {
         case 'science':
           return addresses.SalaryWithDAO.address;
@@ -194,10 +194,10 @@ function DonationsComponent() {
       async function updateInfo() {
         const web3 = await getWeb3();
         if (web3 !== null) {
-          const contractAddress = await lockContract();
-          if (contractAddress !== '') {
+          const contractEthAddress = await lockContract();
+          if (contractEthAddress !== '') {
             const scienceAbi = (await getABIs()).SalaryWithDAO;
-            const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
+            const science = new (web3 as any).eth.Contract(scienceAbi as any, contractEthAddress);
             const account = (await getAccounts())[0];
             if(!account) {
               // setConnectedToAccount(false); // TODO
@@ -217,28 +217,28 @@ function DonationsComponent() {
       const web3 = await getWeb3();
       if (web3 !== null) {
         try {
-          const contractAddress = await lockContract();
+          const contractEthAddress = await lockContract();
           const scienceAbi = (await getABIs()).SalaryWithDAO;
-          const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
+          const science = new (web3 as any).eth.Contract(scienceAbi as any, contractEthAddress);
           const account = (await getAccounts())[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
             return;
           }
-          const [collateralContractAddress, collateralTokenId] = await obtainERC1155Token();
-          const collateralContract = new (web3 as any).eth.Contract(erc1155Abi as any, collateralContractAddress);
-          const approved = await collateralContract.methods.isApprovedForAll(account, contractAddress).call();
+          const [collateralContractEthAddress, collateralTokenId] = await obtainERC1155Token();
+          const collateralContract = new (web3 as any).eth.Contract(erc1155Abi as any, collateralContractEthAddress);
+          const approved = await collateralContract.methods.isApprovedForAll(account, contractEthAddress).call();
           if (!approved) {
             const tx = await mySend(
               collateralContract, collateralContract.methods.setApprovalForAll,
-              [contractAddress, true], {from: account}, null
+              [contractEthAddress, true], {from: account}, null
             );
             await tx;
           }
           switch(paymentKind) {
             case 'donate':
               await mySend(science, science.methods.donate,
-                [collateralContractAddress,
+                [collateralContractEthAddress,
                 collateralTokenId,
                 oracleId,
                 wei,
@@ -250,7 +250,7 @@ function DonationsComponent() {
               break;
             case 'bequestTokens':
               await mySend(science, science.methods.bequestCollateral,
-                [collateralContractAddress,
+                [collateralContractEthAddress,
                 collateralTokenId,
                 oracleId,
                 wei,
@@ -273,11 +273,11 @@ function DonationsComponent() {
 
     function donateButtonDisabled() {
       return !isRealNumber(amount) || donateFor === '' || paymentKind === '' || tokenKind === '' ||
-        !isAddressValid(tokenAddress) || (tokenKind === 'erc1155' && !isUint256Valid(tokenId));
+        !isEthAddressValid(tokenEthAddress) || (tokenKind === 'erc1155' && !isUint256Valid(tokenId));
     }
 
     function bequestButtonDisabled() {
-      return !isAddressValid(tokenAddress) || bequestDate === null;
+      return !isEthAddressValid(tokenEthAddress) || bequestDate === null;
     }
 
     return (
@@ -337,7 +337,7 @@ function DonationsComponent() {
           <span style={{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}}>Wallet address:</span>
           <span style={{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}}>Token address:</span>
           {' '}
-          <Address value={tokenAddress} onChange={async (e: Event) => await setTokenAddress((e.target as HTMLInputElement).value as string)}/>
+          <EthAddress value={tokenEthAddress} onChange={async (e: Event) => await setTokenEthAddress((e.target as HTMLInputElement).value as string)}/>
         </p>
         <p style={{display: paymentKind !== 'bequestGnosis' && tokenKind === 'erc1155' ? 'block' : 'none'}}>
           Token ID:
@@ -382,7 +382,7 @@ function DonationsComponent() {
       const web3 = await getWeb3();
       const account = (await getAccounts())[0];
       if (web3 && account !== null) {
-        const addresses = await getAddresses();
+        const addresses = await getEthAddresses();
         if (!addresses) return;
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new (web3 as any).eth.Contract(scienceAbi as any, addresses.SalaryWithDAO.address);
@@ -446,15 +446,15 @@ function DonationsComponent() {
   );
 }
 
-function Address({...props}) {
+function EthAddress({...props}) {
   return (
-    <span className="Address">
+    <span className="EthAddress">
       <input type="text"
              maxLength={42}
              size={50}
              value={props.value ? props.value : ""}
              onChange={props.onChange}
-             className={isAddressValid(props.value) ? '' : 'error'}/>
+             className={isEthAddressValid(props.value) ? '' : 'error'}/>
     </span>
   )
 }
