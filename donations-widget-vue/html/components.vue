@@ -6,7 +6,7 @@
         maxLength="42"
         size="50"
         value="value"
-        :class="{ error: isEthAddressValid(props.value) }"
+        :class="{ error: isAddressValid(props.value) }"
         @change="onChange"
       />
     </span>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-function isEthAddressValid(v) {
+function isAddressValid(v) {
   return window.web3.utils.isEthAddress(v)
 }
 
