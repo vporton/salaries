@@ -12,8 +12,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "mkdir dist/; cp public/* dist/ && microbundle-crl --strict --no-compress --format modern,cjs",
-    "start": "mkdir dist/; cp public/* dist/ && microbundle-crl watch --strict --no-compress --format modern,cjs",
+    "build": "mkdir dist/; cp public/* dist/ && microbundle-crl --strict --no-compress --format cjs",
+    "start": "mkdir dist/; cp public/* dist/ && microbundle-crl watch --strict --no-compress --format cjs",
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint .",

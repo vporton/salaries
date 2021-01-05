@@ -22,9 +22,7 @@ module.exports = async function(deployer, network, accounts) {
     catch(_) {
         json = {};  
     }
-    updateAddress(json, network, 'data', {
-        scienceOracleId: oracleId,
-    });
+    updateAddress(json, network, 'scienceOracleId', oracleId);
     fs.writeFileSync(addressesFileName, JSON.stringify(json));
   }
 };

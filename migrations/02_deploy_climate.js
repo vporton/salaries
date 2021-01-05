@@ -25,9 +25,7 @@ module.exports = async function(deployer, network, accounts) {
     catch(_) {
         json = {};  
     }
-    updateAddress(json, network, 'data', {
-        climateOracleId: oracleId,
-    });
+    updateAddress(json, network, 'climateOracleId', oracleId);
     fs.writeFileSync(addressesFileName, JSON.stringify(json));
   }
 };
