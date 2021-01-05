@@ -147,14 +147,13 @@ function DonationsComponent() {
     const [tokenId, setTokenId] = useState('');
     const [amount, setAmount] = useState('');
 
-    function oracleId() {
+    async function oracleId() {
       switch (donateFor) {
         case 'science':
           return (await getAddresses()).scienceOracleId;
         case 'climate':
-          return (await getAddresses()).scienceOracleId;
+          return (await getAddresses()).climateOracleId;
       }
-      return ????;
     }
 
     async function obtainERC1155Token() {
@@ -214,14 +213,14 @@ function DonationsComponent() {
               // setConnectedToAccount(false); // TODO
               return;
             }
-            setBequestDate(new Date(await science.methods.minFinishTime(oracleId).call() * 1000));
+            setBequestDate(new Date(await science.methods.minFinishTime(await oracleId()).call() * 1000));
           }
         }
       }
 
       updateInfo();
       // eslint-disable-next-line
-    }, [oracleId]);
+    }, [donateFor]);
 
     async function donate() {
       const wei = toWei(amount);
@@ -251,7 +250,7 @@ function DonationsComponent() {
               await mySend(science, science.methods.donate,
                 [collateralContractAddress,
                 collateralTokenId,
-                oracleId,
+                await oracleId(),
                 wei,
                 account,
                 account,
@@ -263,7 +262,7 @@ function DonationsComponent() {
               await mySend(science, science.methods.bequestCollateral,
                 [collateralContractAddress,
                 collateralTokenId,
-                oracleId,
+                await oracleId(),
                 wei,
                 account,
                 []],
@@ -397,6 +396,7 @@ function DonationsComponent() {
         if (!addresses) return;
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new (web3 as any).eth.Contract(scienceAbi as any, addresses.SalaryWithDAO.address);
+        const oracleId = (await getAddresses()).scienceOracleId;
         await mySend(science, science.methods.registerCustomer, [oracleId, []], {from: account}, null)
           .catch(e => {
             alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
