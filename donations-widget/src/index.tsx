@@ -89,14 +89,11 @@ async function fetchOnceJson(url: string): Promise<any> {
 }
 
 function DonationsComponent() {
-  const [oracleId, setOracleId] = useState('0'); // FIXME
-
   useEffect(() => {
     // FIXME: It should not be done when using this as a component.
     document.title = "Future Software/Science Salaries + Donate/Bequest for Science and Climate";
-    setOracleId('0'); // FIXME
   }, []);
- 
+
   async function getWeb3() {
     try {
       (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
@@ -149,6 +146,16 @@ function DonationsComponent() {
     const [tokenAddress, setTokenAddress] = useState('');
     const [tokenId, setTokenId] = useState('');
     const [amount, setAmount] = useState('');
+
+    function oracleId() {
+      switch (donateFor) {
+        case 'science':
+          return (await getAddresses()).scienceOracleId;
+        case 'climate':
+          return (await getAddresses()).scienceOracleId;
+      }
+      return ????;
+    }
 
     async function obtainERC1155Token() {
       let collateralContractAddress, collateralTokenId;
