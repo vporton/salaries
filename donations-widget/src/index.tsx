@@ -89,11 +89,6 @@ async function fetchOnceJson(url: string): Promise<any> {
 }
 
 function DonationsComponent() {
-  useEffect(() => {
-    // FIXME: It should not be done when using this as a component.
-    document.title = "Future Software/Science Salaries + Donate/Bequest for Science and Climate";
-  }, []);
-
   async function getWeb3() {
     try {
       (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
@@ -139,7 +134,6 @@ function DonationsComponent() {
   }
   
   function Pay() {
-    const [donateFor, setDonateFor] = useState('');
     const [paymentKind, setPaymentKind] = useState('bequestTokens');
     const [tokenKind, setTokenKind] = useState('');
     const [bequestDate, setBequestDate] = useState<Date | null>(null);
@@ -147,13 +141,31 @@ function DonationsComponent() {
     const [tokenId, setTokenId] = useState('');
     const [amount, setAmount] = useState('');
 
-    async function oracleId() {
-      switch (donateFor) {
-        case 'science':
-          return (await getAddresses()).scienceOracleId;
-        case 'climate':
-          return (await getAddresses()).climateOracleId;
+    useEffect(() => {
+      // FIXME: It should not be done when using this as a component.
+      document.title = "Future Salaries + Donate/Bequest for Common Good";
+  
+      async function loadBequestDate() {
+        const web3 = await getWeb3();
+        if (web3 !== null) {
+          const contractAddress = await lockContract();
+          if (contractAddress !== '') {
+            const scienceAbi = (await getABIs()).SalaryWithDAO;
+            const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
+            const account = (await getAccounts())[0];
+            if(!account) {
+              // setConnectedToAccount(false); // TODO
+              return;
+            }
+            setBequestDate(new Date(await science.methods.minFinishTime(await oracleId()).call() * 1000));
+          }
+        }
       }
+      loadBequestDate();
+    }, []);
+  
+    async function oracleId() {
+      return (await getAddresses()).scienceOracleId;
     }
 
     async function obtainERC1155Token() {
@@ -190,37 +202,8 @@ function DonationsComponent() {
 
     async function lockContract() {
       const addresses = await getAddresses();
-      switch (donateFor) {
-        case 'science':
-          return addresses.SalaryWithDAO.address;
-        case 'climate':
-          return addresses.Lock.address;
-        default:
-          return '';
-      } 
+      return addresses.SalaryWithDAO.address;
     }
-
-    useEffect(() => {
-      async function updateInfo() {
-        const web3 = await getWeb3();
-        if (web3 !== null) {
-          const contractAddress = await lockContract();
-          if (contractAddress !== '') {
-            const scienceAbi = (await getABIs()).SalaryWithDAO;
-            const science = new (web3 as any).eth.Contract(scienceAbi as any, contractAddress);
-            const account = (await getAccounts())[0];
-            if(!account) {
-              // setConnectedToAccount(false); // TODO
-              return;
-            }
-            setBequestDate(new Date(await science.methods.minFinishTime(await oracleId()).call() * 1000));
-          }
-        }
-      }
-
-      updateInfo();
-      // eslint-disable-next-line
-    }, [donateFor]);
 
     async function donate() {
       const wei = toWei(amount);
@@ -282,7 +265,7 @@ function DonationsComponent() {
     }
 
     function donateButtonDisabled() {
-      return !isRealNumber(amount) || donateFor === '' || paymentKind === '' || tokenKind === '' ||
+      return !isRealNumber(amount) || paymentKind === '' || tokenKind === '' ||
         !isAddressValid(tokenAddress) || (tokenKind === 'erc1155' && !isUint256Valid(tokenId));
     }
 
@@ -293,8 +276,9 @@ function DonationsComponent() {
     return (
       <header className="App-header">
         <p>
-          <small>Free software authors, scientists/inventors, and science/software publishers:</small>
-          {' '}
+          <small>Free software authors, scientists/inventors, science/software publishers,
+            carbon accounters, and other common good producers:</small>
+          <br/>
           <NavLink to="/register">Register for a salary.</NavLink>
           <br/>
           <small>Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.</small>
@@ -306,13 +290,6 @@ function DonationsComponent() {
           {' '}
           here for the software and the free market to choose the best donation recepient.</p>
         <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
-        <p>
-          Donate for:
-          {' '}
-          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('science')}/> Science and free software</label>
-          {' '}
-          <label><input type="radio" name="donateFor" onClick={() => setDonateFor('climate')}/> Climate</label>
-        </p>
         <p>
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')} checked={paymentKind === 'donate'}/>
@@ -407,16 +384,17 @@ function DonationsComponent() {
     return (
       <header className="App-header">
         <p>
-          <NavLink to="/">Donate/bequest for science, free software, or climate.</NavLink>
+          <NavLink to="/">Donate/bequest for science, free software, climate, and other common goods.</NavLink>
           <br/> 
           <small>Just bequest all your funds here.</small>
         </p>
         <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
         <p>
-          <small>Free software authors, scientists/inventors, and science/software publishers:</small>
+          <small>Free software authors, scientists/inventors, science/software publishers,
+            carbon accounters, and other common good producers:</small>
         </p>
         <p>
-          <button className="donateButton" onClick={register}>Register for a salary</button>
+          <button className="donateButton" onClick={register}>Register for a "salary"</button>
           <br/>
           <small>
             After you have been registered, see TODO to improve your rating.
