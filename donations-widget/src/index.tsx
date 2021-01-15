@@ -271,7 +271,7 @@ function DonationsComponent() {
         <h1>Donate / Bequest</h1>
         <p>This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe anymore,
           {' '}
-          <em>donate or bequest</em>
+          <em>donate and/or bequest</em>
           {' '}
           here for the software and the free market to choose the best donation recepient.</p>
         <p style={{color: 'red'}}>This is demo version for a testnet. Contracts are not audited yet.</p>
