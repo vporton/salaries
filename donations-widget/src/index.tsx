@@ -279,7 +279,7 @@ function DonationsComponent() {
           <label>
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')} checked={paymentKind === 'donate'}/>
             {' '}
-            Donate a sum
+            Donate
           </label>
           {' '}
           <label>
