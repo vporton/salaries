@@ -134,7 +134,7 @@ function DonationsComponent() {
   }
   
   function Pay() {
-    const [paymentKind, setPaymentKind] = useState('bequestTokens');
+    const [paymentKind, setPaymentKind] = useState('donate');
     const [tokenKind, setTokenKind] = useState('');
     const [bequestDate, setBequestDate] = useState<Date | null>(null);
     const [tokenAddress, setTokenAddress] = useState('');
@@ -228,31 +228,16 @@ function DonationsComponent() {
             );
             await tx;
           }
-          switch(paymentKind) {
-            case 'donate':
-              await mySend(science, science.methods.donate,
-                [collateralContractAddress,
-                collateralTokenId,
-                await oracleId(),
-                wei,
-                account,
-                account,
-                []],
-                {from: account}, null
-              );
-              break;
-            case 'bequestTokens':
-              await mySend(science, science.methods.bequestCollateral,
-                [collateralContractAddress,
-                collateralTokenId,
-                await oracleId(),
-                wei,
-                account,
-                []],
-                {from: account}, null
-              );
-              break;
-          }
+          await mySend(science, science.methods.donate,
+            [collateralContractAddress,
+            collateralTokenId,
+            await oracleId(),
+            wei,
+            account,
+            account,
+            []],
+            {from: account}, null
+          );
         }
         catch(e) {
           alert(e.message);
@@ -295,12 +280,6 @@ function DonationsComponent() {
             <input type="radio" name="paymentKind" onClick={() => setPaymentKind('donate')} checked={paymentKind === 'donate'}/>
             {' '}
             Donate a sum
-          </label>
-          {' '}
-          <label>
-            <input type="radio" name="paymentKind" onClick={() => setPaymentKind('bequestTokens')} checked={paymentKind === 'bequestTokens'}/>
-            {' '}
-            Donate but allow me to take money back
           </label>
           {' '}
           <label>
