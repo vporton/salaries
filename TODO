@@ -13,3 +13,7 @@
 - Show statistics.
 - Bequest funds to several recipients using prediction markets.
 - Split the React component into several parts, to be able to place them on different pages.
+- Donate funds on a smart wallet (useful to donate DeFi tokens).
+- ENS
+- Common token names
+
