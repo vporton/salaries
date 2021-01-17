@@ -1,34 +1,46 @@
 <template>
   <div>
-    <span class="EthAddress">
       <input
         type="text"
         maxLength="42"
         size="50"
-        value="value"
-        :class="{ error: isAddressValid(props.value) }"
-        @change="onChange"
+        v-model="address"
       />
-    </span>
+      <br />
+      <span>{{ error }}</span>
   </div>
 </template>
 
 <script>
+import Web3 from 'web3'
+
+const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
 export default {
   name: 'EthAddress',
-  props: ['onchange'],
   data() {
     return {
-      value: ''
+      address: '',
+      error: ''
     }
   },
   methods: {
-    onChange(value) {
-      this.value = value
-    },
-    isAddressValid(v) {
-      return window.web3.utils.isEthAddress(v)
+    isValidAddress(address) {
+      this.error = web3.utils.isAddress(address) ? '' : 'Invalid Ethereum address'
     }
-  }
+  },
+  watch: {
+    address(value){
+      this.address = value;
+      this.isValidAddress(value);
+    }
+  },
 }
+
+</script>
+
+<style>
+span {
+  color: red;
+}
+</style>
