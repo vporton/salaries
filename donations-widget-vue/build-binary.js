@@ -13,5 +13,3 @@ const jBin = JSON.parse(fs.readFileSync('package-binary.json'))
 jBin.version = jSrc.version
 
 fs.writeFileSync('dist-bin/package.json', JSON.stringify(jBin))
-
-execSync('cd dist-bin && npm login && npm publish --access public')
