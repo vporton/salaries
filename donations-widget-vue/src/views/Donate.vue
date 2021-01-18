@@ -80,11 +80,11 @@
       <p>
         Donation amount:
         <Amount :value="amount" onchange="this.amount = event.target.value;" />
-        <button @click="donate" :disabled="donateButtonDisabled">Donate</button>
+        <button @click="this.donate()" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>
     <p :style="{display: paymentKind === 'bequestGnosis' ? 'block' : 'none'}">
-      <button class="donateButton" :disabled="bequestButtonDisabled" @click="bequestAll">
+      <button class="donateButton" :disabled="bequestButtonDisabled" @click="this.bequestAll()">
         Bequest!
       </button>
     </p>
