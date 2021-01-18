@@ -65,7 +65,7 @@
       <span :style="{display: walletDisplayInline}">
         <br />
         <span style="display: inline-block">
-          <DatePicker v-model="bequestDate" :min-date="new Date()"/>
+          <v-date-picker is-expanded v-model="bequestDate" :min-date="new Date()"/>
         </span>
       </span>
     </p>
@@ -86,13 +86,16 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import Web3 from 'web3';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
-import DatePicker from 'v-calendar/lib/components/date-picker.umd'
+import VCalendar from 'v-calendar';
 
 import validators from '../utils/validators'
+
+Vue.use(VCalendar)
 
 const { toBN, toWei } = Web3.utils;
 
@@ -110,7 +113,6 @@ export default {
     EthAddress,
     Uint256,
     Amount,
-    DatePicker,
   },
   watch: {
     oracleId(/*v*/) {
