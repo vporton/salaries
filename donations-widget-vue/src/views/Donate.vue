@@ -80,11 +80,11 @@
       <p>
         Donation amount:
         <Amount :value="amount" onchange="this.amount = event.target.value;" />
-        <button @click="donate" :disabled="donateButtonDisabled()">Donate</button>
+        <button @click="donate" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>
     <p :style="{display: paymentKind === 'bequestGnosis' ? 'block' : 'none'}">
-      <button class="donateButton" :disabled="bequestButtonDisabled()" @click="bequestAll">
+      <button class="donateButton" :disabled="bequestButtonDisabled" @click="bequestAll">
         Bequest!
       </button>
     </p>
@@ -133,6 +133,28 @@ export default {
       }
       updateInfo();
     },
+    amount() {
+      this.setDonateButtonDisabled();
+    },
+    donateFor() {
+      this.setDonateButtonDisabled();
+    },
+    paymentKind() {
+      this.setDonateButtonDisabled();
+    },
+    tokenKind() {
+      this.setDonateButtonDisabled();
+    },
+    tokenEthAddress() {
+      this.setDonateButtonDisabled();
+      this.setBequestButtonDisabled();
+    },
+    tokenId() {
+      this.setDonateButtonDisabled();
+    },
+    bequestDate() {
+      this.setBequestButtonDisabled();
+    },
   },
   data() {
     return {
@@ -144,6 +166,8 @@ export default {
       tokenEthAddress: '',
       tokenId: '',
       amount: '',
+      donateButtonDisabled: true,
+      bequestButtonDisabled: true,
     }
   },
   async obtainERC1155Token() {
@@ -247,12 +271,13 @@ export default {
   async bequestAll() {
     alert("Bequesting all funds is not yet supported!");
   },
-  donateButtonDisabled() {
-    return !Amount.isRealNumber(this.amount) || this.donateFor === '' || this.paymentKind === '' || this.tokenKind === '' ||
+  setDonateButtonDisabled() {
+    this.donateButtonDisabled =
+      !Amount.isRealNumber(this.amount) || this.donateFor === '' || this.paymentKind === '' || this.tokenKind === '' ||
       !EthAddress.isEthAddressValid(this.tokenEthAddress) || (this.tokenKind === 'erc1155' && !Uint256.isUint256Valid(this.tokenId));
   },
-  bequestButtonDisabled() {
-    return !EthAddress.isEthAddressValid(this.tokenEthAddress) || this.bequestDate === null;
+  setBequestButtonDisabled() {
+    this.bequestButtonDisabled = !EthAddress.isEthAddressValid(this.tokenEthAddress) || this.bequestDate === null;
   },
 }
 </script>
