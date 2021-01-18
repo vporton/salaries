@@ -1,16 +1,12 @@
 <template>
   <div>
     <p>
-      <small>
-        Free software authors, scientists/inventors, and science/software
-        publishers:
-      </small>
-      <a href="#/register">Register for a salary.</a>
-      <br />
-      <small>
-        Registration is free (except of an Ethereum network fee). The earlier
-        you register, the more money you get.
-      </small>
+      <small>Free software authors, scientists/inventors, science/software publishers,
+        carbon accounters, and other common good producers:</small>
+      <br/>
+      <a href="/register">Register for a salary.</a>
+      <br/>
+      <small>Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.</small>
     </p>
     <h1>Donate / Bequest</h1>
     <p>
@@ -22,25 +18,6 @@
       This is demo version for a testnet. Contracts are not audited yet.
     </p>
     <p>
-      Donate for:
-      <label>
-        <input
-          type="radio"
-          name="donateFor"
-          onclick="setDonateFor('science')"
-        />
-        &nbsp;Science and free software
-      </label>
-      <label>
-        <input
-          type="radio"
-          name="donateFor"
-          onclick="setDonateFor('climate')"
-        />
-        &nbsp;Climate
-      </label>
-    </p>
-    <p>
       <label>
         <input
           type="radio"
@@ -48,16 +25,7 @@
           onclick="setPaymentKind('donate')"
           checked=""
         />
-        &nbsp;Donate a sum
-      </label>
-      <label>
-        <input
-          type="radio"
-          name="paymentKind"
-          onclick="setPaymentKind('bequestTokens')"
-          checked=""
-        />
-        &nbsp;Donate but allow me to take money back
+        &nbsp;Donate
       </label>
       <label>
         <input
@@ -121,6 +89,11 @@
       <button className="donateButton" disabled="" onclick="bequestAll()">
         Bequest!
       </button>
+    </p>
+    <p>
+      <a rel="noreferrer" target="_blank" href="https://github.com/vporton/donations">
+        <img src="img/GitHub-Mark-32px.png" width="32" height="32" alt="Source at GitHub"/>
+      </a>
     </p>
   </div>
 </template>
