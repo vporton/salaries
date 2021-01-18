@@ -142,9 +142,6 @@ export default {
     amount() {
       this.setDonateButtonDisabled();
     },
-    donateFor() {
-      this.setDonateButtonDisabled();
-    },
     paymentKind() {
       this.setDonateButtonDisabled();
       this.updateWalletTokenDisplay();
@@ -166,7 +163,6 @@ export default {
   data() {
     return {
       oracleId: '0', // FIXME
-      donateFor: '',
       paymentKind: 'bequestTokens',
       tokenKind: '',
       bequestDate: null,
@@ -215,14 +211,7 @@ export default {
     },
     async lockContract() {
       const addresses = await getEthAddresses();
-      switch (this.donateFor) {
-        case 'science':
-          return addresses.SalaryWithDAO.address;
-        case 'climate':
-          return addresses.Lock.address;
-        default:
-          return '';
-      } 
+      return addresses.SalaryWithDAO.address;
     },
     async donate() {
       const wei = toWei(this.amount);
@@ -283,7 +272,7 @@ export default {
     },
     setDonateButtonDisabled() {
       this.donateButtonDisabled =
-        !validators.isRealNumber(this.amount) || this.donateFor === '' || this.paymentKind === '' || this.tokenKind === '' ||
+        !validators.isRealNumber(this.amount) || this.paymentKind === '' || this.tokenKind === '' ||
         !validators.isEthAddressValid(this.tokenEthAddress) || (this.tokenKind === 'erc1155' && !validators.isUint256Valid(this.tokenId));
     },
     setBequestButtonDisabled() {
