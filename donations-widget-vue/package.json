@@ -1,28 +1,28 @@
 {
   "name": "@vporton/donations-widget-vue",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Victor Porton",
   "description": "App/widgets to accept crypto donations for the future.",
   "license": "GPL-3.0-or-later",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/vporton/donations.git"
+    "type": "git",
+    "url": "https://github.com/vporton/donations.git"
   },
   "funding": [
     {
-      "type" : "individual",
-      "url" : "https://gitcoin.co/grants/1591/science-of-the-future"
+      "type": "individual",
+      "url": "https://gitcoin.co/grants/1591/science-of-the-future"
     },
     {
-      "type" : "patreon",
-      "url" : "https://gitcoin.co/grants/1591/science-of-the-future"
+      "type": "patreon",
+      "url": "https://gitcoin.co/grants/1591/science-of-the-future"
     }
   ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "binary": "node build-binary.js && "
+    "binary": "node build-binary.js"
   },
   "dependencies": {
     "core-js": "^3.6.5",
