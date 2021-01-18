@@ -7,7 +7,7 @@
       :value="value"
       @input="input"
       @change="change"
-      :class="isEthAddressValid(this.currentValue) ? '' : 'error'" />
+      :class="className" />
     <br />
     <span>{{ error }}</span>
   </span>
@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       currentValue: this.value,
+      className: this.isEthAddressValid(this.value) ? '' : 'error',
       error: '',
     }
   },
@@ -38,7 +39,9 @@ export default {
   },
   watch: {
     value(v) {
-      this.error = validators.isEthAddressValid(v) ? '' : 'Invalid Ethereum address'
+      const valid = validators.isEthAddressValid(v)
+      this.className = valid ? '' : 'error'
+      this.error = valid ? '' : 'Invalid Ethereum address'
     }
   },
 }

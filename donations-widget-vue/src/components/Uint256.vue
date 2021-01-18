@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       currentValue: this.value,
+      className: this.isUint256Valid(this.value) ? '' : 'error',
       error: '',
     }
   },
@@ -40,7 +41,9 @@ export default {
   },
   watch: {
     value(v) {
-      this.error = validators.isUint256Valid(v) ? '' : 'Invalid 256-bit value'
+      const valid = validators.isUint256Valid(v)
+      this.className = valid ? '' : 'error'
+      this.error = valid ? '' : 'Invalid 256-bit number'
     }
   },
 }

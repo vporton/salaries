@@ -20,6 +20,7 @@ export default {
   data() {
     return {
       currentValue: this.value,
+      className: this.isRealNumber(this.value) ? '' : 'error',
       error: '',
     }
   },
@@ -38,7 +39,9 @@ export default {
   },
   watch: {
     value(v) {
-      this.error = validators.isRealNumber(v) ? '' : 'Invalid amount'
+      const valid =  validators.isRealNumber(v)
+      this.className = valid ? '' : 'error'
+      this.error = valid ? '' : 'Invalid amount'
     }
   },
 }
