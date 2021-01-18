@@ -74,8 +74,6 @@ export async function fetchOnceJson(url) {
   }
 }
 
-///////////////////////////////////////
-
 export async function getWeb3() {
   try {
     window.ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.

@@ -58,13 +58,11 @@
     <p>
       <span :style="{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}">Wallet address:</span>
       <span :style="{display: paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}">Token address:</span>
-      <EthAddress
-        :value="tokenEthAddress"
-      />
+      <EthAddress :value="this.tokenEthAddress" @input="this.tokenEthAddress = event.target.value;" />
     </p>
-    <p style="{display: paymentKind !== 'bequestGnosis' && tokenKind === 'erc1155' ? 'block' : 'none'}">
+    <p style="{display: this.paymentKind !== 'bequestGnosis' && this.tokenKind === 'erc1155' ? 'block' : 'none'}">
       Token ID:
-      <Uint256 :value="tokenId" onchange="this.tokenId = event.target.value;" />
+      <Uint256 :value="this.tokenId" onchange="this.tokenId = event.target.value;" />
     </p>
     <p :style="{display: paymentKind !== 'donate' ? 'block' : 'none'}">
       <span :style="{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}">The bequest can be taken after:</span>
@@ -74,7 +72,7 @@
       <span :style="{display: paymentKind === 'bequestGnosis' ? 'inline' : 'none'}">
         <br />
         <span style="display: inline-block">
-          <!--Calendar onchange="setBequestDate(e)" value="" minDate=""/-->
+          <!--Calendar onchange="this.bequestDate = e" value="" minDate=""/-->
         </span>
       </span>
     </p>
@@ -82,11 +80,11 @@
       <p>
         Donation amount:
         <Amount :value="amount" onchange="this.amount = event.target.value;" />
-        <button @click="donate" :disabled.prop="{donateButtonDisabled()}">Donate</button>
+        <button @click="donate" :disabled="donateButtonDisabled()">Donate</button>
       </p>
     </div>
     <p :style="{display: paymentKind === 'bequestGnosis' ? 'block' : 'none'}">
-      <button class="donateButton" :disabled.prop="bequestButtonDisabled()" @click="bequestAll">
+      <button class="donateButton" :disabled="bequestButtonDisabled()" @click="bequestAll">
         Bequest!
       </button>
     </p>
@@ -94,10 +92,19 @@
 </template>
 
 <script>
+import Web3 from 'web3';
+// MEWConnect does not work on Firefox 84.0 for Ubuntu.
+// import Web3Modal from "web3modal";
+// import MewConnect from '@myetherwallet/mewconnect-web-client';
+const { toBN, toWei } = Web3.utils;
+
 import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 import Amount from '@/components/Amount.vue'
-import '../utils/AppLib'
+import { getWeb3, mySend, getABIs, getAccounts, getEthAddresses } from '../utils/AppLib'
+
+import erc1155Abi from '../utils/ERC1155Abi';
+import erc20Abi from '../utils/ERC1155Abi';
 
 export default {
   name: 'Donate',
@@ -107,11 +114,11 @@ export default {
     Amount,
   },
   watch: {
-    oracleId(v) {
+    oracleId(/*v*/) {
       async function updateInfo() {
         const web3 = await getWeb3();
         if (web3 !== null) {
-          const contractEthAddress = await lockContract();
+          const contractEthAddress = await this.lockContract();
           if (contractEthAddress !== '') {
             const scienceAbi = (await getABIs()).SalaryWithDAO;
             const science = new web3.eth.Contract(scienceAbi, contractEthAddress);
@@ -120,7 +127,7 @@ export default {
               // setConnectedToAccount(false); // TODO
               return;
             }
-            setBequestDate(new Date(await science.methods.minFinishTime(oracleId).call() * 1000));
+            this.bequestDate = new Date(await science.methods.minFinishTime(this.oracleId).call() * 1000);
           }
         }
       }
@@ -141,30 +148,32 @@ export default {
   },
   async obtainERC1155Token() {
     let collateralContractEthAddress, collateralTokenId;
-    switch(tokenKind) {
+    switch(this.tokenKind) {
       case 'erc1155':
-        collateralContractEthAddress = tokenEthAddress;
-        collateralTokenId = tokenId;
+        collateralContractEthAddress = this.tokenEthAddress;
+        collateralTokenId = this.tokenId;
         break;
       case 'erc20':
         collateralContractEthAddress = (await getEthAddresses()).ERC1155OverERC20.address;
-        collateralTokenId = Web3.utils.toHex(tokenEthAddress);
+        collateralTokenId = Web3.utils.toHex(this.tokenEthAddress);
 
-        const web3 = await getWeb3();
-        // if (web3 === null) return;
-        const account = (await getAccounts())[0];
-        // if(!account) return;
+        {
+          const web3 = await getWeb3();
+          // if (web3 === null) return;
+          const account = (await getAccounts())[0];
+          // if(!account) return;
 
-        // Approve ERC-20 spent
-        const erc20 = new web3.eth.Contract(erc20Abi  , tokenEthAddress);
-        const allowanceStr = await erc20.methods.allowance(account, collateralContractEthAddress).call();
-        const allowance = toBN(allowanceStr);
-        const halfBig = toBN(2).pow(toBN(128));
-        if(allowance.lt(halfBig)) {
-          const big = toBN(2).pow(toBN(256)).sub(toBN(1));
-          const tx = await mySend(erc20, erc20.methods.approve, [collateralContractEthAddress, big.toString()], {from: account}, null)
-            // .catch(e => alert(e.message));
-          await tx;
+          // Approve ERC-20 spent
+          const erc20 = new web3.eth.Contract(erc20Abi, this.tokenEthAddress);
+          const allowanceStr = await erc20.methods.allowance(account, collateralContractEthAddress).call();
+          const allowance = toBN(allowanceStr);
+          const halfBig = toBN(2).pow(toBN(128));
+          if(allowance.lt(halfBig)) {
+            const big = toBN(2).pow(toBN(256)).sub(toBN(1));
+            const tx = await mySend(erc20, erc20.methods.approve, [collateralContractEthAddress, big.toString()], {from: account}, null)
+              // .catch(e => alert(e.message));
+            await tx;
+          }
         }
         break;
     }
@@ -172,7 +181,7 @@ export default {
   },
   async lockContract() {
     const addresses = await getEthAddresses();
-    switch (donateFor) {
+    switch (this.donateFor) {
       case 'science':
         return addresses.SalaryWithDAO.address;
       case 'climate':
@@ -182,11 +191,11 @@ export default {
     } 
   },
   async donate() {
-    const wei = toWei(amount);
+    const wei = toWei(this.amount);
     const web3 = await getWeb3();
     if (web3 !== null) {
       try {
-        const contractEthAddress = await lockContract();
+        const contractEthAddress = await this.lockContract();
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, contractEthAddress);
         const account = (await getAccounts())[0];
@@ -194,7 +203,7 @@ export default {
           // setConnectedToAccount(false); // TODO
           return;
         }
-        const [collateralContractEthAddress, collateralTokenId] = await obtainERC1155Token();
+        const [collateralContractEthAddress, collateralTokenId] = await this.obtainERC1155Token();
         const collateralContract = new web3.eth.Contract(erc1155Abi, collateralContractEthAddress);
         const approved = await collateralContract.methods.isApprovedForAll(account, contractEthAddress).call();
         if (!approved) {
@@ -204,12 +213,12 @@ export default {
           );
           await tx;
         }
-        switch(paymentKind) {
+        switch(this.paymentKind) {
           case 'donate':
             await mySend(science, science.methods.donate,
               [collateralContractEthAddress,
               collateralTokenId,
-              oracleId,
+              this.oracleId,
               wei,
               account,
               account,
@@ -221,7 +230,7 @@ export default {
             await mySend(science, science.methods.bequestCollateral,
               [collateralContractEthAddress,
               collateralTokenId,
-              oracleId,
+              this.oracleId,
               wei,
               account,
               []],
@@ -239,11 +248,11 @@ export default {
     alert("Bequesting all funds is not yet supported!");
   },
   donateButtonDisabled() {
-    return !isRealNumber(amount) || donateFor === '' || paymentKind === '' || tokenKind === '' ||
-      !isEthAddressValid(tokenEthAddress) || (tokenKind === 'erc1155' && !isUint256Valid(tokenId));
+    return !Amount.isRealNumber(this.amount) || this.donateFor === '' || this.paymentKind === '' || this.tokenKind === '' ||
+      !EthAddress.isEthAddressValid(this.tokenEthAddress) || (this.tokenKind === 'erc1155' && !Uint256.isUint256Valid(this.tokenId));
   },
   bequestButtonDisabled() {
-    return !isEthAddressValid(tokenEthAddress) || bequestDate === null;
+    return !EthAddress.isEthAddressValid(this.tokenEthAddress) || this.bequestDate === null;
   },
 }
 </script>
