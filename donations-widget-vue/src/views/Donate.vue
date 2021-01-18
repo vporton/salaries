@@ -48,6 +48,7 @@
         &nbsp;ERC-1155
       </label>
       <small>(recommended)</small>
+      {{' '}}
       <label>
         <input type="radio" name="tokenKind" @click="setTokenKind('erc20')" />
         &nbsp;ERC-20
@@ -58,6 +59,7 @@
     <p>
       <span :style="{display: walletDisplay}">Wallet address:</span>
       <span :style="{display: tokenDisplay}">Token address:</span>
+      {{' '}}
       <EthAddress v-model="tokenEthAddress"/>
     </p>
     <p :style="{display: this.paymentKind !== 'bequestGnosis' && this.tokenKind === 'erc1155' ? 'block' : 'none'}">
@@ -80,6 +82,7 @@
       <p>
         Donation amount:
         <Amount v-model="amount"/>
+        {{' '}}
         <button @click="this.donate()" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>
