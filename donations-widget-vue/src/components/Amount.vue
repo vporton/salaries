@@ -38,9 +38,3 @@ export default {
   },
 }
 </script>
-
-<style>
-span {
-  color: red;
-}
-</style>
