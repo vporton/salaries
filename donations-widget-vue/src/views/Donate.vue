@@ -58,11 +58,11 @@
     <p>
       <span :style="{display: this.paymentKind === 'bequestGnosis' ? 'inline' : 'none'}">Wallet address:</span>
       <span :style="{display: this.paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}">Token address:</span>
-      <EthAddress v-bind:value="this.tokenEthAddress"/>
+      <EthAddress v-model:value="this.tokenEthAddress"/>
     </p>
     <p :style="{display: this.paymentKind !== 'bequestGnosis' && this.tokenKind === 'erc1155' ? 'block' : 'none'}">
       Token ID:
-      <Uint256 v-bind:value="this.tokenId"/>
+      <Uint256 v-model:value="this.tokenId"/>
     </p>
     <p :style="{display: this.paymentKind !== 'donate' ? 'block' : 'none'}">
       <span :style="{display: this.paymentKind === 'bequestGnosis' ? 'inline' : 'none'}">The bequest can be taken after:</span>
@@ -79,7 +79,7 @@
     <div :style="{display: this.paymentKind !== 'bequestGnosis' ? 'block' : 'none'}">
       <p>
         Donation amount:
-        <Amount v-bind:value="amount"/>
+        <Amount v-model:value="amount"/>
         <button @click="this.donate()" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>

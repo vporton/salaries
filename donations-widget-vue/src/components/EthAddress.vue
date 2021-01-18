@@ -7,7 +7,7 @@
       :value="value"
       @input="input"
       @change="change"
-      :class="isEthAddressValid(this.value) ? '' : 'error'" />
+      :class="isEthAddressValid(this.currentValue) ? '' : 'error'" />
     <br />
     <span>{{ error }}</span>
   </span>
@@ -21,12 +21,12 @@ export default {
   props: ['value'],
   data() {
     return {
-      error: ''
+      currentValue: this.value,
+      error: '',
     }
   },
   methods: {
     input(event) {
-      console.log(event.target.value)
       this.$emit('input', event.target.value)
     },
     change(event) {

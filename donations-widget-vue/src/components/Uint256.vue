@@ -7,7 +7,7 @@
       :value="value"
       @input="input"
       @change="change"
-      :class="isUint256Valid(this.value) ? '' : 'error'" />
+      :class="isUint256Valid(this.currentValue) ? '' : 'error'" />
     <br />
     <span>{{ error }}</span>
   </span>
@@ -21,14 +21,17 @@ export default {
   props: ['value'],
   data() {
     return {
-      error: ''
+      currentValue: this.value,
+      error: '',
     }
   },
   methods: {
     input(event) {
+      this.currentValue = event.target.value;
       this.$emit('input', event.target.value)
     },
     change(event) {
+      this.currentValue = event.target.value;
       this.$emit('change', event.target.value)
     },
     isUint256Valid(value) {
