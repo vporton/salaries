@@ -11,5 +11,5 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-window.customElements.define('donate', Donate);
-window.customElements.define('register', Register);
+window.customElements.define('donations-donate', Donate);
+window.customElements.define('donations-register', Register);
