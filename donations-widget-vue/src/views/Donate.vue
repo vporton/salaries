@@ -37,7 +37,7 @@
         &nbsp;Bequest all funds on a Gnosis Safe smart wallet
       </label>
     </p>
-    <p :style="{display: this.paymentKind !== 'bequestGnosis' ? 'block' : 'none'}">
+    <p :style="{display: tokenDisplay}">
       Donation in:
       <label>
         <input
@@ -56,8 +56,8 @@
       <small>(Don't use stablecoins for long-time funding.)</small>
     </p>
     <p>
-      <span :style="{display: this.paymentKind === 'bequestGnosis' ? 'inline' : 'none'}">Wallet address:</span>
-      <span :style="{display: this.paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}">Token address:</span>
+      <span :style="{display: walletDisplay}">Wallet address:</span>
+      <span :style="{display: tokenDisplay}">Token address:</span>
       <EthAddress v-model="tokenEthAddress"/>
     </p>
     <p :style="{display: this.paymentKind !== 'bequestGnosis' && this.tokenKind === 'erc1155' ? 'block' : 'none'}">
@@ -65,25 +65,25 @@
       <Uint256 v-model="tokenId"/>
     </p>
     <p :style="{display: this.paymentKind !== 'donate' ? 'block' : 'none'}">
-      <span :style="{display: this.paymentKind === 'bequestGnosis' ? 'inline' : 'none'}">The bequest can be taken after:</span>
-      <span :style="{display: this.paymentKind !== 'bequestGnosis' ? 'inline' : 'none'}">
+      <span :style="{display: walletDisplay}">The bequest can be taken after:</span>
+      <span :style="{display: tokenDisplay}">
         {{bequestDate !== null ? this.bequestDate.toString() : ""}}
       </span>
-      <span :style="{display: this.paymentKind === 'bequestGnosis' ? 'inline' : 'none'}">
+      <span :style="{display: walletDisplay}">
         <br />
         <span style="display: inline-block">
           <!--Calendar onchange="this.bequestDate = e" value="" minDate=""/-->
         </span>
       </span>
     </p>
-    <div :style="{display: this.paymentKind !== 'bequestGnosis' ? 'block' : 'none'}">
+    <div :style="{display: tokenDisplay}">
       <p>
         Donation amount:
         <Amount v-model="amount"/>
         <button @click="this.donate()" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>
-    <p :style="{display: this.paymentKind === 'bequestGnosis' ? 'block' : 'none'}">
+    <p :style="{display: walletDisplay}">
       <button class="donateButton" :disabled="bequestButtonDisabled" @click="this.bequestAll()">
         Bequest!
       </button>
@@ -144,6 +144,7 @@ export default {
     },
     paymentKind() {
       this.setDonateButtonDisabled();
+      this.updateWalletTokenDisplay();
     },
     tokenKind() {
       this.setDonateButtonDisabled();
@@ -171,6 +172,8 @@ export default {
       amount: '',
       donateButtonDisabled: true,
       bequestButtonDisabled: true,
+      walletDisplay: 'inline-block',
+      tokenDisplay: 'none',
     }
   },
   methods: {
@@ -297,6 +300,11 @@ export default {
     },
     setAmount(value) {
       this.value = value;
+    },
+    updateWalletTokenDisplay() {
+      this.walletDisplay = this.paymentKind === 'bequestGnosis' ? 'inline-block' : 'none'
+      this.tokenDisplay = this.paymentKind !== 'bequestGnosis' ? 'inline-block' : 'none'
+      console.log('paymentKind', this.paymentKind, 'walletDisplay', this.walletDisplay, 'tokenDisplay', this.tokenDisplay)
     },
   },
 }
