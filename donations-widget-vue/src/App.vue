@@ -1,6 +1,13 @@
 <template>
   <div id="app">
-    <router-view/>
+    <header class="App-header">
+      <router-view/>
+    </header>
+    <p>
+      <a rel="noreferrer" target="_blank" href="https://github.com/vporton/donations">
+        <img src="GitHub-Mark-32px.png" width="32" height="32" alt="Source at GitHub"/>
+      </a>
+    </p>
   </div>
 </template>
 

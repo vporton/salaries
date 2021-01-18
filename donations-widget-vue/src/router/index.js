@@ -9,7 +9,7 @@ export const routes = [
     path: '/',
     component: Donate,
     meta: {
-      title: 'Future Software/Science Salaries + Donate/Bequest for Science and Climate',
+      title: 'Future Salaries + Donate/Bequest for Common Good',
     }
   }
 ]

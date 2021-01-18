@@ -90,11 +90,6 @@
         Bequest!
       </button>
     </p>
-    <p>
-      <a rel="noreferrer" target="_blank" href="https://github.com/vporton/donations">
-        <img src="img/GitHub-Mark-32px.png" width="32" height="32" alt="Source at GitHub"/>
-      </a>
-    </p>
   </div>
 </template>
 
@@ -108,3 +103,5 @@ export default {
   }
 }
 </script>
+
+<style src="../assets/Donate.css"></style>
