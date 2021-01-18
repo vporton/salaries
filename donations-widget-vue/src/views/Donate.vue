@@ -1,15 +1,6 @@
 <template>
   <div>
     <p>
-      <small>Free software authors, scientists/inventors, science/software publishers,
-        carbon accounters, and other common good producers:</small>
-      <br/>
-      <a href="/register">Register for a salary.</a>
-      <br/>
-      <small>Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.</small>
-    </p>
-    <h1>Donate / Bequest</h1>
-    <p>
       This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe
       anymore, <em>donate or bequest</em> here for the software and the free
       market to choose the best donation recepient.
