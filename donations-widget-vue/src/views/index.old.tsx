@@ -14,76 +14,6 @@ import erc20Abi from './ERC20Abi';
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
 const { toBN, toWei } = Web3.utils;
 
-// TODO
-const CHAINS: { [id: string] : string } = {
-  '1': 'mainnet',
-  '3': 'ropsten',
-  '4': 'rinkeby',
-  '5': 'goerli',
-  '42': 'kovan',
-  '1337': 'local',
-  '122': 'fuse',
-  '80001': 'mumbai',
-  '137': 'matic',
-  '99': 'core',
-  '77': 'sokol',
-  '100': 'xdai',
-  '74': 'idchain',
-  '56': 'bsc',
-  '97': 'bsctest',
-}
-
-let _web3Provider: any = null;
-
-async function baseGetWeb3() {
-  if ((window as any).web3 && (window as any).web3.chainId) return (window as any).web3;
-
-  _web3Provider = Web3.givenProvider; //await getWeb3Provider();
-  return (window as any).web3 = _web3Provider ? new Web3(_web3Provider) : null;
-}
-
-async function getChainId(): Promise<any> { // TODO: more specific type
-  const web3 = await baseGetWeb3();
-  if (!web3) {
-    return null;
-  }
-  return await (web3 as any).eth.getChainId();
-}
-
-function isUint256Valid(v: string): boolean { // TODO: called twice
-  return /^[0-9]+$/.test(v) && toBN(v).lt(toBN(2).pow(toBN(256)));
-}
-
-function isRealNumber(v: string): boolean { // TODO: called twice
-  return /^[0-9]+(\.[0-9]+)?$/.test(v);
-}
-
-let _fetchedJsonPromises = new Map<string, Promise<any>>();
-let _fetched = new Map<string, any>();
-
-async function fetchOnceJsonPromise(url: string): Promise<Promise<any>> {
-  let promise = _fetchedJsonPromises.get(url);
-  if (promise) {
-    return promise;
-  } else {
-    const fetchResult = await fetch(url);
-    promise = fetchResult.json() as Promise<any>;
-    _fetchedJsonPromises.set(url, promise);
-    return await promise;
-  }
-}
-
-async function fetchOnceJson(url: string): Promise<any> {
-  let json = _fetched.get(url);
-  if (json) {
-    return json;
-  } else {
-    json = await fetchOnceJsonPromise(url);
-    _fetched.set(url, json);
-    return json;
-  }
-}
-
 function DonationsComponent() {
   const [oracleId, setOracleId] = useState('0'); // FIXME
 
@@ -92,50 +22,6 @@ function DonationsComponent() {
     document.title = "Future Software/Science Salaries + Donate/Bequest for Science and Climate";
     setOracleId('0'); // FIXME
   }, []);
- 
-  async function getWeb3() {
-    try {
-      (window as any).ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
-    }
-    catch(_) { }
-    const web3 = await baseGetWeb3();
-    getAccounts().then((/*accounts*/) => {
-      // setConnectedToAccount(accounts.length !== 0); // TODO
-    });
-    return web3;
-  }
-
-  async function getABIs() {
-    return await fetchOnceJson(`abis.json`);
-  }
-
-  async function getEthAddresses() {
-    const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
-    if (!CHAINS[chainId] || !json[CHAINS[chainId]]) {
-      alert("The selected blockchain is not supported!");
-      return null;
-    }
-    return json[CHAINS[chainId]];
-  }
-
-  async function getAccounts(): Promise<Array<string>> {
-    const web3 = await baseGetWeb3();
-    return web3 ? (web3 as any).eth.getAccounts() : null;
-  }
-
-  // FIXME: returns Promise?
-  async function mySend(contract: string, method: any, args: Array<any>, sendArgs: any, handler: any): Promise<any> {
-    sendArgs = sendArgs || {}
-    const account = (await getAccounts())[0];
-    return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
-        .then((estimatedGas: string) => {
-            const gas = String(Math.floor(Number(estimatedGas) * 1.15) + 24000);
-            if(handler !== null)
-                return method.bind(contract)(...args).send({gas, from: account, ...sendArgs}, handler);
-            else
-                return method.bind(contract)(...args).send({gas, from: account, ...sendArgs});
-        });
-  }
   
   function Pay() {
     const [donateFor, setDonateFor] = useState('');

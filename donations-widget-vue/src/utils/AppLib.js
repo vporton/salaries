@@ -73,3 +73,49 @@ export async function fetchOnceJson(url) {
     return json;
   }
 }
+
+///////////////////////////////////////
+
+export async function getWeb3() {
+  try {
+    window.ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
+  }
+  catch(_) { /* empty */ }
+  const web3 = await baseGetWeb3();
+  getAccounts().then((/*accounts*/) => {
+    // setConnectedToAccount(accounts.length !== 0); // TODO
+  });
+  return web3;
+}
+
+export async function getABIs() {
+  return await fetchOnceJson(`abis.json`);
+}
+
+export async function getEthAddresses() {
+  const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
+  if (!CHAINS[chainId] || !json[CHAINS[chainId]]) {
+    alert("The selected blockchain is not supported!");
+    return null;
+  }
+  return json[CHAINS[chainId]];
+}
+
+export async function getAccounts() {
+  const web3 = await baseGetWeb3();
+  return web3 ? web3.eth.getAccounts() : null;
+}
+
+// FIXME: returns Promise?
+export async function mySend(contract, method, args, sendArgs, handler) {
+  sendArgs = sendArgs || {}
+  const account = (await getAccounts())[0];
+  return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
+    .then((estimatedGas) => {
+      const gas = String(Math.floor(Number(estimatedGas) * 1.15) + 24000);
+      if(handler !== null)
+        return method.bind(contract)(...args).send({gas, from: account, ...sendArgs}, handler);
+      else
+        return method.bind(contract)(...args).send({gas, from: account, ...sendArgs});
+    });
+}
