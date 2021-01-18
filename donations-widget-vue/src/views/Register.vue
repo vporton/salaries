@@ -2,7 +2,10 @@
   <div>
     <p style="color: red">This is demo version for a testnet. Contracts are not audited yet.</p>
     <p>
-        <small>Free software authors, scientists/inventors, and science/software publishers:</small>
+        <small>
+            Free software authors, scientists/inventors, science/software publishers, carbon accounters,
+            and other common good producers:
+        </small>
     </p>
     <p>
         <button class="donateButton" @click="register">Register for a salary</button>
