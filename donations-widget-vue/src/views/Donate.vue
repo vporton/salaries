@@ -37,7 +37,7 @@
         &nbsp;Bequest all funds on a Gnosis Safe smart wallet
       </label>
     </p>
-    <p :style="{display: tokenDisplay}">
+    <p :style="{display: tokenDisplayBlock}">
       Donation in:
       <label>
         <input
@@ -57,8 +57,8 @@
       <small>(Don't use stablecoins for long-time funding.)</small>
     </p>
     <p>
-      <span :style="{display: walletDisplay}">Wallet address:</span>
-      <span :style="{display: tokenDisplay}">Token address:</span>
+      <span :style="{display: walletDisplayInline}">Wallet address:</span>
+      <span :style="{display: tokenDisplayInline}">Token address:</span>
       {{' '}}
       <EthAddress v-model="tokenEthAddress"/>
     </p>
@@ -67,18 +67,18 @@
       <Uint256 v-model="tokenId"/>
     </p>
     <p :style="{display: this.paymentKind !== 'donate' ? 'block' : 'none'}">
-      <span :style="{display: walletDisplay}">The bequest can be taken after:</span>
-      <span :style="{display: tokenDisplay}">
+      <span :style="{display: walletDisplayInline}">The bequest can be taken after:</span>
+      <span :style="{display: tokenDisplayInline}">
         {{bequestDate !== null ? this.bequestDate.toString() : ""}}
       </span>
-      <span :style="{display: walletDisplay}">
+      <span :style="{display: walletDisplayInline}">
         <br />
         <span style="display: inline-block">
-          <!--Calendar onchange="this.bequestDate = e" value="" minDate=""/-->
+          <DatePicker v-model="bequestDate" :min-date="new Date()"/>
         </span>
       </span>
     </p>
-    <div :style="{display: tokenDisplay}">
+    <div :style="{display: tokenDisplayBlock}">
       <p>
         Donation amount:
         <Amount v-model="amount"/>
@@ -86,7 +86,7 @@
         <button @click="this.donate()" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>
-    <p :style="{display: walletDisplay}">
+    <p :style="{display: walletDisplayBlock}">
       <button class="donateButton" :disabled="bequestButtonDisabled" @click="this.bequestAll()">
         Bequest!
       </button>
@@ -99,6 +99,7 @@ import Web3 from 'web3';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
+import DatePicker from 'v-calendar/lib/components/date-picker.umd'
 
 import validators from '../utils/validators'
 
@@ -118,6 +119,7 @@ export default {
     EthAddress,
     Uint256,
     Amount,
+    DatePicker,
   },
   watch: {
     oracleId(/*v*/) {
@@ -171,8 +173,12 @@ export default {
       amount: '',
       donateButtonDisabled: true,
       bequestButtonDisabled: true,
-      walletDisplay: 'inline-block',
-      tokenDisplay: 'none',
+      
+      // TODO: too many:
+      walletDisplayInline: 'inline',
+      walletDisplayBlock: 'block',
+      tokenDisplayInline: 'none',
+      tokenDisplayBlock: 'none',
     }
   },
   methods: {
@@ -294,9 +300,10 @@ export default {
       this.value = value;
     },
     updateWalletTokenDisplay() {
-      this.walletDisplay = this.paymentKind === 'bequestGnosis' ? 'inline-block' : 'none'
-      this.tokenDisplay = this.paymentKind !== 'bequestGnosis' ? 'inline-block' : 'none'
-      console.log('paymentKind', this.paymentKind, 'walletDisplay', this.walletDisplay, 'tokenDisplay', this.tokenDisplay)
+      this.walletDisplayInline = this.paymentKind === 'bequestGnosis' ? 'inline' : 'none'
+      this.walletDisplayBlock = this.paymentKind === 'bequestGnosis' ? 'block' : 'none'
+      this.tokenDisplayInline = this.paymentKind !== 'bequestGnosis' ? 'inline' : 'none'
+      this.tokenDisplayBlock = this.paymentKind !== 'bequestGnosis' ? 'block' : 'none'
     },
   },
 }
