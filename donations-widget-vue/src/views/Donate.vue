@@ -97,6 +97,7 @@
 import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 import Amount from '@/components/Amount.vue'
+import '../utils/AppLib'
 
 export default {
   name: 'Donate',
