@@ -74,7 +74,7 @@
         Donation amount:
         <Amount v-model="amount"/>
         {{' '}}
-        <button @click="this.donate()" :disabled="donateButtonDisabled">Donate</button>
+        <button @click="donate()" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>
     <p :style="{display: walletDisplayBlock}">
@@ -215,49 +215,34 @@ export default {
       const web3 = await getWeb3();
       if (web3 !== null) {
         try {
-          const contractEthAddress = await this.lockContract();
+          const contractAddress = await this.lockContract();
           const scienceAbi = (await getABIs()).SalaryWithDAO;
-          const science = new web3.eth.Contract(scienceAbi, contractEthAddress);
+          const science = new web3.eth.Contract(scienceAbi, this.contractAddress);
           const account = (await getAccounts())[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
             return;
           }
-          const [collateralContractEthAddress, collateralTokenId] = await this.obtainERC1155Token();
-          const collateralContract = new web3.eth.Contract(erc1155Abi, collateralContractEthAddress);
-          const approved = await collateralContract.methods.isApprovedForAll(account, contractEthAddress).call();
+          const [collateralContractAddress, collateralTokenId] = await this.obtainERC1155Token();
+          const collateralContract = new web3.eth.Contract(erc1155Abi, collateralContractAddress);
+          const approved = await collateralContract.methods.isApprovedForAll(this.account, this.contractAddress).call();
           if (!approved) {
             const tx = await mySend(
               collateralContract, collateralContract.methods.setApprovalForAll,
-              [contractEthAddress, true], {from: account}, null
+              [contractAddress, true], {from: account}, null
             );
             await tx;
           }
-          switch(this.paymentKind) {
-            case 'donate':
-              await mySend(science, science.methods.donate,
-                [collateralContractEthAddress,
-                collateralTokenId,
-                this.oracleId,
-                wei,
-                account,
-                account,
-                []],
-                {from: account}, null
-              );
-              break;
-            case 'bequestTokens':
-              await mySend(science, science.methods.bequestCollateral,
-                [collateralContractEthAddress,
-                collateralTokenId,
-                this.oracleId,
-                wei,
-                account,
-                []],
-                {from: account}, null
-              );
-              break;
-          }
+          await mySend(science, science.methods.donate,
+            [collateralContractAddress,
+             collateralTokenId,
+             this.oracleId,
+             wei,
+             account,
+             account,
+             []],
+            {from: account}, null
+          );
         }
         catch(e) {
           alert(e.message);
