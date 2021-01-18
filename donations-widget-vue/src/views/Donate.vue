@@ -96,12 +96,14 @@
 <script>
 import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
+import Amount from '@/components/Amount.vue'
 
 export default {
   name: 'Donate',
   components: {
     EthAddress,
-    Uint256
+    Uint256,
+    Amount,
   }
 }
 </script>

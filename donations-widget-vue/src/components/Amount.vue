@@ -1,25 +1,19 @@
 <template>
-  <span class="Uint256">
+  <span class="EthAddress">
     <input
       type="text"
-      maxLength="78"
-      size="94"
       v-model="value"
       @input="input"
       @change="change"
-      :class="isUint256Valid(this.value) ? '' : 'error'" />
+      :class="isRealNumber(this.value) ? '' : 'error'" />
     <br />
     <span>{{ error }}</span>
   </span>
 </template>
 
 <script>
-import Web3 from 'web3'
-
-const { toBN } = Web3.utils;
-
 export default {
-  name: 'Uint256',
+  name: 'Amount',
   props: ['value'],
   data() {
     return {
@@ -27,8 +21,8 @@ export default {
     }
   },
   methods: {
-    isUint256Valid(v) {
-      return /^[0-9]+$/.test(v) && toBN(v).lt(toBN(2).pow(toBN(256)))
+    isRealNumber(value) {
+      return /^[0-9]+(\.[0-9]+)?$/.test(value)
     },
     input(v) {
       this.$emit('input', v)
@@ -39,7 +33,7 @@ export default {
   },
   watch: {
     value(v) {
-      this.error = this.isUint256Valid(v) ? '' : 'Invalid 256-bit value'
+      this.error = this.isValidAddress(v) ? '' : 'Invalid amount'
     }
   },
 }
