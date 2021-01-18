@@ -4,19 +4,17 @@
       type="text"
       maxLength="42"
       size="50"
-      v-model="value"
+      :value="value"
       @input="input"
       @change="change"
-      :class="isValidAddress(this.value) ? '' : 'error'" />
+      :class="isEthAddressValid(this.value) ? '' : 'error'" />
     <br />
     <span>{{ error }}</span>
   </span>
 </template>
 
 <script>
-import Web3 from 'web3'
-
-const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545") // hack
+import validators from '../utils/validators'
 
 export default {
   name: 'EthAddress',
@@ -27,19 +25,20 @@ export default {
     }
   },
   methods: {
-    isValidAddress(value) {
-      return web3.utils.isAddress(value)
+    input(event) {
+      console.log(event.target.value)
+      this.$emit('input', event.target.value)
     },
-    input(v) {
-      this.$emit('input', v)
+    change(event) {
+      this.$emit('change', event.target.value)
     },
-    change(v) {
-      this.$emit('change', v)
-    },
+    isEthAddressValid(value) {
+      return validators.isEthAddressValid(value)
+    }
   },
   watch: {
     value(v) {
-      this.error = this.isValidAddress(v) ? '' : 'Invalid Ethereum address'
+      this.error = validators.isEthAddressValid(v) ? '' : 'Invalid Ethereum address'
     }
   },
 }

@@ -2,7 +2,7 @@
   <span class="EthAddress">
     <input
       type="text"
-      v-model="value"
+      :value="value"
       @input="input"
       @change="change"
       :class="isRealNumber(this.value) ? '' : 'error'" />
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import validators from '../utils/validators'
+
 export default {
   name: 'Amount',
   props: ['value'],
@@ -21,19 +23,19 @@ export default {
     }
   },
   methods: {
+    input(event) {
+      this.$emit('input', event.target.value)
+    },
+    change(event) {
+      this.$emit('change', event.target.value)
+    },
     isRealNumber(value) {
-      return /^[0-9]+(\.[0-9]+)?$/.test(value)
+      return validators.isRealNumber(value)
     },
-    input(v) {
-      this.$emit('input', v)
-    },
-    change(v) {
-      this.$emit('change', v)
-    }
   },
   watch: {
     value(v) {
-      this.error = this.isValidAddress(v) ? '' : 'Invalid amount'
+      this.error = validators.isRealNumber(v) ? '' : 'Invalid amount'
     }
   },
 }

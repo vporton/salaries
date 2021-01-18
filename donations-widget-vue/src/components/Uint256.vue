@@ -4,7 +4,7 @@
       type="text"
       maxLength="78"
       size="94"
-      v-model="value"
+      :value="value"
       @input="input"
       @change="change"
       :class="isUint256Valid(this.value) ? '' : 'error'" />
@@ -14,9 +14,7 @@
 </template>
 
 <script>
-import Web3 from 'web3'
-
-const { toBN } = Web3.utils;
+import validators from '../utils/validators'
 
 export default {
   name: 'Uint256',
@@ -27,19 +25,19 @@ export default {
     }
   },
   methods: {
-    isUint256Valid(v) {
-      return /^[0-9]+$/.test(v) && toBN(v).lt(toBN(2).pow(toBN(256)))
+    input(event) {
+      this.$emit('input', event.target.value)
     },
-    input(v) {
-      this.$emit('input', v)
+    change(event) {
+      this.$emit('change', event.target.value)
     },
-    change(v) {
-      this.$emit('change', v)
-    }
+    isUint256Valid(value) {
+      return validators.isUint256Valid(value)
+    },
   },
   watch: {
     value(v) {
-      this.error = this.isUint256Valid(v) ? '' : 'Invalid 256-bit value'
+      this.error = validators.isUint256Valid(v) ? '' : 'Invalid 256-bit value'
     }
   },
 }
