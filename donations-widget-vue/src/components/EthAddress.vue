@@ -8,8 +8,8 @@
       @input="input"
       @change="change"
       :class="className" />
-    <br />
-    <span>{{ error }}</span>
+    <!--br />
+    <span>{{ error }}</span-->
   </span>
 </template>
 

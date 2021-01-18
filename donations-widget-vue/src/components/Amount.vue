@@ -6,8 +6,8 @@
       @input="input"
       @change="change"
       :class="isRealNumber(this.currentValue) ? '' : 'error'" />
-    <br />
-    <span>{{ error }}</span>
+    <!--br />
+    <span>{{ error }}</span-->
   </span>
 </template>
 
