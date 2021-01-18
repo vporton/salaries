@@ -2,7 +2,7 @@
   <div>
     <p>
       This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe
-      anymore, <em>donate or bequest</em> here for the software and the free
+      anymore, <em>donate and/or bequest</em> here for the software and the free
       market to choose the best donation recepient.
     </p>
     <p style="color: red">
