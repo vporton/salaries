@@ -35,7 +35,7 @@ export default {
     },
     change(v) {
       this.$emit('change', v)
-    }
+    },
   },
   watch: {
     value(v) {
