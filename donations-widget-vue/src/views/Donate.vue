@@ -65,8 +65,12 @@
       <span :style="{display: walletDisplayInline}">
         <br />
         <span style="display: inline-block">
-          <!-- FIXME: Don't allow select past dates. -->
-          <v-day-selector v-model="bequestDate"/>
+          <date-pick v-model="bequestDate"
+                     :hasInputElement="false"
+                     style="width: 300px"
+                     :pickTime="true"
+                     :isDateDisabled="isPastDate">
+          </date-pick>
         </span>
       </span>
     </p>
@@ -91,7 +95,8 @@ import Web3 from 'web3';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
-import VDaySelector from 'vuelendar/components/vl-day-selector';
+import DatePick from 'vue-date-pick';
+import 'vue-date-pick/dist/vueDatePick.css';
 
 import validators from '../utils/validators'
 
@@ -111,7 +116,7 @@ export default {
     EthAddress,
     Uint256,
     Amount,
-    VDaySelector,
+    DatePick,
   },
   watch: {
     oracleId(/*v*/) {
@@ -282,9 +287,12 @@ export default {
       this.tokenDisplayInline = this.paymentKind !== 'bequestGnosis' ? 'inline' : 'none'
       this.tokenDisplayBlock = this.paymentKind !== 'bequestGnosis' ? 'block' : 'none'
     },
+    isPastDate(date) {
+      const currentDate = new Date();
+      return date < currentDate;
+    }
   },
 }
 </script>
 
 <style src="../assets/Donate.css"></style>
-<style lang="scss" src="vuelendar/scss/vuelendar.scss"></style>
