@@ -63,15 +63,7 @@
         {{bequestDate !== null ? this.bequestDate.toString() : ""}}
       </span>
       <span :style="{display: walletDisplayInline}">
-        <br />
-        <span style="display: inline-block">
-          <date-pick v-model="bequestDate"
-                     :hasInputElement="false"
-                     style="width: 300px"
-                     :pickTime="true"
-                     :isDateDisabled="isPastDate">
-          </date-pick>
-        </span>
+        <datetime type="datetime" v-model="bequestDate" style="display: inline"></datetime>
       </span>
     </p>
     <div :style="{display: tokenDisplayBlock}">
@@ -95,10 +87,14 @@ import Web3 from 'web3';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
-import DatePick from 'vue-date-pick';
-import 'vue-date-pick/dist/vueDatePick.css';
+// import Vue from 'vue'
+import { Datetime } from 'vue-datetime'
+// You need a specific loader for CSS files
+import 'vue-datetime/dist/vue-datetime.css'
 
 import validators from '../utils/validators'
+
+// Vue.use(Datetime)
 
 const { toBN, toWei } = Web3.utils;
 
@@ -116,7 +112,7 @@ export default {
     EthAddress,
     Uint256,
     Amount,
-    DatePick,
+    Datetime,
   },
   watch: {
     oracleId(/*v*/) {

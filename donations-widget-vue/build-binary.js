@@ -6,6 +6,7 @@ fs.mkdir('dist-bin', () => {})
 
 execSync('npx vue-cli-service build --target wc --dest dist-bin/Donate --name donations-donate src/views/Donate.vue')
 execSync('npx vue-cli-service build --target wc --dest dist-bin/Register --name donations-register src/views/Register.vue')
+execSync('cp node_modules/vue-date-pick/dist/vueDatePick.css dist-bin/Donate/')
 
 const jSrc = JSON.parse(fs.readFileSync('package.json'))
 const jBin = JSON.parse(fs.readFileSync('package-binary.json'))
