@@ -59,7 +59,6 @@ export default {
         if (!addresses) return;
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-        console.log(account, this.oracleId, true, []) // FIXME: remove
         await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
           .catch(e => {
             alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);

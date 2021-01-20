@@ -15,7 +15,7 @@ const routes = [
     },
     props: {
       default: true,
-      prefix: '',
+      prefix: './',
       oracleId: null,
       ref: 'donate',
     },
@@ -29,7 +29,7 @@ const routes = [
     },
     props: {
       default: true,
-      prefix: '',
+      prefix: './',
       oracleId: null,
       ref: 'register',
     },

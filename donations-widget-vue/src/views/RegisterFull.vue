@@ -5,7 +5,7 @@
         <br/> 
         <small>Just bequest all your funds here.</small>
     </p>
-    <Register/>
+    <Register :prefix="this.prefix"/>
   </div>
 </template>
 
@@ -14,6 +14,7 @@ import Register from './Register';
 
 export default {
   name: 'RegisterFull',
+  props: ['prefix'],
   components: {
     Register,
   },
