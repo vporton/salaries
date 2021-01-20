@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getWeb3, mySend, getABIs, getAccounts, getEthAddresses } from '../utils/AppLib'
+import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 
 export default {
   name: 'Register',
@@ -43,7 +43,7 @@ export default {
       const web3 = await getWeb3();
       const account = (await getAccounts())[0];
       if (web3 && account !== null) {
-        const addresses = await getEthAddresses();
+        const addresses = await getAddresses();
         if (!addresses) return;
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);

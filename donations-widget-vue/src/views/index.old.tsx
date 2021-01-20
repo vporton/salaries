@@ -108,7 +108,7 @@ function DonationsComponent() {
       const web3 = await getWeb3();
       const account = (await getAccounts())[0];
       if (web3 && account !== null) {
-        const addresses = await getEthAddresses();
+        const addresses = await getAddresses();
         if (!addresses) return;
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new (web3 as any).eth.Contract(scienceAbi as any, addresses.SalaryWithDAO.address);

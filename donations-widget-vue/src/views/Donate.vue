@@ -100,7 +100,7 @@ const { toBN, toWei } = Web3.utils;
 import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 import Amount from '@/components/Amount.vue'
-import { getWeb3, mySend, getABIs, getAccounts, getEthAddresses } from '../utils/AppLib'
+import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 
 import erc1155Abi from '../utils/ERC1155Abi';
 import erc20Abi from '../utils/ERC1155Abi';
@@ -182,7 +182,7 @@ export default {
           collateralTokenId = this.tokenId;
           break;
         case 'erc20':
-          collateralContractEthAddress = (await getEthAddresses()).ERC1155OverERC20.address;
+          collateralContractEthAddress = (await getAddresses()).ERC1155OverERC20.address;
           collateralTokenId = Web3.utils.toHex(this.tokenEthAddress);
 
           {
@@ -208,7 +208,7 @@ export default {
       return [collateralContractEthAddress, collateralTokenId];
     },
     async lockContract() {
-      const addresses = await getEthAddresses();
+      const addresses = await getAddresses();
       return addresses.SalaryWithDAO.address;
     },
     async donate() {
