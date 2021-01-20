@@ -16,5 +16,8 @@
       "type" : "patreon",
       "url" : "https://gitcoin.co/grants/1591/science-of-the-future"
     }
-  ]
+  ],
+  "dependencies": {
+    "@vporton/future-contracts": "^0.1.0"
+  }
 }
