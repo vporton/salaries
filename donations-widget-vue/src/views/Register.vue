@@ -37,7 +37,18 @@ import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/Ap
 
 export default {
   name: 'Register',
-  props: ['oracleId'],
+  // props: ['oracleId'],
+  data() {
+    return {
+      oracleId: null,
+    }
+  },
+  created() {
+    getAddresses()
+      .then(function(abis) {
+        this.oracleId = abis.oracleId
+    })
+  },
   methods: {
     async register() {
       const web3 = await getWeb3();
@@ -47,7 +58,8 @@ export default {
         if (!addresses) return;
         const scienceAbi = (await getABIs()).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-        await mySend(science, science.methods.registerCustomer, [this.oracleId, []], {from: account}, null)
+        console.log(account, this.oracleId, true, []) // FIXME: remove
+        await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
           .catch(e => {
             alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
           });

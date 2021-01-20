@@ -107,7 +107,7 @@ import erc20Abi from '../utils/ERC1155Abi';
 
 export default {
   name: 'Donate',
-  props: ['oracleId'],
+  // props: ['oracleId'],
   components: {
     EthAddress,
     Uint256,
@@ -115,25 +115,6 @@ export default {
     VueCtkDateTimePicker,
   },
   watch: {
-    oracleId(/*v*/) {
-      async function updateInfo() {
-        const web3 = await getWeb3();
-        if (web3 !== null) {
-          const contractEthAddress = await this.lockContract();
-          if (contractEthAddress !== '') {
-            const scienceAbi = (await getABIs()).SalaryWithDAO;
-            const science = new web3.eth.Contract(scienceAbi, contractEthAddress);
-            const account = (await getAccounts())[0];
-            if(!account) {
-              // setConnectedToAccount(false); // TODO
-              return;
-            }
-            this.bequestDate = new Date(await science.methods.minFinishTime(this.oracleId).call() * 1000);
-          }
-        }
-      }
-      updateInfo();
-    },
     amount() {
       this.setDonateButtonDisabled();
     },
@@ -157,6 +138,8 @@ export default {
   },
   data() {
     return {
+      oracleId: null, // TODO: should be a property instead
+
       paymentKind: 'bequestTokens',
       tokenKind: '',
       bequestDate: null,
@@ -172,6 +155,13 @@ export default {
       tokenDisplayInline: 'none',
       tokenDisplayBlock: 'none',
     }
+  },
+  created() {
+    const self = this
+    getAddresses()
+      .then(function(abis) {
+        self.oracleId = abis.oracleId
+    })
   },
   methods: {
     async obtainERC1155Token() {
