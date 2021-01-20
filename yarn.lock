@@ -1080,11 +1080,10 @@
 
 "@vporton/future-contracts@git+ssh://git@github.com/vporton/future-contracts.git":
   version "0.0.1"
-  resolved "git+ssh://git@github.com/vporton/future-contracts.git#f15adbc50e9a5e7906313dd4ab35a264b84228ab"
+  resolved "git+ssh://git@github.com/vporton/future-contracts.git#8b6ce25ff1d25fda328f7ce84f03904b25347937"
   dependencies:
     "@openzeppelin/contracts" "^3.3.0"
     abdk-libraries-solidity "^2.4.0"
-    restorable-funds "git+ssh://git@github.com/vporton/restorable-funds"
 
 "@vporton/wrap-tokens@git+ssh://git@github.com/vporton/wrap-tokens.git#v3.1.0":
   version "2.1.0"
@@ -8112,13 +8111,6 @@ responselike@^1.0.2:
   integrity sha1-kYcg7ztjHFZCvgaPFa3lpG9Loec=
   dependencies:
     lowercase-keys "^1.0.0"
-
-"restorable-funds@git+ssh://git@github.com/vporton/restorable-funds":
-  version "0.0.1"
-  resolved "git+ssh://git@github.com/vporton/restorable-funds#eabdf85b31dbe9a9c5d63bf29b8e316a0e81c230"
-  dependencies:
-    "@openzeppelin/contracts" "^3.3.0"
-    hardhat "^2.0.5"
 
 restore-cursor@^2.0.0:
   version "2.0.0"

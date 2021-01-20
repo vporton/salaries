@@ -107,6 +107,7 @@ import erc20Abi from '../utils/ERC1155Abi';
 
 export default {
   name: 'Donate',
+  props: ['oracleId'],
   components: {
     EthAddress,
     Uint256,
@@ -156,7 +157,6 @@ export default {
   },
   data() {
     return {
-      oracleId: '0', // FIXME
       paymentKind: 'bequestTokens',
       tokenKind: '',
       bequestDate: null,

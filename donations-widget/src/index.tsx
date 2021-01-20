@@ -62,32 +62,6 @@ function isRealNumber(v: string): boolean { // TODO: called twice
   return /^[0-9]+(\.[0-9]+)?$/.test(v);
 }
 
-let _fetchedJsonPromises = new Map<string, Promise<any>>();
-let _fetched = new Map<string, any>();
-
-async function fetchOnceJsonPromise(url: string): Promise<Promise<any>> {
-  let promise = _fetchedJsonPromises.get(url);
-  if (promise) {
-    return promise;
-  } else {
-    const fetchResult = await fetch(url);
-    promise = fetchResult.json() as Promise<any>;
-    _fetchedJsonPromises.set(url, promise);
-    return await promise;
-  }
-}
-
-async function fetchOnceJson(url: string): Promise<any> {
-  let json = _fetched.get(url);
-  if (json) {
-    return json;
-  } else {
-    json = await fetchOnceJsonPromise(url);
-    _fetched.set(url, json);
-    return json;
-  }
-}
-
 function DonationsComponent() {
   async function getWeb3() {
     try {

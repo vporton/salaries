@@ -37,6 +37,7 @@ import { getWeb3, mySend, getABIs, getAccounts, getEthAddresses } from '../utils
 
 export default {
   name: 'Register',
+  props: ['oracleId'],
   methods: {
     async register() {
       const web3 = await getWeb3();
@@ -51,11 +52,6 @@ export default {
             alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
           });
       }
-    }
-  },
-  data() {
-    return {
-      oracleId: '0', // FIXME
     }
   },
 }
