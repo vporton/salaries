@@ -75,7 +75,7 @@
       </p>
     </div>
     <p :style="{display: walletDisplayBlock}">
-      <button class="donateButton" :disabled="bequestButtonDisabled" @click="this.bequestAll()">
+      <button class="donateButton" :disabled="bequestButtonDisabled" @click="bequestAll()">
         Bequest!
       </button>
     </p>
