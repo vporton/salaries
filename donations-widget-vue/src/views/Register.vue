@@ -45,7 +45,7 @@ export default {
   },
   created() {
     const self = this
-    getAddresses()
+    getAddresses(this.prefix)
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
@@ -55,7 +55,7 @@ export default {
       const web3 = await getWeb3();
       const account = (await getAccounts())[0];
       if (web3 && account !== null) {
-        const addresses = await getAddresses();
+        const addresses = await getAddresses(this.prefix);
         if (!addresses) return;
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);

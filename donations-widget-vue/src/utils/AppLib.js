@@ -90,8 +90,8 @@ export async function getABIs(PREFIX) {
   return await fetchOnceJson(PREFIX + `abis.json`);
 }
 
-export async function getAddresses() {
-  const [json, chainId] = await Promise.all([fetchOnceJson(`addresses.json`), getChainId()]);
+export async function getAddresses(PREFIX) {
+  const [json, chainId] = await Promise.all([fetchOnceJson(PREFIX + `addresses.json`), getChainId()]);
   if (!CHAINS[chainId] || !json[CHAINS[chainId]]) {
     alert("The selected blockchain is not supported!");
     return null;

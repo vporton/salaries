@@ -158,7 +158,7 @@ export default {
   },
   created() {
     const self = this
-    getAddresses()
+    getAddresses(this.prefix)
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
@@ -172,7 +172,7 @@ export default {
           collateralTokenId = this.tokenId;
           break;
         case 'erc20':
-          collateralContractEthAddress = (await getAddresses()).ERC1155OverERC20.address;
+          collateralContractEthAddress = (await getAddresses(this.prefix)).ERC1155OverERC20.address;
           collateralTokenId = Web3.utils.toHex(this.tokenEthAddress);
 
           {
@@ -198,7 +198,7 @@ export default {
       return [collateralContractEthAddress, collateralTokenId];
     },
     async lockContract() {
-      const addresses = await getAddresses();
+      const addresses = await getAddresses(this.prefix);
       return addresses.SalaryWithDAO.address;
     },
     async donate() {
