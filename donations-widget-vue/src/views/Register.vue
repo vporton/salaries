@@ -44,10 +44,11 @@ export default {
     }
   },
   created() {
+    const self = this
     getAddresses()
       .then(function(abis) {
-        this.oracleId = abis.oracleId
-    })
+        self.oracleId = abis.oracleId
+      })
   },
   methods: {
     async register() {

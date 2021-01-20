@@ -103,7 +103,7 @@ import Amount from '@/components/Amount.vue'
 import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 
 import erc1155Abi from '../utils/ERC1155Abi';
-import erc20Abi from '../utils/ERC1155Abi';
+import erc20Abi from '../utils/ERC20Abi';
 
 export default {
   name: 'Donate',
@@ -161,7 +161,7 @@ export default {
     getAddresses()
       .then(function(abis) {
         self.oracleId = abis.oracleId
-    })
+      })
   },
   methods: {
     async obtainERC1155Token() {
