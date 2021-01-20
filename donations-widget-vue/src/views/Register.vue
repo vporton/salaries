@@ -60,9 +60,14 @@ export default {
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
+          .then(txData => {
+            const conditionId = txData.events.ConditionCreated.returnValues.condition;
+            console.log('conditionId:', conditionId)
+            this.$emit('conditionCreated', conditionId);
+          })
           .catch(e => {
             alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
-          });
+          })
       }
     }
   },

@@ -111,9 +111,10 @@ export async function mySend(contract, method, args, sendArgs, handler) {
   return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
     .then((estimatedGas) => {
       const gas = String(Math.floor(Number(estimatedGas) * 1.15) + 24000);
-      if(handler !== null)
+      if (handler !== null) {
         return method.bind(contract)(...args).send({gas, from: account, ...sendArgs}, handler);
-      else
+      } else {
         return method.bind(contract)(...args).send({gas, from: account, ...sendArgs});
+      }
     });
 }
