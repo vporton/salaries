@@ -86,8 +86,8 @@ export async function getWeb3() {
   return web3;
 }
 
-export async function getABIs() {
-  return await fetchOnceJson(`abis.json`);
+export async function getABIs(PREFIX) {
+  return await fetchOnceJson(PREFIX + `abis.json`);
 }
 
 export async function getAddresses() {

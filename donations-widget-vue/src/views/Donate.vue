@@ -107,7 +107,7 @@ import erc20Abi from '../utils/ERC20Abi';
 
 export default {
   name: 'Donate',
-  // props: ['oracleId'],
+  props: ['prefix'],
   components: {
     EthAddress,
     Uint256,
@@ -207,7 +207,7 @@ export default {
       if (web3 !== null) {
         try {
           const contractAddress = await this.lockContract();
-          const scienceAbi = (await getABIs()).SalaryWithDAO;
+          const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, this.contractAddress);
           const account = (await getAccounts())[0];
           if(!account) {

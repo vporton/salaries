@@ -37,7 +37,7 @@ import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/Ap
 
 export default {
   name: 'Register',
-  // props: ['oracleId'],
+  props: ['prefix'],
   data() {
     return {
       oracleId: null,
@@ -57,7 +57,7 @@ export default {
       if (web3 && account !== null) {
         const addresses = await getAddresses();
         if (!addresses) return;
-        const scienceAbi = (await getABIs()).SalaryWithDAO;
+        const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         console.log(account, this.oracleId, true, []) // FIXME: remove
         await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)

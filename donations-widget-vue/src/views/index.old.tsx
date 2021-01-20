@@ -110,7 +110,7 @@ function DonationsComponent() {
       if (web3 && account !== null) {
         const addresses = await getAddresses();
         if (!addresses) return;
-        const scienceAbi = (await getABIs()).SalaryWithDAO;
+        const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new (web3 as any).eth.Contract(scienceAbi as any, addresses.SalaryWithDAO.address);
         await mySend(science, science.methods.registerCustomer, [oracleId, []], {from: account}, null)
           .catch(e => {
