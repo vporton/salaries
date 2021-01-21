@@ -16,10 +16,10 @@ Vue.config.ignoredElements = [
 Vue.use(vueCustomElement);
 
 Vue.customElement('donations-donate', Donate, {
-  // Additional Options: https://github.com/karol-f/vue-custom-element#options
+  shadow: false,
 });
 Vue.customElement('donations-register', Register, {
-  // Additional Options: https://github.com/karol-f/vue-custom-element#options
+  shadow: false,
 });
 
 new Vue({
