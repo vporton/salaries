@@ -162,6 +162,7 @@ export default {
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
+    window.donateComponent = self // bug workaround used in GitCoin
   },
   methods: {
     async obtainERC1155Token() {
