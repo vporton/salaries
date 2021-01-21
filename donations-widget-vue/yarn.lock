@@ -1572,7 +1572,7 @@
 
 "@vue/web-component-wrapper@git+ssh://git@github.com:vporton/vue-web-component-wrapper.git#shadow-option":
   version "1.2.0"
-  resolved "git+ssh://git@github.com:vporton/vue-web-component-wrapper.git#30db7ce686f13a2822d17a6db0594f5cca87ec8c"
+  resolved "git+ssh://git@github.com:vporton/vue-web-component-wrapper.git#63d4f0d03083cb5bb50f6f768a5673b4af7d48c2"
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
