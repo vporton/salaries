@@ -69,7 +69,7 @@ export default {
             const conditionId = txData.events.ConditionCreated.returnValues.condition;
             console.log('conditionId:', conditionId);
             this.$emit('conditionCreated', conditionId);
-            for(f of this.registerCallbacks) {
+            for(let f of this.registerCallbacks) {
               f(conditionId);
             }
           })
