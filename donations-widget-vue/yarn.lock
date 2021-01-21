@@ -1570,10 +1570,6 @@
   version "1.2.0"
   resolved "git+ssh://git@github.com:vporton/vue-web-component-wrapper.git#e2b84569c4671a7ea451b3887840533261e71715"
 
-"@vue/web-component-wrapper@git+ssh://git@github.com:vporton/vue-web-component-wrapper.git#shadow-option":
-  version "1.2.0"
-  resolved "git+ssh://git@github.com:vporton/vue-web-component-wrapper.git#63d4f0d03083cb5bb50f6f768a5673b4af7d48c2"
-
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"
@@ -9104,6 +9100,11 @@ vue-ctk-date-time-picker@^2.5.0:
     moment-range "^4.0.1"
     v-click-outside "^2.0.2"
     vue "^2.6.9"
+
+vue-custom-element@^3.2.14:
+  version "3.2.14"
+  resolved "https://registry.yarnpkg.com/vue-custom-element/-/vue-custom-element-3.2.14.tgz#fc4987ed4e1742bcb4e70a669d5060fc2c42bc25"
+  integrity sha512-IZYYsqyF1wC7hFm2g6gkf7lXp9hFau+po6dL0JTaMvSglsAgnowcbkpaOUl8exC7Bs6Ir9smJSXmKGFapml6TA==
 
 vue-datetime@^1.0.0-beta.14:
   version "1.0.0-beta.14"
