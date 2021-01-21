@@ -12,5 +12,5 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-window.customElements.define('donations-donate', wrap(Vue, Donate));
-window.customElements.define('donations-register', wrap(Vue, Register));
+window.customElements.define('donations-donate', wrap(Vue, Donate, {isShadow: false}));
+window.customElements.define('donations-register', wrap(Vue, Register, {isShadow: false}));

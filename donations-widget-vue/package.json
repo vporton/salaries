@@ -25,7 +25,7 @@
     "binary": "node build-binary.js && cd dist-bin && npm publish --access public"
   },
   "dependencies": {
-    "@vue/web-component-wrapper": "^1.2.0",
+    "@vue/web-component-wrapper": "git+ssh://git@github.com:vporton/vue-web-component-wrapper.git",
     "core-js": "^3.6.5",
     "luxon": "^1.25.0",
     "vue": "^2.6.11",

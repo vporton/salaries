@@ -1566,10 +1566,14 @@
   resolved "https://registry.yarnpkg.com/@vue/preload-webpack-plugin/-/preload-webpack-plugin-1.1.2.tgz#ceb924b4ecb3b9c43871c7a429a02f8423e621ab"
   integrity sha512-LIZMuJk38pk9U9Ur4YzHjlIyMuxPlACdBIHH9/nGYVTsaGKOSnSuELiE8vS9wa+dJpIYspYUOqk+L1Q4pgHQHQ==
 
-"@vue/web-component-wrapper@^1.2.0":
+"@vue/web-component-wrapper@^1.2.0", "@vue/web-component-wrapper@git+ssh://git@github.com:vuejs/vue-web-component-wrapper.git":
   version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@vue/web-component-wrapper/-/web-component-wrapper-1.2.0.tgz#bb0e46f1585a7e289b4ee6067dcc5a6ae62f1dd1"
-  integrity sha512-Xn/+vdm9CjuC9p3Ae+lTClNutrVhsXpzxvoTXXtoys6kVRX9FkueSUAqSWAyZntmVLlR4DosBV4pH8y5Z/HbUw==
+  resolved "git+ssh://git@github.com:vuejs/vue-web-component-wrapper.git#e2b84569c4671a7ea451b3887840533261e71715"
+
+"@vue/web-component-wrapper@git+ssh://git@github.com:vporton/vue-web-component-wrapper.git":
+  version "1.2.0"
+  uid e2b84569c4671a7ea451b3887840533261e71715
+  resolved "git+ssh://git@github.com:vporton/vue-web-component-wrapper.git#e2b84569c4671a7ea451b3887840533261e71715"
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
