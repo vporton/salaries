@@ -34,6 +34,16 @@
         <input
           type="radio"
           name="tokenKind"
+          @click="setTokenKind('eth')"
+        />
+        &nbsp;ETH
+      </label>
+      <small>(recommended)</small>
+      {{' '}}
+      <label>
+        <input
+          type="radio"
+          name="tokenKind"
           @click="setTokenKind('erc1155')"
         />
         &nbsp;ERC-1155
@@ -51,7 +61,9 @@
       <span :style="{display: walletDisplayInline}">Wallet address:</span>
       <span :style="{display: tokenDisplayInline}">Token address:</span>
       {{' '}}
-      <EthAddress v-model="tokenEthAddress"/>
+      <span :style="{display: addressDisplayInline}">
+        <EthAddress v-model="tokenEthAddress"/>
+      </span>
     </p>
     <p :style="{display: this.paymentKind !== 'bequestGnosis' && this.tokenKind === 'erc1155' ? 'block' : 'none'}">
       Token ID:
@@ -124,6 +136,7 @@ export default {
     },
     tokenKind() {
       this.setDonateButtonDisabled();
+      this.updateWalletTokenDisplay();
     },
     tokenEthAddress() {
       this.setDonateButtonDisabled();
@@ -154,6 +167,7 @@ export default {
       walletDisplayBlock: 'block',
       tokenDisplayInline: 'none',
       tokenDisplayBlock: 'none',
+      addressDisplayInline: 'inline',
     }
   },
   created() {
@@ -202,7 +216,32 @@ export default {
       const addresses = await getAddresses(this.prefix);
       return addresses.SalaryWithDAO.address;
     },
-    async donate() {
+    async donateETH() {
+      const wei = toWei(this.amount);
+      const web3 = await getWeb3();
+      if (web3 !== null) {
+        try {
+          const contractAddress = (await getAddresses(this.prefix)).DonateETH.address;
+          const abi = (await getABIs(this.prefix)).DonateETH;
+          const contract = new web3.eth.Contract(abi, contractAddress);
+          const account = (await getAccounts())[0];
+          if(!account) {
+            // setConnectedToAccount(false); // TODO
+            return;
+          }
+          await mySend(contract, contract.methods.donate,
+            [this.oracleId,
+             account,
+             []],
+            {from: account, value: wei}, null
+          );
+        }
+        catch(e) {
+          alert(e.message);
+        }
+      }
+    },
+    async donateToken() {
       const wei = toWei(this.amount);
       const web3 = await getWeb3();
       if (web3 !== null) {
@@ -241,13 +280,21 @@ export default {
         }
       }
     },
+    async donate() {
+      if (this.tokenKind === 'eth') {
+        this.donateETH();
+      } else {
+        this.donateToken();
+      }
+    },
     async bequestAll() {
       alert("Bequesting all funds is not yet supported!");
     },
     setDonateButtonDisabled() {
       this.donateButtonDisabled =
         !validators.isRealNumber(this.amount) || this.paymentKind === '' || this.tokenKind === '' ||
-        !validators.isEthAddressValid(this.tokenEthAddress) || (this.tokenKind === 'erc1155' && !validators.isUint256Valid(this.tokenId));
+        (this.tokenKind !== 'eth' && !validators.isEthAddressValid(this.tokenEthAddress)) ||
+        (this.tokenKind === 'erc1155' && !validators.isUint256Valid(this.tokenId));
     },
     setBequestButtonDisabled() {
       this.bequestButtonDisabled = !validators.isEthAddressValid(this.tokenEthAddress) || this.bequestDate === null;
@@ -270,8 +317,9 @@ export default {
     updateWalletTokenDisplay() {
       this.walletDisplayInline = this.paymentKind === 'bequestGnosis' ? 'inline' : 'none'
       this.walletDisplayBlock = this.paymentKind === 'bequestGnosis' ? 'block' : 'none'
-      this.tokenDisplayInline = this.paymentKind !== 'bequestGnosis' ? 'inline' : 'none'
+      this.tokenDisplayInline = this.paymentKind !== 'bequestGnosis' && this.tokenKind !== 'eth' ? 'inline' : 'none'
       this.tokenDisplayBlock = this.paymentKind !== 'bequestGnosis' ? 'block' : 'none'
+      this.addressDisplayInline = this.paymentKind === 'bequestGnosis' || this.tokenKind !== 'eth' ? 'inline' : 'none'
     },
     isPastDate(date) {
       const currentDate = new Date();
