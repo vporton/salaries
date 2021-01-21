@@ -1,6 +1,6 @@
 {
   "name": "@vporton/donations-widget-vue",
-  "version": "0.1.10-no-shadow",
+  "version": "0.1.11-no-shadow",
   "author": "Victor Porton",
   "description": "App/widgets to accept crypto donations for the future.",
   "license": "GPL-3.0-or-later",
@@ -25,7 +25,7 @@
     "binary": "node build-binary.js && cd dist-bin && npm publish --access public"
   },
   "dependencies": {
-    "@vue/web-component-wrapper": "git+ssh://git@github.com:vporton/vue-web-component-wrapper.git",
+    "@vue/web-component-wrapper": "git+ssh://git@github.com:vporton/vue-web-component-wrapper.git#shadow-option",
     "core-js": "^3.6.5",
     "luxon": "^1.25.0",
     "vue": "^2.6.11",
