@@ -41,6 +41,7 @@ export default {
   data() {
     return {
       oracleId: null,
+      registerCallbacks: [],
     }
   },
   created() {
@@ -49,8 +50,12 @@ export default {
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
+    window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
+    addRegisterCallback(f) { // bug workaround used in GitCoin
+      this.registerCallbacks.push(f)
+    },
     async register() {
       const web3 = await getWeb3();
       const account = (await getAccounts())[0];
@@ -62,8 +67,11 @@ export default {
         await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
           .then(txData => {
             const conditionId = txData.events.ConditionCreated.returnValues.condition;
-            console.log('conditionId:', conditionId)
+            console.log('conditionId:', conditionId);
             this.$emit('conditionCreated', conditionId);
+            for(f of this.registerCallbacks) {
+              f(conditionId);
+            }
           })
           .catch(e => {
             alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
