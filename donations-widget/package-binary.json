@@ -18,6 +18,6 @@
     }
   ],
   "dependencies": {
-    "@vporton/future-contracts": "^0.1.0"
+    "@vporton/future-contracts": "git+ssh://git@github.com/vporton/future-contracts.git"
   }
 }
