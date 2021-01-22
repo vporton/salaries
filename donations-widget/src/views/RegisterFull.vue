@@ -5,7 +5,7 @@
         <br/> 
         <small>Just bequest all your funds here.</small>
     </p>
-    <Register :prefix="this.prefix"/>
+    <Register :prefix="this.prefix" :initialConditionId="this.initialConditionId"/>
   </div>
 </template>
 
@@ -14,9 +14,20 @@ import Register from './Register';
 
 export default {
   name: 'RegisterFull',
-  props: ['prefix'],
+  props: [
+    'prefix',
+    'initialConditionId',
+  ],
   components: {
     Register,
   },
+  mounted() {
+    // Hack
+    window.registerComponent.addRegisterCallback(onConditionCreated);
+  },
+}
+
+function onConditionCreated(/*conditionId*/) {
+  // alert(`Your condition ID is ${conditionId}. Write it down.`)
 }
 </script>

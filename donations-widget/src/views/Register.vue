@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p style="color: red">This is demo version for a testnet. Contracts are not audited yet.</p>
+    <p style="color: red">This is demo version for a testnet. Contracts are not enough tested and audited yet.</p>
     <p>
         <small>
             Free software authors, scientists/inventors, science/software publishers, carbon accounters,
@@ -8,7 +8,11 @@
         </small>
     </p>
     <p>
-        <button class="donateButton" @click="register">Register for a salary</button>
+        <button class="donateButton" :style="{display: registerStyle}" @click="register">Register for a salary</button>
+        <span :style="{display: alreadyRegisterStyle}">
+          <strong>You are already registered.</strong>
+          Your condition ID is {{conditionId}}.
+        </span>
         <br/>
         <small>
             After you have been registered, see TODO to improve your rating.
@@ -37,12 +41,23 @@ import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/Ap
 
 export default {
   name: 'Register',
-  props: ['prefix'],
+  props: [
+    'prefix',
+    'initialConditionId',
+  ],
   data() {
     return {
       oracleId: null,
       registerCallbacks: [],
+      conditionId: this.initialConditionId,
+      registerStyle: '',
+      alreadyRegisterStyle: '',
     }
+  },
+  watch: {
+    conditionId() {
+      this.updateRegisteredStatus()
+    },
   },
   created() {
     const self = this
@@ -50,9 +65,14 @@ export default {
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
+    this.updateRegisteredStatus()
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
+    updateRegisteredStatus() {
+      this.registerStyle = this.conditionId !== undefined ? 'none' : 'inline'
+      this.alreadyRegisterStyle = this.conditionId !== undefined ? 'inline' : 'none'
+    },
     addRegisterCallback(f) { // bug workaround used in GitCoin
       this.registerCallbacks.push(f)
     },
@@ -66,11 +86,11 @@ export default {
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
           .then(txData => {
-            const conditionId = txData.events.ConditionCreated.returnValues.condition;
-            console.log('conditionId:', conditionId);
-            this.$emit('conditionCreated', conditionId);
+            this.conditionId = txData.events.ConditionCreated.returnValues.condition;
+            console.log('conditionId:', this.conditionId);
+            this.$emit('conditionCreated', this.conditionId);
             for(let f of this.registerCallbacks) {
-              f(conditionId);
+              f(this.conditionId);
             }
           })
           .catch(e => {

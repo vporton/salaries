@@ -1,13 +1,10 @@
 <template>
   <div>
     <p>
-      This is <strong>the</strong> donation app. Don't use KickStarter/GoFundMe
-      anymore, <em>donate and/or bequest</em> here for the software and the free
+      This is <strong>the</strong> donation app. <em>Donate and/or bequest</em> here for the software and the free
       market to choose the best donation recepient.
     </p>
-    <p style="color: red">
-      This is demo version for a testnet. Contracts are not audited yet.
-    </p>
+    <p style="color: red">This is demo version for a testnet. Contracts are not enough tested and audited yet.</p>
     <p>
       <label>
         <input
