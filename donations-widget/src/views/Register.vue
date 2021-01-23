@@ -11,11 +11,11 @@
         <button class="donateButton" :style="{display: registerStyle}" @click="register">Register for a salary</button>
         <span :style="{display: alreadyRegisterStyle}">
           <strong>You are already registered.</strong>
-          Your condition ID is {{conditionId}}.
-          <br/>
-          Your salary to be paid: <span>{{toBePaid}}</span> personal tokens.
-          <br/>
-          Your lifetime salary: <span>{{lifetimeSalary}}</span> personal tokens.
+          Your condition ID is {{conditionId}}. <br/>
+          Registration date: {{new Date(registrationDate*1000)}} <br/>
+          Last withdrawal date: {{new Date(lastSalaryDate*1000)}} <br/>
+          Salary to be paid: <span>{{toBePaid}}</span> personal tokens. <br/>
+          Lifetime salary: <span>{{lifetimeSalary}}</span> personal tokens.
         </span>
         <br/>
         <small>
@@ -126,7 +126,6 @@ export default {
     updateSalary() {
       const time = Date.now();
       const seconds = Math.floor(time / 1000);
-      console.log(this.lastSalaryDate, this.registrationDate)
       this.toBePaid = seconds - this.lastSalaryDate;
       this.lifetimeSalary = seconds - this.registrationDate;
       setTimeout(this.updateSalary.bind(this), time - seconds * 1000);
