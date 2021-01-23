@@ -25,6 +25,7 @@
     "binary": "node build-binary.js && cd dist-bin && npm publish --access public"
   },
   "dependencies": {
+    "@vporton/future-contracts": "git+ssh://git@github.com/vporton/future-contracts.git",
     "@vue/web-component-wrapper": "^1.2.0",
     "core-js": "^3.6.5",
     "luxon": "^1.25.0",

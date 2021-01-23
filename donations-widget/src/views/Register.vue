@@ -12,6 +12,10 @@
         <span :style="{display: alreadyRegisterStyle}">
           <strong>You are already registered.</strong>
           Your condition ID is {{conditionId}}.
+          <br/>
+          Your salary to be paid: <span>{{toBePaid}}</span> personal tokens.
+          <br/>
+          Your lifetime salary: <span>{{lifetimeSalary}}</span> personal tokens.
         </span>
         <br/>
         <small>
@@ -52,6 +56,10 @@ export default {
       conditionId: this.initialConditionId,
       registerStyle: '',
       alreadyRegisterStyle: '',
+      toBePaid: null,
+      lifetimeSalary: null,
+      registrationDate: null,
+      lastSalaryDate: null,
     }
   },
   watch: {
@@ -72,6 +80,23 @@ export default {
     updateRegisteredStatus() {
       this.registerStyle = this.conditionId !== undefined ? 'none' : 'inline'
       this.alreadyRegisterStyle = this.conditionId !== undefined ? 'inline' : 'none'
+      const self = this
+      async function loadData() {
+        const web3 = await getWeb3();
+        const account = (await getAccounts())[0];
+        if (web3 && account !== null) {
+          const addresses = await getAddresses(self.prefix);
+          if (!addresses) return;
+          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
+          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+          self.registrationDate = await science.methods.conditionCreationDates(self.conditionId).call()
+          self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
+        } 
+      }
+      if (this.conditionId !== undefined) {
+        loadData()
+        this.startShowingSalary()
+      }
     },
     addRegisterCallback(f) { // bug workaround used in GitCoin
       this.registerCallbacks.push(f)
@@ -97,7 +122,18 @@ export default {
             alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
           })
       }
-    }
+    },
+    updateSalary() {
+      const time = Date.now();
+      const seconds = Math.floor(time / 1000);
+      console.log(this.lastSalaryDate, this.registrationDate)
+      this.toBePaid = seconds - this.lastSalaryDate;
+      this.lifetimeSalary = seconds - this.registrationDate;
+      setTimeout(this.updateSalary.bind(this), time - seconds * 1000);
+    },
+    startShowingSalary() {
+      this.updateSalary()
+    },
   },
 }
 </script>
