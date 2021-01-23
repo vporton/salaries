@@ -5,7 +5,7 @@
         <br/> 
         <small>Just bequest all your funds here.</small>
     </p>
-    <Register :prefix="this.prefix" :initialConditionId="this.initialConditionId"/>
+    <Register :prefix="this.prefix" :initialconditionid="this.initialconditionid"/>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ export default {
   name: 'RegisterFull',
   props: [
     'prefix',
-    'initialConditionId',
+    'initialconditionid',
   ],
   components: {
     Register,

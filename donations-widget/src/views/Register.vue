@@ -61,14 +61,14 @@ export default {
   name: 'Register',
   props: [
     'prefix',
-    'initialConditionId',
+    'initialconditionid',
   ],
   components: {
     Uint256,
   },
   data() {
-    const conditionId = this.initialConditionId === undefined || this.initialConditionId === ''
-      ? undefined : this.initialConditionId
+    const conditionId = this.initialconditionid === undefined || this.initialconditionid === ''
+      ? undefined : this.initialconditionid
     return {
       oracleId: null,
       registerCallbacks: [],
@@ -102,11 +102,11 @@ export default {
   },
   methods: {
     onUpdateConditionId() {
-      this.isDefaultID = this.conditionId === this.initialConditionId ? 'inline' : 'none'
-      this.isNotDefaultID = this.conditionId !== this.initialConditionId ? 'inline' : 'none'
+      this.isDefaultID = this.conditionId === this.initialconditionid ? 'inline' : 'none'
+      this.isNotDefaultID = this.conditionId !== this.initialconditionid ? 'inline' : 'none'
     },
     setDefaultID() {
-      this.conditionId = this.initialConditionId
+      this.conditionId = this.initialconditionid
       this.updateRegisteredStatus()
     },
     updateRegistrationStyles() {
