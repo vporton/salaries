@@ -11,7 +11,7 @@
         Condition ID:
         <Uint256
           :value="conditionId"
-          @input="conditionId = $event !== '' ? $event : undefined"
+          @input="conditionId = $event !== '' ? $event : undefined; updateRegisteredStatus();"
           size="20"/>
         <span :style="{display: noSuchConditionStyle, color: 'red'}"><br/>No such condition ID</span>
     </p>
@@ -75,11 +75,11 @@ export default {
       noSuchConditionStyle: 'none',
     }
   },
-  watch: {
-    conditionId() {
-      this.updateRegisteredStatus()
-    },
-  },
+//  watch: {
+//    conditionId() {
+//      this.updateRegisteredStatus()
+//    },
+//  },
   created() {
     const self = this
     getAddresses(this.prefix)
@@ -135,6 +135,7 @@ export default {
         await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
           .then(txData => {
             this.conditionId = txData.events.ConditionCreated.returnValues.condition;
+            this.updateRegisteredStatus(); // Call it even if this.conditionId didn't change.
             console.log('conditionId:', this.conditionId);
             this.$emit('conditionCreated', this.conditionId);
             for(let f of this.registerCallbacks) {
