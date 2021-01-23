@@ -139,7 +139,6 @@ export default {
           } else {
             [self.registrationDate, self.lastSalaryDate] = [undefined, undefined]
           }
-          console.log('tt', self.registrationDate, self.lastSalaryDate)
           self.updateRegistrationStyles()
         } 
       }
