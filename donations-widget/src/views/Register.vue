@@ -82,6 +82,7 @@ export default {
       noSuchConditionStyle: 'none',
       isDefaultID: 'none',
       isNotDefaultID: 'none',
+      timeoutHandle: null,
     }
   },
   watch: {
@@ -102,6 +103,11 @@ export default {
   },
   methods: {
     onUpdateConditionId() {
+      // TODO: The following causes a serious bug:
+//      if (this.timeoutHandle !== null) {
+//        clearTimeout(this.timeoutHandle);
+//        this.timeoutHandle = null
+//      }
       this.isDefaultID = this.conditionId !== undefined && this.initialconditionid ? 'inline' : 'none'
       this.isNotDefaultID = this.conditionId !== this.initialconditionid ? 'inline' : 'none'
     },
@@ -180,7 +186,7 @@ export default {
       const seconds = Math.floor(time / 1000);
       this.toBePaid = seconds - this.lastSalaryDate;
       this.lifetimeSalary = seconds - this.registrationDate;
-      setTimeout(this.updateSalary.bind(this), time - seconds * 1000);
+      this.timeoutHandle = setTimeout(this.updateSalary.bind(this), time - seconds * 1000);
     },
     startShowingSalary() {
       this.updateSalary()
