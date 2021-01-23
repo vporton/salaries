@@ -11,3 +11,4 @@
 - Bequest funds to several recipients using prediction markets.
 - ENS
 - Common token names
+- Entering not-a-number in Condition ID doesn't reset the UI.
