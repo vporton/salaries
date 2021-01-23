@@ -22,7 +22,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "binary": "node build-binary.js && cd dist-bin && npm publish --access public"
+    "binary": "node build-binary.js"
   },
   "dependencies": {
     "@vporton/future-contracts": "git+ssh://git@github.com/vporton/future-contracts.git",
