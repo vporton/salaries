@@ -2,7 +2,7 @@
   <span class="EthAddress">
     <input
       type="text"
-      :value="value"
+      :value="currentValue"
       @input="input"
       @change="change"
       :class="isRealNumber(this.currentValue) ? '' : 'error'" />
@@ -39,6 +39,9 @@ export default {
   },
   watch: {
     value(v) {
+      this.currentValue = v;
+    },
+    currentValue(v) {
       const valid =  validators.isRealNumber(v)
       this.className = valid ? '' : 'error'
       this.error = valid ? '' : 'Invalid amount'

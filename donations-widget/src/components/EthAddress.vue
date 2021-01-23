@@ -4,7 +4,7 @@
       type="text"
       maxLength="42"
       size="50"
-      :value="value"
+      :value="currentValue"
       @input="input"
       @change="change"
       :class="className" />
@@ -28,9 +28,11 @@ export default {
   },
   methods: {
     input(event) {
+      this.currentValue = event.target.value;
       this.$emit('input', event.target.value)
     },
     change(event) {
+      this.currentValue = event.target.value;
       this.$emit('change', event.target.value)
     },
     isEthAddressValid(value) {
@@ -39,10 +41,13 @@ export default {
   },
   watch: {
     value(v) {
+      this.currentValue = v;
+    },
+    currentValue(v) {
       const valid = validators.isEthAddressValid(v)
       this.className = valid ? '' : 'error'
       this.error = valid ? '' : 'Invalid Ethereum address'
-    }
+    },
   },
 }
 </script>

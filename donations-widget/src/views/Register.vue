@@ -8,10 +8,16 @@
         </small>
     </p>
     <p>
+        Condition ID:
+        <Uint256
+          :value="conditionId"
+          @input="conditionId = $event !== '' ? $event : undefined"
+          size="20"/>
+        <span :style="{display: noSuchConditionStyle, color: 'red'}"><br/>No such condition ID</span>
+    </p>
+    <p>
         <button class="donateButton" :style="{display: registerStyle}" @click="register">Register for a salary</button>
         <span :style="{display: alreadyRegisterStyle}">
-          <strong>You are already registered.</strong>
-          Your condition ID is {{conditionId}}. <br/>
           Registration date: {{new Date(registrationDate*1000)}} <br/>
           Last withdrawal date: {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}} <br/>
           Salary to be paid: <span>{{toBePaid}}</span> personal tokens. <br/>
@@ -42,6 +48,7 @@
 
 <script>
 import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
+import Uint256 from '@/components/Uint256.vue'
 
 export default {
   name: 'Register',
@@ -49,6 +56,9 @@ export default {
     'prefix',
     'initialConditionId',
   ],
+  components: {
+    Uint256,
+  },
   data() {
     return {
       oracleId: null,
@@ -60,10 +70,12 @@ export default {
       lifetimeSalary: null,
       registrationDate: null,
       lastSalaryDate: null,
+      noSuchConditionStyle: 'none',
     }
   },
   watch: {
     conditionId() {
+      console.log('yyy')
       this.updateRegisteredStatus()
     },
   },
@@ -78,8 +90,6 @@ export default {
   },
   methods: {
     updateRegisteredStatus() {
-      this.registerStyle = this.conditionId !== undefined ? 'none' : 'inline'
-      this.alreadyRegisterStyle = this.conditionId !== undefined ? 'inline' : 'none'
       const self = this
       async function loadData() {
         const web3 = await getWeb3();
@@ -90,12 +100,24 @@ export default {
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
           self.registrationDate = await science.methods.conditionCreationDates(self.conditionId).call()
+          if (self.registrationDate === '0') {
+            self.noSuchConditionStyle = 'inline'
+            self.registerStyle = 'inline'
+            self.alreadyRegisterStyle = 'none'
+          } else {
+            self.noSuchConditionStyle = 'none'
+            self.registerStyle = self.conditionId !== undefined ? 'none' : 'inline'
+            self.alreadyRegisterStyle = self.conditionId !== undefined ? 'inline' : 'none'
+          }
           self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
         } 
       }
       if (this.conditionId !== undefined) {
         loadData()
         this.startShowingSalary()
+      } else {
+        this.registerStyle = 'inline'
+        this.alreadyRegisterStyle = 'none'
       }
     },
     addRegisterCallback(f) { // bug workaround used in GitCoin

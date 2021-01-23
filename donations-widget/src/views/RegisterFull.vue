@@ -28,6 +28,7 @@ export default {
 }
 
 function onConditionCreated(/*conditionId*/) {
+  // TODO: Show a HTML dialog.
   // alert(`Your condition ID is ${conditionId}. Write it down.`)
 }
 </script>

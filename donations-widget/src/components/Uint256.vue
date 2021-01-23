@@ -3,8 +3,8 @@
     <input
       type="text"
       maxLength="78"
-      size="94"
-      :value="value"
+      :size="this.size ? this.size : 94"
+      :value="currentValue"
       @input="input"
       @change="change"
       :class="isUint256Valid(this.currentValue) ? '' : 'error'" />
@@ -18,7 +18,7 @@ import validators from '../utils/validators'
 
 export default {
   name: 'Uint256',
-  props: ['value'],
+  props: ['value', 'size'],
   data() {
     return {
       currentValue: this.value,
@@ -41,6 +41,9 @@ export default {
   },
   watch: {
     value(v) {
+      this.currentValue = v;
+    },
+    currentValue(v) {
       const valid = validators.isUint256Valid(v)
       this.className = valid ? '' : 'error'
       this.error = valid ? '' : 'Invalid 256-bit number'
