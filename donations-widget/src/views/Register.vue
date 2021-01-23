@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
+import { isUint256Valid, getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import Uint256 from '@/components/Uint256.vue'
 
 export default {
@@ -75,7 +75,6 @@ export default {
   },
   watch: {
     conditionId() {
-      console.log('yyy')
       this.updateRegisteredStatus()
     },
   },
@@ -112,7 +111,7 @@ export default {
           self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
         } 
       }
-      if (this.conditionId !== undefined) {
+      if (this.conditionId !== undefined && isUint256Valid(this.conditionId)) {
         loadData()
         this.startShowingSalary()
       } else {
