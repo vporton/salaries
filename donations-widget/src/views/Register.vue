@@ -60,10 +60,12 @@ export default {
     Uint256,
   },
   data() {
+    const conditionId = this.initialConditionId === undefined || this.initialConditionId === ''
+      ? undefined : this.initialConditionId
     return {
       oracleId: null,
       registerCallbacks: [],
-      conditionId: this.initialConditionId,
+      conditionId,
       registerStyle: '',
       alreadyRegisterStyle: '',
       toBePaid: null,
