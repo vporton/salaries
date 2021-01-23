@@ -13,6 +13,13 @@
           :value="conditionId"
           @input="conditionId = $event !== '' ? $event : undefined; updateRegisteredStatus();"
           size="20"/>
+        <span>
+          {{' '}}
+          <span :style="{display: isDefaultID}">(Your default condition ID)</span>
+          <span :style="{display: isNotDefaultID}">
+            <button @click="setDefaultID">Go to default ID</button>
+          </span>
+        </span>
         <span :style="{display: noSuchConditionStyle, color: 'red'}"><br/>No such condition ID</span>
     </p>
     <p>
@@ -73,23 +80,35 @@ export default {
       registrationDate: undefined,
       lastSalaryDate: null,
       noSuchConditionStyle: 'none',
+      isDefaultID: 'none',
+      isNotDefaultID: 'none',
     }
   },
-//  watch: {
-//    conditionId() {
-//      this.updateRegisteredStatus()
-//    },
-//  },
+  watch: {
+    conditionId() {
+      // this.updateRegisteredStatus()
+      this.onUpdateConditionId()
+    },
+  },
   created() {
     const self = this
     getAddresses(this.prefix)
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
-    this.updateRegisteredStatus() // TODO: Move to created()?
+    this.updateRegisteredStatus()
+    this.onUpdateConditionId()
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
+    onUpdateConditionId() {
+      this.isDefaultID = this.conditionId === this.initialConditionId ? 'inline' : 'none'
+      this.isNotDefaultID = this.conditionId !== this.initialConditionId ? 'inline' : 'none'
+    },
+    setDefaultID() {
+      this.conditionId = this.initialConditionId
+      this.updateRegisteredStatus()
+    },
     updateRegistrationStyles() {
       if (this.registrationDate === undefined) {
         this.noSuchConditionStyle = 'inline'
