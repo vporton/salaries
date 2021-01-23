@@ -13,7 +13,7 @@
           <strong>You are already registered.</strong>
           Your condition ID is {{conditionId}}. <br/>
           Registration date: {{new Date(registrationDate*1000)}} <br/>
-          Last withdrawal date: {{new Date(lastSalaryDate*1000)}} <br/>
+          Last withdrawal date: {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}} <br/>
           Salary to be paid: <span>{{toBePaid}}</span> personal tokens. <br/>
           Lifetime salary: <span>{{lifetimeSalary}}</span> personal tokens.
         </span>
