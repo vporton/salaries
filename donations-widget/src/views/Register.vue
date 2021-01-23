@@ -66,11 +66,11 @@ export default {
       oracleId: null,
       registerCallbacks: [],
       conditionId,
-      registerStyle: '',
-      alreadyRegisterStyle: '',
+      registerStyle: 'none',
+      alreadyRegisterStyle: 'none',
       toBePaid: null,
       lifetimeSalary: null,
-      registrationDate: null,
+      registrationDate: undefined,
       lastSalaryDate: null,
       noSuchConditionStyle: 'none',
     }
@@ -86,10 +86,21 @@ export default {
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
-    this.updateRegisteredStatus()
+    this.updateRegisteredStatus() // TODO: Move to created()?
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
+    updateRegistrationStyles() {
+      if (this.registrationDate === undefined) {
+        this.noSuchConditionStyle = 'inline'
+        this.registerStyle = 'inline'
+        this.alreadyRegisterStyle = 'none'
+      } else {
+        this.noSuchConditionStyle = 'none'
+        this.registerStyle = this.conditionId !== undefined ? 'none' : 'inline'
+        this.alreadyRegisterStyle = this.conditionId !== undefined ? 'inline' : 'none'
+      }
+    },
     updateRegisteredStatus() {
       const self = this
       async function loadData() {
@@ -100,25 +111,24 @@ export default {
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-          self.registrationDate = await science.methods.conditionCreationDates(self.conditionId).call()
-          if (self.registrationDate === '0') {
-            self.noSuchConditionStyle = 'inline'
-            self.registerStyle = 'inline'
-            self.alreadyRegisterStyle = 'none'
+          const maxConditionId = await science.methods.maxConditionId().call()
+          if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // FIXME: BigNumber
+            [self.registrationDate, self.lastSalaryDate] =
+              await Promise.all([
+                science.methods.conditionCreationDates(self.conditionId).call(),
+                science.methods.lastSalaryDates(self.conditionId).call()])
           } else {
-            self.noSuchConditionStyle = 'none'
-            self.registerStyle = self.conditionId !== undefined ? 'none' : 'inline'
-            self.alreadyRegisterStyle = self.conditionId !== undefined ? 'inline' : 'none'
+            [self.registrationDate, self.lastSalaryDate] = [undefined, undefined]
           }
-          self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
+          console.log('tt', self.registrationDate, self.lastSalaryDate)
+          self.updateRegistrationStyles()
         } 
       }
       if (this.conditionId !== undefined && isUint256Valid(this.conditionId)) {
         loadData()
         this.startShowingSalary()
       } else {
-        this.registerStyle = 'inline'
-        this.alreadyRegisterStyle = 'none'
+        this.updateRegistrationStyles()
       }
     },
     addRegisterCallback(f) { // bug workaround used in GitCoin
