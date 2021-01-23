@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     onUpdateConditionId() {
-      this.isDefaultID = this.conditionId === this.initialconditionid ? 'inline' : 'none'
+      this.isDefaultID = this.conditionId !== undefined && this.initialconditionid ? 'inline' : 'none'
       this.isNotDefaultID = this.conditionId !== this.initialconditionid ? 'inline' : 'none'
     },
     setDefaultID() {
@@ -111,7 +111,7 @@ export default {
     },
     updateRegistrationStyles() {
       if (this.registrationDate === undefined) {
-        this.noSuchConditionStyle = 'inline'
+        this.noSuchConditionStyle = this.conditionId !== undefined ? 'inline' : 'none'
         this.registerStyle = 'inline'
         this.alreadyRegisterStyle = 'none'
       } else {
