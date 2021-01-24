@@ -97,7 +97,9 @@ export async function getAddresses(PREFIX) {
     // alert("The selected blockchain is not supported!");
     return null;
   }
-  return json[CHAINS[chainId]];
+  const addresses = json[CHAINS[chainId]];
+  if (!addresses.SalaryWithDAO) return null; // TODO: Crude hack here!
+  return addresses;
 }
 
 export async function getAccounts(provider) {

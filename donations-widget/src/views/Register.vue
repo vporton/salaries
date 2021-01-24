@@ -196,7 +196,9 @@ export default {
       doIt(); 
     },
     amountOnAccount() {
-      this.amountOnAccountFormatted = Web3.utils.fromWei(this.amountOnAccount);
+      this.amountOnAccountFormatted = this.amountOnAccount !== undefined
+        ? Web3.utils.fromWei(this.amountOnAccount)
+        : '';
     },
   },
   created() {
@@ -204,7 +206,10 @@ export default {
     window.ethereum.on('networkChanged', function(/*networkId*/) {
       self.myGetWeb3().then(value => {
         self.web3 = value
+        // TODO: Is the following correct?
         self.updateRegisteredStatus()
+        self.updateAmountOnAccount()
+        self.updateRegistrationStyles()
       })
     })
     self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
@@ -229,7 +234,7 @@ export default {
           alert("Use the salary recepient's account.")
           return
         }
-        if (web3 && account !== null) {
+        if (web3 && account !== undefined) {
           const addresses = await getAddresses(self.prefix)
           if (!addresses) return
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO
@@ -239,7 +244,7 @@ export default {
             science.methods.mintSalary,
             [self.oracleId, self.conditionId, []],
             {from: account},
-              null)
+            null)
           await tx
           self.updateAmountOnAccount()
         } 
@@ -252,16 +257,15 @@ export default {
         const web3 = await self.myGetWeb3();
         // FIXME: Races!
         // It may be more efficient to use directly the Salary contract, but be aware of race conditions:
-        if (self.conditionId !== undefined) {
+        const addresses = await getAddresses(self.prefix);
+        if (self.conditionId !== undefined && addresses) {
           if (web3) {
-            const addresses = await getAddresses(self.prefix);
-            if (!addresses) return;
             const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
             const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
             const wrapperAbi = (await getABIs(self.prefix)).UnitedSalaryTokenWrapper;
             const wrapper = new web3.eth.Contract(wrapperAbi, addresses.UnitedSalaryTokenWrapper.address);
 
-            if (/^0x0+/.test(self.salaryRecipient)) {
+            if (self.salaryRecipient === undefined || /^0x0+/.test(self.salaryRecipient)) {
               self.lastSalaryDate = undefined
               self.amountOnAccount = undefined
             } else {
@@ -273,6 +277,12 @@ export default {
             self.lastSalaryDate = undefined
             self.amountOnAccount = undefined
           }
+        } else {
+          // Hack.
+          self.lastSalaryDate = undefined
+          self.amountOnAccount = undefined
+          self.registrationDate = undefined
+          self.updateRegistrationStyles()
         }
       }
       doIt()
@@ -307,6 +317,7 @@ export default {
     },
     updateRegistrationStyles() {
       if (this.registrationDate === undefined) {
+        // TODO: For a non-supported Ethereum network use 'none'.
         this.noSuchConditionStyle = this.conditionId !== undefined ? 'inline' : 'none'
         this.registerStyle = 'inline'
         this.alreadyRegisterStyle = 'none'
@@ -321,7 +332,7 @@ export default {
       async function loadData() {
         const web3 = await self.myGetWeb3();
         const account = (await getAccounts())[0];
-        if (web3 && account !== null) {
+        if (web3 && account !== undefined) {
           const addresses = await getAddresses(self.prefix);
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
@@ -354,7 +365,7 @@ export default {
     async register() {
       const web3 = await this.myGetWeb3();
       const account = (await getAccounts())[0];
-      if (web3 && account !== null) {
+      if (web3 && account !== undefined) {
         const addresses = await getAddresses(this.prefix);
         if (!addresses) return;
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
