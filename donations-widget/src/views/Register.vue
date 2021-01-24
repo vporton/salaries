@@ -27,8 +27,8 @@
         <span :style="{display: alreadyRegisterStyle}">
           Salary recipient: <code class="ethereumAddress">{{salaryRecipient}}</code> <br/>
           On account: {{amountOnAccountFormatted}} personal tokens. <br/>
-          Registration date: {{new Date(registrationDate*1000)}} <br/>
-          Last withdrawal date: {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}} <br/>
+            Registration date: {{new Date(registrationDate*1000)}}. <br/>
+          Last withdrawal date: {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}}. <br/>
           Salary to be paid: <span>{{toBePaid}}</span> personal tokens. <br/>
           Lifetime salary: <span>{{lifetimeSalary}}</span> personal tokens.
         </span>
