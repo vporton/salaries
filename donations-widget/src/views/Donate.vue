@@ -259,9 +259,11 @@ export default {
       const web3 = await this.myGetWeb3();
       if (web3 !== null) {
         try {
+          const addresses = await getAddresses(this.prefix);
+          if (!addresses) return;
           const contractAddress = await this.lockContract();
           const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
-          const science = new web3.eth.Contract(scienceAbi, this.contractAddress);
+          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
           const account = (await getAccounts())[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
@@ -269,7 +271,7 @@ export default {
           }
           const [collateralContractAddress, collateralTokenId] = await this.obtainERC1155Token();
           const collateralContract = new web3.eth.Contract(erc1155Abi, collateralContractAddress);
-          const approved = await collateralContract.methods.isApprovedForAll(this.account, this.contractAddress).call();
+          const approved = await collateralContract.methods.isApprovedForAll(account, contractAddress).call();
           if (!approved) {
             const tx = await mySend(
               collateralContract, collateralContract.methods.setApprovalForAll,
