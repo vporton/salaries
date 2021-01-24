@@ -14,6 +14,7 @@
     "@truffle/config": "^1.2.34",
     "@truffle/contract": "^4.3.3",
     "@truffle/deployer": "^3.2.5",
+    "@truffle/hdwallet-provider": "^1.2.1",
     "@vporton/future-contracts": "git+ssh://git@github.com:vporton/future-contracts.git",
     "abdk-libraries-solidity": "^2.4.0",
     "eslint": "^6.6.0",
