@@ -79,7 +79,7 @@ export default {
       oracleId: null,
       registerCallbacks: [],
       conditionId,
-      tokenId: null,
+      tokenId: null, // TODO: Is this field needed?
       registerStyle: 'none',
       alreadyRegisterStyle: 'none',
       toBePaid: null,
@@ -116,9 +116,8 @@ export default {
             ev.unsubscribe();
           }
 
-          // FIXME: Races.
           self.salaryRecipientEvents.push(science.events.ConditionReCreate({
-            filter: {customer: self.salaryRecipient, oldCondition: self.tokenId}},
+            filter: {customer: self.salaryRecipient, condition: self.conditionId}},
             async (error, event) => {
               if (!error) {
                 self.tokenId = event.returnValues.newCondition;
@@ -126,7 +125,7 @@ export default {
             }))
 
           // after subscribing
-          self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call() // FIXME
+          self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call()
         }
       }
       doIt();
