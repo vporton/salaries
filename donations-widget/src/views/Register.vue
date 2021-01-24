@@ -126,16 +126,18 @@ export default {
             ev.unsubscribe();
           }
 
-          self.salaryRecipientEvents.push(science.events.ConditionReCreate({
-            filter: {customer: self.salaryRecipient, condition: self.conditionId}},
-            async (error, event) => {
-              if (!error) {
-                self.tokenId = event.returnValues.newCondition;
-              }
-            }))
+          if (self.conditionId !== undefined && self.salaryRecipient !== undefined) {
+            self.salaryRecipientEvents.push(science.events.ConditionReCreate({
+              filter: {customer: self.salaryRecipient, condition: self.conditionId}},
+              async (error, event) => {
+                if (!error) {
+                  self.tokenId = event.returnValues.newCondition;
+                }
+              }))
 
-          // after subscribing
-          self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call()
+            // after subscribing
+            self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call()
+          }
         }
       }
       doIt();

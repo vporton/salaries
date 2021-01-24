@@ -17,16 +17,16 @@ contract DonateETH is ERC1155TokenReceiver {
     }
 
     function donate(uint64 _oracleId, address _to, bytes calldata _data) public payable {
-        // erc1155LockedETH.setApprovalForAll(address(locker), true);
-        // erc1155LockedETH.borrowETH{value: msg.value}(address(this), _data);
-        // locker.donate(
-        //     erc1155LockedETH,
-        //     tokenId, // erc1155LockedETH.tokenId, // FIXME
-        //     _oracleId,
-        //     msg.value,
-        //     address(this),
-        //     _to,
-        //     _data);
+        erc1155LockedETH.setApprovalForAll(address(locker), true);
+        erc1155LockedETH.borrowETH{value: msg.value}(address(this), _data);
+        locker.donate(
+            erc1155LockedETH,
+            tokenId, // erc1155LockedETH.tokenId, // FIXME
+            _oracleId,
+            msg.value,
+            address(this),
+            _to,
+            _data);
     }
 
     function onERC1155Received(
