@@ -29,7 +29,9 @@
           On account: {{amountOnAccountFormatted}} personal tokens. <br/>
             Registration date: {{new Date(registrationDate*1000)}}. <br/>
           Last withdrawal date: {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}}. <br/>
-          Salary to be paid: <span>{{toBePaid}}</span> personal tokens. <br/>
+          Salary to be paid: <span>{{toBePaid}}</span> personal tokens.
+          <button @click="withdraw">Withdraw</button> <br/>
+          <small>Withdrawal is a paid service, so please withdraw only when you are going to use the money.</small> <br/>
           Lifetime salary: <span>{{lifetimeSalary}}</span> personal tokens.
         </span>
         <br/>
@@ -198,6 +200,30 @@ export default {
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
+    withdraw() {
+      const self = this
+      async function doIt() {
+        const web3 = await getWeb3();
+        const account = (await getAccounts())[0];
+        if (account !== self.salaryRecipient) {
+          alert("Use the salary recepient's account.")
+          return
+        }
+        if (web3 && account !== null) {
+          const addresses = await getAddresses(self.prefix)
+          if (!addresses) return
+          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO
+          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address)
+          await mySend(
+            science,
+            science.methods.mintSalary,
+            [self.oracleId, self.conditionId, []],
+            {from: account},
+              null)
+        } 
+      }
+      doIt();
+    },
     onUpdateConditionId() {
       // TODO: The following causes a serious bug:
 //      if (this.timeoutHandle !== null) {
