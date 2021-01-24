@@ -26,6 +26,7 @@
         <button class="donateButton" :style="{display: registerStyle}" @click="register">Register for a salary</button>
         <span :style="{display: alreadyRegisterStyle}">
           Salary recipient: <code class="ethereumAddress">{{salaryRecipient}}</code> <br/>
+          On account: {{amountOnAccountFormatted}} personal tokens. <br/>
           Registration date: {{new Date(registrationDate*1000)}} <br/>
           Last withdrawal date: {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}} <br/>
           Salary to be paid: <span>{{toBePaid}}</span> personal tokens. <br/>
@@ -55,6 +56,7 @@
 </template>
 
 <script>
+import Web3 from 'web3'
 import { isUint256Valid, getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import Uint256 from '@/components/Uint256.vue'
 
@@ -74,6 +76,7 @@ export default {
       oracleId: null,
       registerCallbacks: [],
       conditionId,
+      tokenId: null,
       registerStyle: 'none',
       alreadyRegisterStyle: 'none',
       toBePaid: null,
@@ -85,12 +88,102 @@ export default {
       isNotDefaultID: 'none',
       timeoutHandle: null,
       salaryRecipient: undefined,
+      amountOnAccount: undefined,
+      amountOnAccountFormatted: '',
+      salaryRecipientEvents: [],
+      tokenIdEvents: [],
     }
   },
   watch: {
     conditionId() {
       // this.updateRegisteredStatus()
       this.onUpdateConditionId()
+    },
+    salaryRecipient() {
+      const self = this
+      async function doIt() {
+        const web3 = await getWeb3();
+        if (web3) {
+          const addresses = await getAddresses(self.prefix);
+          if (!addresses) return;
+          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
+          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+
+          for (let ev of self.salaryRecipientEvents) {
+            ev.unsubscribe();
+          }
+          self.salaryRecipientEvents.push(science.events.ConditionReCreate({
+            filter: {customer: self.salaryRecipient, oldCondition: self.tokenId}},
+            async (error, event) => {
+              if (!error) {
+                self.tokenId = event.returnValues.newCondition;
+              }
+            }));
+
+          // after subscribing
+          self.amountOnAccount = await science.methods.balanceOf(self.salaryRecipient, self.conditionId).call() // FIXME: fromWei
+        }
+      }
+      doIt();
+    },
+    tokenId() {
+      const self = this
+      async function doIt() {
+        const web3 = await getWeb3();
+        if (!web3) {
+          return;
+        }
+        const addresses = await getAddresses(self.prefix);
+        if (!addresses) return;
+        const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
+        const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+
+        for (let ev of self.tokenIdEvents) {
+          ev.unsubscribe();
+        }
+        self.tokenIdEvents.push(science.events.TransferSingle(
+          {filter: {to: self.salaryRecipient, id: self.tokenId}},
+          async () => {
+            if (!event.returnValues.from.eq(event.returnValues.to)) {
+              self.amountOnAccount = self.amountOnAccount.add(event.returnValues.value);
+            }
+          }));
+        self.tokenIdEvents.push(science.events.TransferSingle(
+          {filter: {from: self.salaryRecipient, id: self.tokenId}},
+          async () => {
+            if (!event.returnValues.from.eq(event.returnValues.to)) {
+              self.amountOnAccount = self.amountOnAccount.sub(event.returnValues.value);
+            }
+          }));
+        self.tokenIdEvents.push(science.events.TransferBatch(
+          {filter: {to: self.salaryRecipient}},
+          async () => {
+            if (!event.returnValues.from.eq(event.returnValues.to)) {
+              const ids = event.returnValues.ids;
+              for (let i = 0; i != ids.length; ++i) {
+                if (ids[i] === self.tokenId) {
+                  self.amountOnAccount = self.amountOnAccount.add(event.returnValues.values[i]);
+                }
+              }
+            }
+          }));
+        self.tokenIdEvents.push(science.events.TransferBatch(
+          {filter: {from: self.salaryRecipient}},
+          async () => {
+            if (!event.returnValues.from.eq(event.returnValues.to)) {
+              const ids = event.returnValues.ids;
+              for (let i = 0; i != ids.length; ++i) {
+                if (ids[i] === self.tokenId) {
+                  self.amountOnAccount = self.amountOnAccount.sub(event.returnValues.values[i]);
+                }
+              }
+            }
+          }));
+      }
+      doIt(); 
+    },
+    amountOnAccount() {
+      this.amountOnAccountFormatted = Web3.utils.fromWei(this.amountOnAccount);
     },
   },
   created() {
@@ -128,7 +221,8 @@ export default {
         this.alreadyRegisterStyle = this.conditionId !== undefined ? 'inline' : 'none'
       }
     },
-    updateRegisteredStatus() {
+    updateRegisteredStatus() { // TODO: Rename.
+      this.tokenId = this.conditionId
       const self = this
       async function loadData() {
         const web3 = await getWeb3();
