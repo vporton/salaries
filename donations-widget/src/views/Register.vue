@@ -202,7 +202,10 @@ export default {
   created() {
     const self = this
     window.ethereum.on('networkChanged', function(/*networkId*/) {
-      self.myGetWeb3().then(value => self.web3 = value)
+      self.myGetWeb3().then(value => {
+        self.web3 = value
+        self.updateRegisteredStatus()
+      })
     })
     self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
     getAddresses(this.prefix)
