@@ -106,10 +106,13 @@ export default {
       async function doIt() {
         const web3 = await getWeb3();
         if (web3) {
+
           const addresses = await getAddresses(self.prefix);
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+
+          self.salaryRecipient = await science.methods.conditionOwners(self.conditionId).call();
 
           for (let ev of self.salaryRecipientEvents) {
             ev.unsubscribe();
@@ -123,14 +126,16 @@ export default {
             }))
 
           // after subscribing
-          self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call()
+          self.tokenId = 1 //await science.methods.firstToLastConditionInChain(self.conditionId).call() // FIXME
+
+          self.updateAmountOnAccount()
         }
       }
       doIt();
     },
-    salaryRecipient() {
-      this.updateAmountOnAccount()
-    },
+//    salaryRecipient() {
+//      this.updateAmountOnAccount()
+//    },
     tokenId() {
       const self = this
       async function doIt() {
@@ -237,9 +242,14 @@ export default {
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+          const wrapperAbi = (await getABIs(self.prefix)).UnitedSalaryTokenWrapper;
+          const wrapper = new web3.eth.Contract(wrapperAbi, addresses.UnitedSalaryTokenWrapper.address);
 
-          console.log(`set self.amountOnAccount / ${self.tokenId}`)
-          self.amountOnAccount = await science.methods.balanceOf(self.salaryRecipient, self.tokenId).call()
+          // FIXME: Races!
+          // It may be more efficient to use directly the Salary contract, but be aware of race conditions:
+          const balance = await wrapper.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
+          self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
+          self.amountOnAccount = balance // Update it after the previous statement to be immediate.
         }
       }
       doIt()
