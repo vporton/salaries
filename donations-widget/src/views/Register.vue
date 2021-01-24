@@ -1,6 +1,7 @@
 <template>
   <div>
     <p style="color: red">This is demo version for a testnet. Contracts are not enough tested and audited yet.</p>
+    <NetworkInfo :chainid="this.chainid" :web3="web3"/>
     <p>
         <small>
             Free software authors, scientists/inventors, science/software publishers, carbon accounters,
@@ -61,21 +62,26 @@
 import Web3 from 'web3'
 import { isUint256Valid, getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import Uint256 from '@/components/Uint256.vue'
+import NetworkInfo from '@/components/NetworkInfo.vue'
 const BN = Web3.utils.BN
 
 export default {
   name: 'Register',
   props: [
     'prefix',
+    'chainid',
+    'provider',
     'initialconditionid',
   ],
   components: {
     Uint256,
+    NetworkInfo,
   },
   data() {
     const conditionId = this.initialconditionid === undefined || this.initialconditionid === ''
       ? undefined : this.initialconditionid
     return {
+      web3: null,
       oracleId: null,
       registerCallbacks: [],
       conditionId,
@@ -103,7 +109,7 @@ export default {
 
       const self = this
       async function doIt() {
-        const web3 = await getWeb3();
+        const web3 = await self.myGetWeb3();
         if (web3) {
           const addresses = await getAddresses(self.prefix);
           if (!addresses) return;
@@ -136,7 +142,7 @@ export default {
     tokenId() {
       const self = this
       async function doIt() {
-        const web3 = await getWeb3();
+        const web3 = await self.myGetWeb3();
         if (!web3) {
           return;
         }
@@ -195,19 +201,26 @@ export default {
   },
   created() {
     const self = this
+    window.ethereum.on('networkChanged', function(/*networkId*/) {
+      self.myGetWeb3().then(value => self.web3 = value)
+    })
+    self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
     getAddresses(this.prefix)
       .then(function(abis) {
-        self.oracleId = abis.oracleId
+        self.oracleId = abis ? abis.oracleId : null
       })
     this.onUpdateConditionId()
     this.updateRegisteredStatus()
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
+    async myGetWeb3() {
+      return getWeb3(this.provider)
+    },
     withdraw() {
       const self = this
       async function doIt() {
-        const web3 = await getWeb3();
+        const web3 = await self.myGetWeb3();
         const account = (await getAccounts())[0];
         if (account !== self.salaryRecipient) {
           alert("Use the salary recepient's account.")
@@ -233,22 +246,26 @@ export default {
     updateAmountOnAccount() {
       const self = this
       async function doIt() {
-        const web3 = await getWeb3();
-        if (web3) {
-          const addresses = await getAddresses(self.prefix);
-          if (!addresses) return;
-          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
-          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-          const wrapperAbi = (await getABIs(self.prefix)).UnitedSalaryTokenWrapper;
-          const wrapper = new web3.eth.Contract(wrapperAbi, addresses.UnitedSalaryTokenWrapper.address);
+        const web3 = await self.myGetWeb3();
+        // FIXME: Races!
+        // It may be more efficient to use directly the Salary contract, but be aware of race conditions:
+        if (self.conditionId !== undefined) {
+          if (web3) {
+            const addresses = await getAddresses(self.prefix);
+            if (!addresses) return;
+            const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
+            const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+            const wrapperAbi = (await getABIs(self.prefix)).UnitedSalaryTokenWrapper;
+            const wrapper = new web3.eth.Contract(wrapperAbi, addresses.UnitedSalaryTokenWrapper.address);
 
-          // FIXME: Races!
-          // It may be more efficient to use directly the Salary contract, but be aware of race conditions:
-          if (self.conditionId !== undefined) {
-            console.log([self.salaryRecipient, self.conditionId])
-            const balance = await wrapper.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
-            self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
-            self.amountOnAccount = balance // Update it after the previous statement to be immediate.
+            if (/^0x0+/.test(self.salaryRecipient)) {
+              self.lastSalaryDate = undefined
+              self.amountOnAccount = undefined
+            } else {
+              const balance = await wrapper.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
+              self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
+              self.amountOnAccount = balance // Update it after the previous statement to be immediate.
+            }
           } else {
             self.lastSalaryDate = undefined
             self.amountOnAccount = undefined
@@ -265,17 +282,16 @@ export default {
 //      }
       const self = this
       async function doIt() {
-        const web3 = await getWeb3();
+        const web3 = await self.myGetWeb3();
         if (web3) {
-          console.log('lll', self.prefix)
           const addresses = await getAddresses(self.prefix);
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
 
-          console.log('self.conditionId1', self.conditionId)
-          self.salaryRecipient = await science.methods.conditionOwners(self.conditionId).call();
-          console.log('self.conditionId2', self.conditionId, self.salaryRecipient)
+          self.salaryRecipient = self.conditionId !== undefined
+            ? await science.methods.conditionOwners(self.conditionId).call()
+            : undefined;
         }
       }
       doIt()
@@ -300,7 +316,7 @@ export default {
     updateRegisteredStatus() { // TODO: Rename.
       const self = this
       async function loadData() {
-        const web3 = await getWeb3();
+        const web3 = await self.myGetWeb3();
         const account = (await getAccounts())[0];
         if (web3 && account !== null) {
           const addresses = await getAddresses(self.prefix);
@@ -333,7 +349,7 @@ export default {
       this.registerCallbacks.push(f)
     },
     async register() {
-      const web3 = await getWeb3();
+      const web3 = await this.myGetWeb3();
       const account = (await getAccounts())[0];
       if (web3 && account !== null) {
         const addresses = await getAddresses(this.prefix);

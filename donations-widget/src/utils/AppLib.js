@@ -25,15 +25,15 @@ export const CHAINS = {
 
 let _web3Provider = null;
 
-export async function baseGetWeb3() {
+export async function baseGetWeb3(provider) {
   if (window.web3 && window.web3.chainId) return window.web3;
 
-  _web3Provider = Web3.givenProvider; //await getWeb3Provider();
-  return window.web3 = _web3Provider ? new Web3(_web3Provider) : null;
+  _web3Provider = provider ? provider : Web3.givenProvider; //await getWeb3Provider();
+  return window.web3 = _web3Provider ? new Web3(_web3Provider) : Web3.givenProvider ? new Web3() : null;
 }
 
-export async function getChainId() {
-  const web3 = await baseGetWeb3();
+export async function getChainId(provider) {
+  const web3 = await baseGetWeb3(provider);
   if (!web3) {
     return null;
   }
@@ -74,12 +74,12 @@ export async function fetchOnceJson(url) {
   }
 }
 
-export async function getWeb3() {
+export async function getWeb3(provider) {
   try {
     window.ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
   }
   catch(_) { /* empty */ }
-  const web3 = await baseGetWeb3();
+  const web3 = await baseGetWeb3(provider);
   getAccounts().then((/*accounts*/) => {
     // setConnectedToAccount(accounts.length !== 0); // TODO
   });
@@ -92,15 +92,16 @@ export async function getABIs(PREFIX) {
 
 export async function getAddresses(PREFIX) {
   const [json, chainId] = await Promise.all([fetchOnceJson(PREFIX + `addresses.json`), getChainId()]);
+  // TODO: Remove CHAINS variable?
   if (!CHAINS[chainId] || !json[CHAINS[chainId]]) {
-    alert("The selected blockchain is not supported!");
+    // alert("The selected blockchain is not supported!");
     return null;
   }
   return json[CHAINS[chainId]];
 }
 
-export async function getAccounts() {
-  const web3 = await baseGetWeb3();
+export async function getAccounts(provider) {
+  const web3 = await baseGetWeb3(provider);
   return web3 ? web3.eth.getAccounts() : null;
 }
 

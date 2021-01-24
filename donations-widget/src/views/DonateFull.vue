@@ -9,7 +9,7 @@
       <small>Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.</small>
     </p>
     <h1>Donate / Bequest</h1>
-    <Donate :prefix="this.prefix"/>
+    <Donate :prefix="this.prefix" :chainid="this.chainid" :provider="this.provider"/>
   </div>
 </template>
 
@@ -18,7 +18,7 @@ import Donate from './Donate';
 
 export default {
   name: 'DonateFull',
-  props: ['prefix'],
+  props: ['prefix', 'chainid', 'provider'],
   components: {
     Donate,
   },

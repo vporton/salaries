@@ -5,6 +5,7 @@
       market to choose the best donation recepient.
     </p>
     <p style="color: red">This is demo version for a testnet. Contracts are not enough tested and audited yet.</p>
+    <NetworkInfo :chainid="this.chainid" :web3="web3"/>
     <p>
       <label>
         <input
@@ -109,6 +110,7 @@ const { toBN, toWei } = Web3.utils;
 import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 import Amount from '@/components/Amount.vue'
+import NetworkInfo from '@/components/NetworkInfo.vue'
 import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 
 import erc1155Abi from '../utils/ERC1155Abi';
@@ -116,12 +118,13 @@ import erc20Abi from '../utils/ERC20Abi';
 
 export default {
   name: 'Donate',
-  props: ['prefix'],
+  props: ['prefix', 'chainid', 'provider'],
   components: {
     EthAddress,
     Uint256,
     Amount,
     VueCtkDateTimePicker,
+    NetworkInfo,
   },
   watch: {
     amount() {
@@ -148,6 +151,8 @@ export default {
   },
   data() {
     return {
+      web3: null,
+
       oracleId: null, // TODO: should be a property instead
 
       paymentKind: 'bequestTokens',
@@ -169,6 +174,10 @@ export default {
   },
   created() {
     const self = this
+    window.ethereum.on('networkChanged', function(/*networkId*/) {
+      self.myGetWeb3().then(value => self.web3 = value)
+    })
+    self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
     getAddresses(this.prefix)
       .then(function(abis) {
         self.oracleId = abis.oracleId
@@ -176,6 +185,9 @@ export default {
     window.donateComponent = self // bug workaround used in GitCoin
   },
   methods: {
+    async myGetWeb3() {
+      return getWeb3(this.provider)
+    },
     async obtainERC1155Token() {
       let collateralContractEthAddress, collateralTokenId;
       switch(this.tokenKind) {
@@ -188,7 +200,7 @@ export default {
           collateralTokenId = Web3.utils.toHex(this.tokenEthAddress);
 
           {
-            const web3 = await getWeb3();
+            const web3 = await this.myGetWeb3();
             // if (web3 === null) return;
             const account = (await getAccounts())[0];
             // if(!account) return;
@@ -215,7 +227,7 @@ export default {
     },
     async donateETH() {
       const wei = toWei(this.amount);
-      const web3 = await getWeb3();
+      const web3 = await this.myGetWeb3();
       if (web3 !== null) {
         try {
           const contractAddress = (await getAddresses(this.prefix)).DonateETH.address;
@@ -240,7 +252,7 @@ export default {
     },
     async donateToken() {
       const wei = toWei(this.amount);
-      const web3 = await getWeb3();
+      const web3 = await this.myGetWeb3();
       if (web3 !== null) {
         try {
           const contractAddress = await this.lockContract();
