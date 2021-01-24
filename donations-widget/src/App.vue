@@ -19,4 +19,7 @@
   text-align: center;
   color: #2c3e50;
 }
+.ethereumAddress {
+  font-size: 72%;
+}
 </style>

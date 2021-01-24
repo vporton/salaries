@@ -25,6 +25,7 @@
     <p>
         <button class="donateButton" :style="{display: registerStyle}" @click="register">Register for a salary</button>
         <span :style="{display: alreadyRegisterStyle}">
+          Salary recipient: <code class="ethereumAddress">{{salaryRecipient}}</code> <br/>
           Registration date: {{new Date(registrationDate*1000)}} <br/>
           Last withdrawal date: {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}} <br/>
           Salary to be paid: <span>{{toBePaid}}</span> personal tokens. <br/>
@@ -83,6 +84,7 @@ export default {
       isDefaultID: 'none',
       isNotDefaultID: 'none',
       timeoutHandle: null,
+      salaryRecipient: undefined,
     }
   },
   watch: {
@@ -138,12 +140,13 @@ export default {
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
           const maxConditionId = await science.methods.maxConditionId().call()
           if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // FIXME: BigNumber
-            [self.registrationDate, self.lastSalaryDate] =
+            [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] =
               await Promise.all([
+                science.methods.conditionOwners(self.conditionId).call(),
                 science.methods.conditionCreationDates(self.conditionId).call(),
                 science.methods.lastSalaryDates(self.conditionId).call()])
           } else {
-            [self.registrationDate, self.lastSalaryDate] = [undefined, undefined]
+            [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
           }
           self.updateRegistrationStyles()
         } 

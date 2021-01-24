@@ -12,3 +12,5 @@
 - ENS
 - Common token names
 - Entering not-a-number in Condition ID doesn't reset the UI.
+- Copy-to-clipboard button for the displayed Ethereum address
+- Show the amount of the token to be donated.
