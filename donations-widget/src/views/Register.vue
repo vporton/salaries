@@ -1,6 +1,10 @@
 <template>
   <div>
-    <p style="color: red">This is demo version for a testnet. Contracts are not enough tested and audited yet.</p>
+    <p style="color: red">
+      This is demo version for a testnet. Contracts are not enough tested and audited yet.
+      <a target="_blank" href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan">Donate</a>
+      for contract audit!
+    </p>
     <NetworkInfo :chainid="this.chainid" :web3="web3"/>
     <p>
         <small>
