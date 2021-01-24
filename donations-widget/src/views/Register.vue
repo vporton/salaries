@@ -249,7 +249,7 @@ export default {
 //        clearTimeout(this.timeoutHandle);
 //        this.timeoutHandle = null
 //      }
-      this.isDefaultID = this.conditionId !== undefined && this.initialconditionid ? 'inline' : 'none'
+      this.isDefaultID = this.conditionId !== undefined && this.conditionId === this.initialconditionid ? 'inline' : 'none'
       this.isNotDefaultID = this.conditionId !== this.initialconditionid ? 'inline' : 'none'
     },
     setDefaultID() {
