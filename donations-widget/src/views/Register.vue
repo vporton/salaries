@@ -100,7 +100,6 @@ export default {
   watch: {
     conditionId() {
       // this.updateRegisteredStatus()
-      this.onUpdateConditionId()
 
       const self = this
       async function doIt() {
@@ -114,6 +113,8 @@ export default {
 
           self.salaryRecipient = await science.methods.conditionOwners(self.conditionId).call();
 
+          self.onUpdateConditionId()
+
           for (let ev of self.salaryRecipientEvents) {
             ev.unsubscribe();
           }
@@ -126,9 +127,7 @@ export default {
             }))
 
           // after subscribing
-          self.tokenId = 1 //await science.methods.firstToLastConditionInChain(self.conditionId).call() // FIXME
-
-          self.updateAmountOnAccount()
+          self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call() // FIXME
         }
       }
       doIt();
@@ -247,9 +246,15 @@ export default {
 
           // FIXME: Races!
           // It may be more efficient to use directly the Salary contract, but be aware of race conditions:
-          const balance = await wrapper.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
-          self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
-          self.amountOnAccount = balance // Update it after the previous statement to be immediate.
+          if (self.conditionId !== undefined) {
+            console.log([self.salaryRecipient, self.conditionId])
+            const balance = await wrapper.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
+            self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
+            self.amountOnAccount = balance // Update it after the previous statement to be immediate.
+          } else {
+            self.lastSalaryDate = undefined
+            self.amountOnAccount = undefined
+          }
         }
       }
       doIt()
@@ -262,6 +267,7 @@ export default {
 //      }
       this.isDefaultID = this.conditionId !== undefined && this.conditionId === this.initialconditionid ? 'inline' : 'none'
       this.isNotDefaultID = this.conditionId !== this.initialconditionid ? 'inline' : 'none'
+      this.updateAmountOnAccount()
     },
     setDefaultID() {
       this.conditionId = this.initialconditionid
