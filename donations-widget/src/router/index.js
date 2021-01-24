@@ -32,6 +32,7 @@ const routes = [
       prefix: './',
       oracleId: null,
       ref: 'register',
+      initialconditionid: '4'
     },
   },
 ]

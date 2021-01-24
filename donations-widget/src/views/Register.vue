@@ -105,19 +105,18 @@ export default {
       async function doIt() {
         const web3 = await getWeb3();
         if (web3) {
-
           const addresses = await getAddresses(self.prefix);
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-
-          self.salaryRecipient = await science.methods.conditionOwners(self.conditionId).call();
 
           self.onUpdateConditionId()
 
           for (let ev of self.salaryRecipientEvents) {
             ev.unsubscribe();
           }
+
+          // FIXME: Races.
           self.salaryRecipientEvents.push(science.events.ConditionReCreate({
             filter: {customer: self.salaryRecipient, oldCondition: self.tokenId}},
             async (error, event) => {
@@ -132,9 +131,9 @@ export default {
       }
       doIt();
     },
-//    salaryRecipient() {
-//      this.updateAmountOnAccount()
-//    },
+    salaryRecipient() {
+      this.updateAmountOnAccount()
+    },
     tokenId() {
       const self = this
       async function doIt() {
@@ -201,8 +200,8 @@ export default {
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
-    this.updateRegisteredStatus()
     this.onUpdateConditionId()
+    this.updateRegisteredStatus()
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
@@ -265,9 +264,24 @@ export default {
 //        clearTimeout(this.timeoutHandle);
 //        this.timeoutHandle = null
 //      }
+      const self = this
+      async function doIt() {
+        const web3 = await getWeb3();
+        if (web3) {
+          console.log('lll', self.prefix)
+          const addresses = await getAddresses(self.prefix);
+          if (!addresses) return;
+          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
+          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+
+          console.log('self.conditionId1', self.conditionId)
+          self.salaryRecipient = await science.methods.conditionOwners(self.conditionId).call();
+          console.log('self.conditionId2', self.conditionId, self.salaryRecipient)
+        }
+      }
+      doIt()
       this.isDefaultID = this.conditionId !== undefined && this.conditionId === this.initialconditionid ? 'inline' : 'none'
       this.isNotDefaultID = this.conditionId !== this.initialconditionid ? 'inline' : 'none'
-      this.updateAmountOnAccount()
     },
     setDefaultID() {
       this.conditionId = this.initialconditionid
@@ -305,6 +319,7 @@ export default {
           } else {
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
           }
+          self.updateAmountOnAccount()
           self.updateRegistrationStyles()
         } 
       }
