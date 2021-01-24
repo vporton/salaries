@@ -9,7 +9,7 @@
       <a target="_blank" href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan">Donate</a>
       for contract audit!
     </p>
-    <NetworkInfo :chainid="this.chainid" :web3="web3"/>
+    <NetworkInfo :chainid="chainid" :web3="web3"/>
     <p>
       <label>
         <input
@@ -67,14 +67,14 @@
         <EthAddress v-model="tokenEthAddress"/>
       </span>
     </p>
-    <p :style="{display: this.paymentKind !== 'bequestGnosis' && this.tokenKind === 'erc1155' ? 'block' : 'none'}">
+    <p :style="{display: paymentKind !== 'bequestGnosis' && tokenKind === 'erc1155' ? 'block' : 'none'}">
       Token ID:
       <Uint256 v-model="tokenId"/>
     </p>
-    <p :style="{display: this.paymentKind !== 'donate' ? 'block' : 'none'}">
+    <p :style="{display: paymentKind !== 'donate' ? 'block' : 'none'}">
       <span :style="{display: walletDisplayInline}">The bequest can be taken after:</span>
       <span :style="{display: tokenDisplayInline}">
-        {{bequestDate !== null ? this.bequestDate.toString() : ""}}
+        {{bequestDate !== null ? bequestDate.toString() : ""}}
       </span>
       <span :style="{display: walletDisplayInline}">
         <VueCtkDateTimePicker v-model="bequestDate" style="width: 20em"></VueCtkDateTimePicker>
@@ -182,7 +182,7 @@ export default {
       self.myGetWeb3().then(value => self.web3 = value)
     })
     self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
-    getAddresses(this.prefix)
+    getAddresses(self.prefix)
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
@@ -190,7 +190,7 @@ export default {
   },
   methods: {
     async myGetWeb3() {
-      return getWeb3(this.provider)
+      return await getWeb3(this.provider)
     },
     async obtainERC1155Token() {
       let collateralContractEthAddress, collateralTokenId;

@@ -5,7 +5,7 @@
       <a target="_blank" href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan">Donate</a>
       for contract audit!
     </p>
-    <NetworkInfo :chainid="this.chainid" :web3="web3"/>
+    <NetworkInfo :chainid="chainid" :web3="web3"/>
     <p>
         <small>
             Free software authors, scientists/inventors, science/software publishers, carbon accounters,
@@ -217,17 +217,17 @@ export default {
       })
     })
     self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
-    getAddresses(this.prefix)
+    getAddresses(self.prefix)
       .then(function(abis) {
         self.oracleId = abis ? abis.oracleId : null
       })
-    this.onUpdateConditionId()
-    this.updateRegisteredStatus()
+    self.onUpdateConditionId()
+    self.updateRegisteredStatus()
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
     async myGetWeb3() {
-      return getWeb3(this.provider)
+      return await getWeb3(this.provider)
     },
     withdraw() {
       const self = this
@@ -356,17 +356,18 @@ export default {
           self.updateRegistrationStyles()
         } 
       }
-      if (this.conditionId !== undefined && isUint256Valid(this.conditionId)) {
+      if (self.conditionId !== undefined && isUint256Valid(self.conditionId)) {
         loadData()
-        this.startShowingSalary()
+        self.startShowingSalary()
       } else {
-        this.updateRegistrationStyles()
+        self.updateRegistrationStyles()
       }
     },
     addRegisterCallback(f) { // bug workaround used in GitCoin
       this.registerCallbacks.push(f)
     },
     async register() {
+      const self = this
       const web3 = await this.myGetWeb3();
       const account = (await getAccounts())[0];
       if (web3 && account !== undefined) {
@@ -376,12 +377,12 @@ export default {
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
           .then(txData => {
-            this.conditionId = txData.events.ConditionCreated.returnValues.condition;
-            this.updateRegisteredStatus(); // Call it even if this.conditionId didn't change.
-            console.log('conditionId:', this.conditionId);
-            this.$emit('conditionCreated', this.conditionId);
-            for(let f of this.registerCallbacks) {
-              f(this.conditionId);
+            self.conditionId = txData.events.ConditionCreated.returnValues.condition;
+            self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
+            console.log('conditionId:', self.conditionId);
+            self.$emit('conditionCreated', self.conditionId);
+            for(let f of self.registerCallbacks) {
+              f(self.conditionId);
             }
           })
           .catch(e => {

@@ -23,19 +23,20 @@ export default {
   },
   methods: {
     updateWeb3() {
-      if (this.web3) {
-        this.web3.eth.net.getId().then(netId => {
+      const self = this
+      if (self.web3) {
+        self.web3.eth.net.getId().then(netId => {
           switch (netId) {
             case 4: // rinkeby
-              this.showStyle = 'none'
+              self.showStyle = 'none'
               break
             default:
-              this.showStyle = 'block'
+              self.showStyle = 'block'
               break
           }
         })
       } else {
-        this.showStyle = 'block'
+        self.showStyle = 'block'
       }
     }
   }
