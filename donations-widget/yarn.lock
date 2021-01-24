@@ -1305,9 +1305,9 @@
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
 
-"@vporton/future-contracts@git+ssh://git@github.com/vporton/future-contracts.git":
+"@vporton/future-contracts@git+ssh://git@github.com:vporton/future-contracts.git":
   version "0.1.0"
-  resolved "git+ssh://git@github.com/vporton/future-contracts.git#fbeeab7ee5bf62d85d80b0d469dbecfdcfc4d426"
+  resolved "git+ssh://git@github.com:vporton/future-contracts.git#50b50ae4c9d6f6e3ac36edf93caa63d26fcee361"
   dependencies:
     "@openzeppelin/contracts" "^3.3.0"
     abdk-libraries-solidity "^2.4.0"

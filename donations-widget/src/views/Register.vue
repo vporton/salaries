@@ -123,8 +123,7 @@ export default {
             }));
 
           // after subscribing
-          // FIXME: It's unreliable, because the token may be recreated meantime. Use a special view contract instead.
-          self.amountOnAccount = await science.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
+          self.updateAmountOnAccount()
         }
       }
       doIt();
@@ -146,22 +145,22 @@ export default {
         }
         self.tokenIdEvents.push(science.events.TransferSingle(
           {filter: {to: self.salaryRecipient, id: self.tokenId}},
-          async () => {
-            if (!event.returnValues.from.eq(event.returnValues.to)) {
+          async (error, event) => {
+            if (!event.returnValues.from === event.returnValues.to) {
               self.amountOnAccount = self.amountOnAccount.add(event.returnValues.value);
             }
           }));
         self.tokenIdEvents.push(science.events.TransferSingle(
           {filter: {from: self.salaryRecipient, id: self.tokenId}},
-          async () => {
-            if (!event.returnValues.from.eq(event.returnValues.to)) {
+          async (error, event) => {
+            if (!event.returnValues.from === event.returnValues.to) {
               self.amountOnAccount = self.amountOnAccount.sub(event.returnValues.value);
             }
           }));
         self.tokenIdEvents.push(science.events.TransferBatch(
           {filter: {to: self.salaryRecipient}},
-          async () => {
-            if (!event.returnValues.from.eq(event.returnValues.to)) {
+          async (error, event) => {
+            if (!event.returnValues.from === event.returnValues.to) {
               const ids = event.returnValues.ids;
               for (let i = 0; i != ids.length; ++i) {
                 if (ids[i] === self.tokenId) {
@@ -172,8 +171,8 @@ export default {
           }));
         self.tokenIdEvents.push(science.events.TransferBatch(
           {filter: {from: self.salaryRecipient}},
-          async () => {
-            if (!event.returnValues.from.eq(event.returnValues.to)) {
+          async (error, event) => {
+            if (!event.returnValues.from === event.returnValues.to) {
               const ids = event.returnValues.ids;
               for (let i = 0; i != ids.length; ++i) {
                 if (ids[i] === self.tokenId) {
@@ -214,15 +213,35 @@ export default {
           if (!addresses) return
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address)
-          await mySend(
+          const tx = await mySend(
             science,
             science.methods.mintSalary,
             [self.oracleId, self.conditionId, []],
             {from: account},
               null)
+          await tx
+          self.updateAmountOnAccount()
         } 
       }
       doIt();
+    },
+    updateAmountOnAccount() {
+      const self = this
+      async function doIt() {
+        const web3 = await getWeb3();
+        if (web3) {
+          const addresses = await getAddresses(self.prefix);
+          if (!addresses) return;
+          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
+          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+
+          const balance = await science.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
+          self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
+          // FIXME: It's unreliable, because the token may be recreated meantime. Use a special view contract instead.
+          self.amountOnAccount = balance // Update it after the previous statement to be immediate.
+        }
+      }
+      doIt()
     },
     onUpdateConditionId() {
       // TODO: The following causes a serious bug:
