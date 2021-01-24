@@ -7,10 +7,14 @@ import router from './router'
 
 Vue.config.productionTip = false
 
-new Vue({
+const vue = new Vue({
   router,
-  render: h => h(App)
-}).$mount('#app')
+  render: h => h(App),
+})
+if (vue.$root.props === undefined) { // `@vue/web-component-wrapper` bug workaround (TODO: Report the bug.)
+  vue.$root.props = {}
+}
+vue.$mount('#app')
 
 window.customElements.define('donations-donate', wrap(Vue, Donate));
 window.customElements.define('donations-register', wrap(Vue, Register));
