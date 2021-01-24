@@ -24,15 +24,15 @@
     </p>
     <p>
         <button class="donateButton" :style="{display: registerStyle}" @click="register">Register for a salary</button>
-        <span :style="{display: alreadyRegisterStyle}">
-          Salary recipient: <code class="ethereumAddress">{{salaryRecipient}}</code> <br/>
-          On account: {{amountOnAccountFormatted}} personal tokens. <br/>
-            Registration date: {{new Date(registrationDate*1000)}}. <br/>
-          Last withdrawal date: {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}}. <br/>
-          Salary to be paid: <span>{{toBePaid}}</span> personal tokens.
-          <button @click="withdraw">Withdraw</button> <br/>
+        <span :style="{display: alreadyRegisterStyle, textAlign: 'left'}">
+          <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code> <br/>
+          <label>On account:</label> {{amountOnAccountFormatted}} personal tokens. <br/>
+          <label>Registration date:</label> {{new Date(registrationDate*1000)}}. <br/>
+          <label>Last withdrawal date:</label> {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}}. <br/>
+          <label>Salary to be paid:</label> <span>{{toBePaid}}</span> personal tokens.
+            <button @click="withdraw">Withdraw</button> <br/>
           <small>Withdrawal is a paid service, so please withdraw only when you are going to use the money.</small> <br/>
-          Lifetime salary: <span>{{lifetimeSalary}}</span> personal tokens.
+          <label>Lifetime salary:</label> <span>{{lifetimeSalary}}</span> personal tokens.
         </span>
         <br/>
         <small>
@@ -264,7 +264,7 @@ export default {
       } else {
         this.noSuchConditionStyle = 'none'
         this.registerStyle = this.conditionId !== undefined ? 'none' : 'inline'
-        this.alreadyRegisterStyle = this.conditionId !== undefined ? 'inline' : 'none'
+        this.alreadyRegisterStyle = this.conditionId !== undefined ? 'inline-block' : 'none'
       }
     },
     updateRegisteredStatus() { // TODO: Rename.
