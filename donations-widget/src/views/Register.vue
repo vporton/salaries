@@ -61,6 +61,7 @@
 import Web3 from 'web3'
 import { isUint256Valid, getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import Uint256 from '@/components/Uint256.vue'
+const BN = Web3.utils.BN
 
 export default {
   name: 'Register',
@@ -100,8 +101,7 @@ export default {
     conditionId() {
       // this.updateRegisteredStatus()
       this.onUpdateConditionId()
-    },
-    salaryRecipient() {
+
       const self = this
       async function doIt() {
         const web3 = await getWeb3();
@@ -120,13 +120,16 @@ export default {
               if (!error) {
                 self.tokenId = event.returnValues.newCondition;
               }
-            }));
+            }))
 
           // after subscribing
-          self.updateAmountOnAccount()
+          self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call()
         }
       }
       doIt();
+    },
+    salaryRecipient() {
+      this.updateAmountOnAccount()
     },
     tokenId() {
       const self = this
@@ -137,46 +140,46 @@ export default {
         }
         const addresses = await getAddresses(self.prefix);
         if (!addresses) return;
-        const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
-        const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+        const wrapperAbi = (await getABIs(self.prefix)).UnitedSalaryTokenWrapper;
+        const wrapper = new web3.eth.Contract(wrapperAbi, addresses.UnitedSalaryTokenWrapper.address);
 
         for (let ev of self.tokenIdEvents) {
           ev.unsubscribe();
         }
-        self.tokenIdEvents.push(science.events.TransferSingle(
+        self.tokenIdEvents.push(wrapper.events.TransferSingle(
           {filter: {to: self.salaryRecipient, id: self.tokenId}},
           async (error, event) => {
             if (!event.returnValues.from === event.returnValues.to) {
-              self.amountOnAccount = self.amountOnAccount.add(event.returnValues.value);
+              self.amountOnAccount = self.amountOnAccount.add(new BN(event.returnValues.value));
             }
           }));
-        self.tokenIdEvents.push(science.events.TransferSingle(
+        self.tokenIdEvents.push(wrapper.events.TransferSingle(
           {filter: {from: self.salaryRecipient, id: self.tokenId}},
           async (error, event) => {
             if (!event.returnValues.from === event.returnValues.to) {
-              self.amountOnAccount = self.amountOnAccount.sub(event.returnValues.value);
+              self.amountOnAccount = self.amountOnAccount.sub(new BN(event.returnValues.value));
             }
           }));
-        self.tokenIdEvents.push(science.events.TransferBatch(
+        self.tokenIdEvents.push(wrapper.events.TransferBatch(
           {filter: {to: self.salaryRecipient}},
           async (error, event) => {
             if (!event.returnValues.from === event.returnValues.to) {
               const ids = event.returnValues.ids;
               for (let i = 0; i != ids.length; ++i) {
                 if (ids[i] === self.tokenId) {
-                  self.amountOnAccount = self.amountOnAccount.add(event.returnValues.values[i]);
+                  self.amountOnAccount = self.amountOnAccount.add(new BN(event.returnValues.values[i]));
                 }
               }
             }
           }));
-        self.tokenIdEvents.push(science.events.TransferBatch(
+        self.tokenIdEvents.push(wrapper.events.TransferBatch(
           {filter: {from: self.salaryRecipient}},
           async (error, event) => {
             if (!event.returnValues.from === event.returnValues.to) {
               const ids = event.returnValues.ids;
               for (let i = 0; i != ids.length; ++i) {
                 if (ids[i] === self.tokenId) {
-                  self.amountOnAccount = self.amountOnAccount.sub(event.returnValues.values[i]);
+                  self.amountOnAccount = self.amountOnAccount.sub(new BN(event.returnValues.values[i]));
                 }
               }
             }
@@ -235,10 +238,8 @@ export default {
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
 
-          const balance = await science.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
-          self.lastSalaryDate = await science.methods.lastSalaryDates(self.conditionId).call()
-          // FIXME: It's unreliable, because the token may be recreated meantime. Use a special view contract instead.
-          self.amountOnAccount = balance // Update it after the previous statement to be immediate.
+          console.log(`set self.amountOnAccount / ${self.tokenId}`)
+          self.amountOnAccount = await science.methods.balanceOf(self.salaryRecipient, self.tokenId).call()
         }
       }
       doIt()
@@ -268,7 +269,6 @@ export default {
       }
     },
     updateRegisteredStatus() { // TODO: Rename.
-      this.tokenId = this.conditionId
       const self = this
       async function loadData() {
         const web3 = await getWeb3();
@@ -279,7 +279,8 @@ export default {
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
           const maxConditionId = await science.methods.maxConditionId().call()
-          if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // FIXME: BigNumber
+          // TODO: Should watch events for change of `self.salaryRecipient`
+          if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) {
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] =
               await Promise.all([
                 science.methods.conditionOwners(self.conditionId).call(),

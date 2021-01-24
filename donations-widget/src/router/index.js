@@ -5,7 +5,6 @@ import RegisterFull from '../views/RegisterFull.vue'
 
 Vue.use(VueRouter)
 
-// TODO: This app does not show the conditionId after registration.
 const routes = [
   {
     path: '/',
