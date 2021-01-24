@@ -122,7 +122,7 @@ export default {
 
           // after subscribing
           // FIXME: It's unreliable, because the token may be recreated meantime. Use a special view contract instead.
-          self.amountOnAccount = await science.methods.balanceOf(self.salaryRecipient, self.conditionId).call() // FIXME: fromWei
+          self.amountOnAccount = await science.methods.balanceOf(self.salaryRecipient, self.conditionId).call()
         }
       }
       doIt();
