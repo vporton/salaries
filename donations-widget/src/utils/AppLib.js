@@ -1,4 +1,8 @@
 import Web3 from 'web3';
+import Web3Modal from "web3modal";
+import Portis from "@portis/web3";
+import Authereum from "authereum";
+import ethProvider from "eth-provider";
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
@@ -23,17 +27,46 @@ export const CHAINS = {
   '97': 'bsctest',
 }
 
-let _web3Provider = null;
+export let web3Modal = null;
+export let web3ModalProvider = null;
 
-export async function baseGetWeb3(provider) {
-  if (window.web3 && window.web3.chainId) return window.web3;
+async function defaultWeb3Provider(networkname) {
+  const providerOptions = {
+    portis: {
+      package: Portis, // required
+      options: {
+        id: "4f1af1e4-2205-4244-a2d3-59e3527a614b" // required
+      }
+    },
+    authereum: {
+      package: Authereum // required
+    },
+    frame: {
+      package: ethProvider // required
+    }
+  };  
+  web3Modal = new Web3Modal({
+    network: networkname, // optional
+    cacheProvider: true, // optional
+    providerOptions // required
+  });
+  
+  return web3ModalProvider = await web3Modal.connect();
+}
 
-  _web3Provider = provider ? provider : Web3.givenProvider; //await getWeb3Provider();
+export async function baseGetWeb3Provider(providername, networkname) {
+  return providername ? providername : await defaultWeb3Provider(networkname);
+}
+
+export async function baseGetWeb3(providername, networkname) {
+  // if (window.web3 && window.web3.chainId) return window.web3;
+
+  const _web3Provider = await baseGetWeb3Provider(providername, networkname)
   return window.web3 = _web3Provider ? new Web3(_web3Provider) : Web3.givenProvider ? new Web3() : null;
 }
 
-export async function getChainId(provider) {
-  const web3 = await baseGetWeb3(provider);
+export async function getChainId(providername, networkname) {
+  const web3 = await baseGetWeb3(providername, networkname);
   if (!web3) {
     return null;
   }
@@ -74,12 +107,16 @@ export async function fetchOnceJson(url) {
   }
 }
 
-export async function getWeb3(provider) {
+export async function getWeb3Provider(providername, networkname) {
+  return await baseGetWeb3Provider(providername, networkname);
+}
+
+export async function getWeb3(providername, networkname) {
   try {
     window.ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
   }
   catch(_) { /* empty */ }
-  const web3 = await baseGetWeb3(provider);
+  const web3 = await baseGetWeb3(providername, networkname);
   getAccounts().then((/*accounts*/) => {
     // setConnectedToAccount(accounts.length !== 0); // TODO
   });
@@ -90,8 +127,8 @@ export async function getABIs(PREFIX) {
   return await fetchOnceJson(PREFIX + `abis.json`);
 }
 
-export async function getAddresses(PREFIX) {
-  const [json, chainId] = await Promise.all([fetchOnceJson(PREFIX + `addresses.json`), getChainId()]);
+export async function getAddresses(PREFIX, providername, networkname) {
+  const [json, chainId] = await Promise.all([fetchOnceJson(PREFIX + `addresses.json`), getChainId(providername, networkname)]);
   // TODO: Remove CHAINS variable?
   if (!CHAINS[chainId] || !json[CHAINS[chainId]]) {
     // alert("The selected blockchain is not supported!");
@@ -102,8 +139,8 @@ export async function getAddresses(PREFIX) {
   return addresses;
 }
 
-export async function getAccounts(provider) {
-  const web3 = await baseGetWeb3(provider);
+export async function getAccounts(providername, networkname) {
+  const web3 = await baseGetWeb3(providername, networkname);
   return web3 ? web3.eth.getAccounts() : null;
 }
 

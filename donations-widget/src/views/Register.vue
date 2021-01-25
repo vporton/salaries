@@ -5,7 +5,7 @@
       <a target="_blank" href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan">Donate</a>
       for contract audit!
     </p>
-    <NetworkInfo :chainid="chainid" :web3="web3"/>
+    <NetworkInfo :chainid="chainid" :networkname="networkname" :web3="web3"/>
     <p>
         <small>
             Free software authors, scientists/inventors, science/software publishers, carbon accounters,
@@ -74,7 +74,8 @@ export default {
   props: [
     'prefix',
     'chainid',
-    'provider',
+    'networkname',
+    'providername',
     'initialconditionid',
   ],
   components: {
@@ -115,7 +116,7 @@ export default {
       async function doIt() {
         const web3 = await self.myGetWeb3();
         if (web3) {
-          const addresses = await getAddresses(self.prefix);
+          const addresses = await self.myGetAddresses(self.prefix);
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
@@ -152,7 +153,7 @@ export default {
         if (!web3) {
           return;
         }
-        const addresses = await getAddresses(self.prefix);
+        const addresses = await self.myGetAddresses(self.prefix);
         if (!addresses) return;
         const wrapperAbi = (await getABIs(self.prefix)).UnitedSalaryTokenWrapper;
         const wrapper = new web3.eth.Contract(wrapperAbi, addresses.UnitedSalaryTokenWrapper.address);
@@ -219,7 +220,7 @@ export default {
       })
     })
     self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
-    getAddresses(self.prefix)
+    self.myGetAddresses(self.prefix)
       .then(function(abis) {
         self.oracleId = abis ? abis.oracleId : null
       })
@@ -229,19 +230,22 @@ export default {
   },
   methods: {
     async myGetWeb3() {
-      return await getWeb3(this.provider)
+      return await getWeb3(this.providername, this.networkname)
+    },
+    async myGetAddresses(PREFIX) {
+      return await getAddresses(PREFIX, this.providername, this.networkname)
     },
     withdraw() {
       const self = this
       async function doIt() {
         const web3 = await self.myGetWeb3();
-        const account = (await getAccounts())[0];
+        const account = (await getAccounts(self.providername, self.networkname))[0];
         if (account !== self.salaryRecipient) {
           alert("Use the salary recepient's account.")
           return
         }
         if (web3 && account !== undefined) {
-          const addresses = await getAddresses(self.prefix)
+          const addresses = await self.myGetAddresses(self.prefix)
           if (!addresses) return
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address)
@@ -263,7 +267,7 @@ export default {
         const web3 = await self.myGetWeb3();
         // FIXME: Races!
         // It may be more efficient to use directly the Salary contract, but be aware of race conditions:
-        const addresses = await getAddresses(self.prefix);
+        const addresses = await self.myGetAddresses(self.prefix);
         if (self.conditionId !== undefined && addresses) {
           if (web3) {
             const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
@@ -303,7 +307,7 @@ export default {
       async function doIt() {
         const web3 = await self.myGetWeb3();
         if (web3) {
-          const addresses = await getAddresses(self.prefix);
+          const addresses = await self.myGetAddresses(self.prefix);
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
@@ -337,9 +341,9 @@ export default {
       const self = this
       async function loadData() {
         const web3 = await self.myGetWeb3();
-        const account = (await getAccounts())[0];
+        const account = (await getAccounts(self.providername, self.networkname))[0];
         if (web3 && account !== undefined) {
-          const addresses = await getAddresses(self.prefix);
+          const addresses = await self.myGetAddresses(self.prefix);
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
@@ -371,9 +375,9 @@ export default {
     async register() {
       const self = this
       const web3 = await this.myGetWeb3();
-      const account = (await getAccounts())[0];
+      const account = (await getAccounts(self.providername, self.networkname))[0];
       if (web3 && account !== undefined) {
-        const addresses = await getAddresses(this.prefix);
+        const addresses = await self.myGetAddresses(this.prefix);
         if (!addresses) return;
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);

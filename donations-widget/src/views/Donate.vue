@@ -9,7 +9,7 @@
       <a target="_blank" href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan">Donate</a>
       for contract audit!
     </p>
-    <NetworkInfo :chainid="chainid" :web3="web3"/>
+    <NetworkInfo :chainid="chainid" :networkname="networkname" :web3="web3"/>
     <p>
       <label>
         <input
@@ -122,7 +122,7 @@ import erc20Abi from '../utils/ERC20Abi';
 
 export default {
   name: 'Donate',
-  props: ['prefix', 'chainid', 'provider'],
+  props: ['prefix', 'chainid', 'networkname', 'providername'],
   components: {
     EthAddress,
     Uint256,
@@ -182,7 +182,7 @@ export default {
       self.myGetWeb3().then(value => self.web3 = value)
     })
     self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
-    getAddresses(self.prefix)
+    self.myGetAddresses(self.prefix)
       .then(function(abis) {
         self.oracleId = abis.oracleId
       })
@@ -190,7 +190,10 @@ export default {
   },
   methods: {
     async myGetWeb3() {
-      return await getWeb3(this.provider)
+      return await getWeb3(this.providername, this.networkname)
+    },
+    async myGetAddresses(PREFIX) {
+      return await getAddresses(PREFIX, this.providername, this.networkname)
     },
     async obtainERC1155Token() {
       let collateralContractEthAddress, collateralTokenId;
@@ -200,13 +203,13 @@ export default {
           collateralTokenId = this.tokenId;
           break;
         case 'erc20':
-          collateralContractEthAddress = (await getAddresses(this.prefix)).ERC1155OverERC20.address;
+          collateralContractEthAddress = (await this.myGetAddresses(this.prefix)).ERC1155OverERC20.address;
           collateralTokenId = Web3.utils.toHex(this.tokenEthAddress);
 
           {
             const web3 = await this.myGetWeb3();
             // if (web3 === null) return;
-            const account = (await getAccounts())[0];
+            const account = (await getAccounts(this.providername, this.networkname))[0];
             // if(!account) return;
 
             // Approve ERC-20 spent
@@ -226,7 +229,7 @@ export default {
       return [collateralContractEthAddress, collateralTokenId];
     },
     async lockContract() {
-      const addresses = await getAddresses(this.prefix);
+      const addresses = await this.myGetAddresses(this.prefix);
       return addresses.SalaryWithDAO.address;
     },
     async donateETH() {
@@ -234,10 +237,10 @@ export default {
       const web3 = await this.myGetWeb3();
       if (web3 !== null) {
         try {
-          const contractAddress = (await getAddresses(this.prefix)).DonateETH.address;
+          const contractAddress = (await this.myGetAddresses(this.prefix)).DonateETH.address;
           const abi = (await getABIs(this.prefix)).DonateETH;
           const contract = new web3.eth.Contract(abi, contractAddress);
-          const account = (await getAccounts())[0];
+          const account = (await getAccounts(this.providername, this.networkname))[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
             return;
@@ -259,12 +262,12 @@ export default {
       const web3 = await this.myGetWeb3();
       if (web3 !== null) {
         try {
-          const addresses = await getAddresses(this.prefix);
+          const addresses = await this.myGetAddresses(this.prefix);
           if (!addresses) return;
           const contractAddress = await this.lockContract();
           const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-          const account = (await getAccounts())[0];
+          const account = (await getAccounts(this.providername, this.networkname))[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
             return;
