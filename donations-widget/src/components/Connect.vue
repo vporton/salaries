@@ -87,6 +87,7 @@ export default {
   ],
   data() {
     return {
+      web3: null,
       connectStyle: 'inline',
       disconnectStyle: 'none',
       web3Modal: this.myGetWeb3Modal(this.networkname),
@@ -130,14 +131,14 @@ export default {
       return getWeb3Modal(networkname);
     },
     async connectAsync() {
-      const web3 = await baseGetWeb3(self.providerurl, self.networkname)
+      this.web3 = await baseGetWeb3(self.providerurl, self.networkname)
       const chainIdPromise = new Promise((accept, /*reject*/) => {
-        web3.eth.getChainId().then(accept);
+        this.web3.eth.getChainId().then(accept);
       });
       const chainId = await chainIdPromise
       this.currentNetworkname = CHAINS[chainId]
-      this.$emit('change', web3)
-      return web3
+      this.$emit('change', this.web3)
+      return this.web3
     },
     connect() {
       console.log("connect command")

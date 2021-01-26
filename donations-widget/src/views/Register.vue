@@ -115,7 +115,7 @@ export default {
 
       const self = this
       async function doIt() {
-        const web3 = await await self.getWeb3();
+        const web3 = await self.getWeb3();
         if (web3) {
           const addresses = await self.myGetAddresses(self.prefix);
           if (!addresses) return;
@@ -150,7 +150,7 @@ export default {
     tokenId() {
       const self = this
       async function doIt() {
-        const web3 = await await self.getWeb3();
+        const web3 = await self.getWeb3();
         if (!web3) {
           return;
         }
@@ -232,8 +232,8 @@ export default {
     withdraw() {
       const self = this
       async function doIt() {
-        const web3 = await await self.getWeb3();
-        const account = (await getAccounts(self.providerurl, self.networkname))[0];
+        const web3 = await self.getWeb3();
+        const account = (await getAccounts(web3))[0];
         if (account !== self.salaryRecipient) {
           alert("Use the salary recepient's account.")
           return
@@ -258,7 +258,7 @@ export default {
     updateAmountOnAccount() {
       const self = this
       async function doIt() {
-        const web3 = await await self.getWeb3();
+        const web3 = await self.getWeb3();
         // FIXME: Races!
         // It may be more efficient to use directly the Salary contract, but be aware of race conditions:
         const addresses = await self.myGetAddresses(self.prefix);
@@ -299,7 +299,7 @@ export default {
 //      }
       const self = this
       async function doIt() {
-        const web3 = await await self.getWeb3();
+        const web3 = await self.getWeb3();
         if (web3) {
           const addresses = await self.myGetAddresses(self.prefix);
           if (!addresses) return;
@@ -334,9 +334,8 @@ export default {
     updateRegisteredStatus() { // TODO: Rename.
       const self = this
       async function loadData() {
-        const web3 = await await self.getWeb3();
-        console.log('ppp', self.providerurl, self.networkname)
-        const account = (await getAccounts(self.providerurl, self.networkname))[0];
+        const web3 = await self.getWeb3();
+        const account = (await getAccounts(web3))[0];
         if (web3 && account !== undefined) {
           const addresses = await self.myGetAddresses(self.prefix);
           if (!addresses) return;
@@ -369,8 +368,8 @@ export default {
     },
     async register() {
       const self = this
-      const web3 = await await this.getWeb3();
-      const account = (await getAccounts(self.providerurl, self.networkname))[0];
+      const web3 = await this.getWeb3();
+      const account = (await getAccounts(web3))[0];
       if (web3 && account !== undefined) {
         const addresses = await self.myGetAddresses(this.prefix);
         if (!addresses) return;

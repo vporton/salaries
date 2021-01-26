@@ -41,7 +41,6 @@ export default {
   ],
   data() {
     return {
-      web3: null,
       currentNetworkname: this.networkname,
     }
   },
@@ -53,6 +52,7 @@ export default {
     async web3Getter() {
       await this.$refs.connector.connectAsync()
       this.currentNetworkname = this.$refs.connector.currentNetworkname
+      return this.$refs.connector.web3
     },
   },
 }

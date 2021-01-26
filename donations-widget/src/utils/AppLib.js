@@ -55,7 +55,8 @@ export async function getABIs(PREFIX) {
 }
 
 export async function getAccounts(web3) {
-  return web3 ? web3.eth.getAccounts() : null;
+  console.log('fff', await web3.eth.getAccounts())
+  return web3 ? await web3.eth.getAccounts() : null;
 }
 
 // FIXME: returns Promise?

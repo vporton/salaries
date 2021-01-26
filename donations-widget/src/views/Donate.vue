@@ -206,9 +206,9 @@ export default {
           collateralTokenId = Web3.utils.toHex(this.tokenEthAddress);
 
           {
-            const web3 = await await this.getWeb3();
+            const web3 = await this.getWeb3();
             // if (web3 === null) return;
-            const account = (await getAccounts(this.providerurl, this.networkname))[0];
+            const account = (await getAccounts(web3))[0];
             // if(!account) return;
 
             // Approve ERC-20 spent
@@ -233,13 +233,13 @@ export default {
     },
     async donateETH() {
       const wei = toWei(this.amount);
-      const web3 = await await this.getWeb3();
+      const web3 = await this.getWeb3();
       if (web3 !== null) {
         try {
           const contractAddress = (await this.myGetAddresses(this.prefix)).DonateETH.address;
           const abi = (await getABIs(this.prefix)).DonateETH;
           const contract = new web3.eth.Contract(abi, contractAddress);
-          const account = (await getAccounts(this.providerurl, this.networkname))[0];
+          const account = (await getAccounts(web3))[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
             return;
@@ -258,7 +258,7 @@ export default {
     },
     async donateToken() {
       const wei = toWei(this.amount);
-      const web3 = await await this.getWeb3();
+      const web3 = await this.getWeb3();
       if (web3 !== null) {
         try {
           const addresses = await this.myGetAddresses(this.prefix);
@@ -266,7 +266,7 @@ export default {
           const contractAddress = await this.lockContract();
           const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-          const account = (await getAccounts(this.providerurl, this.networkname))[0];
+          const account = (await getAccounts(web3))[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
             return;
