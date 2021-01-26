@@ -110,13 +110,11 @@ export default {
       const self = this;
       self.web3Modal.on("connect", (/*info*/) => {
         console.log('connect')
-        self.connectStyle = 'none'
-        self.disconnectStyle = 'inline'
+        this.onConnect()
       })
       self.web3Modal.on("disconnect", (/*error*/) => {
         console.log('disconnect')
-        self.connectStyle = 'inline'
-        self.disconnectStyle = 'none'
+        this.onDisconnect()
       })
       self.web3Modal.on("chainChanged", (chainId) => {
         this.currentNetworkname = CHAINS[chainId]
@@ -127,6 +125,14 @@ export default {
     }
   },
   methods: {
+    onConnect() {
+      this.connectStyle = 'none'
+      this.disconnectStyle = 'inline'
+    },
+    onDisconnect() {
+      this.connectStyle = 'inline'
+      this.disconnectStyle = 'none'
+    },
     myGetWeb3Modal(networkname) {
       return getWeb3Modal(networkname);
     },
@@ -143,10 +149,12 @@ export default {
     connect() {
       console.log("connect command")
       this.connectAsync()
+      this.onConnect()
     },
     disconnect() {
       console.log("disconnect command")
       this.myGetWeb3Modal(this.networkname).clearCachedProvider()
+      this.onDisconnect()
     },
   },
 }
