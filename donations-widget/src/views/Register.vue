@@ -218,6 +218,7 @@ export default {
         self.oracleId = abis ? abis.oracleId : null
       }
       doIt()
+      // FIXME: It connects again immediately after disconnect.
       this.updateRegisteredStatus()
       this.updateAmountOnAccount()
       this.updateRegistrationStyles()
