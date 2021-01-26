@@ -5,7 +5,7 @@
         ref="connector"
         :networkname="this.networkname"
         :providerurl="this.providerurl"
-        @changenetworkname="tes($event)"
+        @changenetworkname="currentNetworkname = $event"
       />
     </p>
     <p>
@@ -56,10 +56,6 @@ export default {
       await this.$refs.connector.connectAsync()
       this.currentNetworkname = this.$refs.connector.currentNetworkname
       return this.$refs.connector.web3
-    },
-    tes(v) {
-      this.currentNetworkname = v
-      console.log('fff', v)
     },
   },
 }

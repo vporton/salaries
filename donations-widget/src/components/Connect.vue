@@ -64,21 +64,6 @@ async function baseGetWeb3Provider(providerurl, networkname) {
   return providerurl ? providerurl : await defaultWeb3Provider(networkname);
 }
 
-async function baseGetWeb3(providerurl, networkname) {
-  // if (window.web3 && window.web3.chainId) return window.web3;
-
-  const _web3Provider = await baseGetWeb3Provider(providerurl, networkname)
-  return _web3Provider ? new Web3(_web3Provider) : Web3.givenProvider ? new Web3() : null;
-}
-
-export async function getChainId(providerurl, networkname) {
-  const web3 = await baseGetWeb3(providerurl, networkname);
-  if (!web3) {
-    return null;
-  }
-  return await web3.eth.getChainId();
-}
-
 export default {
   name: 'Connect',
   props: [
@@ -88,6 +73,7 @@ export default {
   data() {
     return {
       web3: null,
+      web3provider: null,
       connectStyle: 'inline',
       disconnectStyle: 'none',
       web3Modal: this.myGetWeb3Modal(this.networkname),
@@ -98,39 +84,60 @@ export default {
     const self = this;
     self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
     self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'
-    window.ethereum.on('networkChanged', function(/*networkId*/) {
-      // self.$emit('change', web3)
-    })
+//     window.ethereum.on('networkChanged', function(/*networkId*/) { 
+//       // self.$emit('change', web3)
+//     })
   },
   watch: {
-    web3Modal() {
-      if (!this.web3Modal) {
-        return
-      }
-      const self = this;
-      self.web3Modal.on("connect", (/*info*/) => {
+    networkname() {
+      this.$emit('changenetworkname', this.networkname)
+    },
+    web3provider() {
+      this.web3provider.on("connect", (/*info*/) => {
         console.log('connect')
         this.onConnect()
       })
-      self.web3Modal.on("disconnect", (/*error*/) => {
+      this.web3provider.on("disconnect", (/*error*/) => {
         console.log('disconnect')
         this.onDisconnect()
       })
-      self.web3Modal.on("chainChanged", (chainId) => {
+      this.web3provider.on("chainChanged", (chainId) => {
         this.currentNetworkname = CHAINS[chainId]
       });
     },
-    networkname() {
-      this.$emit('changenetworkname', this.networkname)
-    }
   },
   methods: {
+    async baseGetWeb3(providerurl, networkname) {
+      // if (window.web3 && window.web3.chainId) return window.web3;
+
+      this.web3provider = await baseGetWeb3Provider(providerurl, networkname)
+      const web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
+      this.onConnectReal()
+      return web3
+    },
+    async getChainId(providerurl, networkname) { // TODO: Used?
+      const web3 = await this.baseGetWeb3(providerurl, networkname);
+      if (!web3) {
+        return null;
+      }
+      return await web3.eth.getChainId();
+    },
     onConnect() {
+      if (window.ethereum.isConnected()) {
+        this.onConnectReal()
+      } else {
+        this.onDisconnectReal()
+      }
+    },
+    onDisconnect() {
+      this.onDisconnectReal()
+    },
+    onConnectReal() {
       this.connectStyle = 'none'
       this.disconnectStyle = 'inline'
       this.$emit('changenetworkname', this.networkname)
     },
-    onDisconnect() {
+    onDisconnectReal() {
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
       this.$emit('changenetworkname', null)
@@ -139,7 +146,7 @@ export default {
       return getWeb3Modal(networkname);
     },
     async connectAsync() {
-      this.web3 = await baseGetWeb3(self.providerurl, self.networkname)
+      this.web3 = await this.baseGetWeb3(self.providerurl, self.networkname)
       const chainIdPromise = new Promise((accept, /*reject*/) => {
         this.web3.eth.getChainId().then(accept);
       });
@@ -151,7 +158,7 @@ export default {
     connect() {
       console.log("connect command")
       this.connectAsync()
-      this.onConnect()
+      //this.onConnect()
     },
     disconnect() {
       console.log("disconnect command")
