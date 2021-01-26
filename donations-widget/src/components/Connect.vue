@@ -69,27 +69,53 @@ export default {
     'networkname',
   ],
   data() {
+    const initPromiseResolve = () => {}
     return {
       web3: null,
       web3provider: null,
+      chainId: 1, // TODO: needed?
+      initPromiseResolve,
+      initPromise: new Promise(initPromiseResolve),
       needReconnect: true,
       connectStyle: 'inline',
       disconnectStyle: 'none',
       web3Modal: this.myGetWeb3Modal(this.networkname),
-      currentNetworkname: this.networkname,
+      currentNetworkname: this.networkname ? this.networkname : 'rinkeby', // FIXME
     }
   },
-  created() {
+  beforeUpdate() { // split
     const self = this;
     self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
     self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'
 //     window.ethereum.on('networkChanged', function(/*networkId*/) { 
 //       // self.$emit('change', web3)
 //     })
+    // TODO: Duplicate code.
+    async function doIt() {
+      console.log('baseGetWeb3Provider', [self.providerurl, self.networkname])
+      await self.initPromise;
+      self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
+      self.initPromiseResolve(undefined) // Now `self.web3provider` is set.
+      console.log('initPromiseResolve')
+    }
+    doIt()
   },
   watch: {
+    chainId() {
+      console.log("CCC", this.chainId)
+      this.initPromiseResolve()
+      this.connectAsync() // TODO: Don't connect early.
+    },
     networkname() {
+      console.log("this.networkname", this.networkname)
+      async function doIt() {
+        this.web3provider = await baseGetWeb3Provider(this.providerurl, this.currentNetworkname)
+      }
+      doIt()
       this.$emit('changenetworkname', this.networkname)
+    },
+    web3provider() {
+      this.needReconnect = true
     },
   },
   methods: {
@@ -107,13 +133,12 @@ export default {
       this.web3Modal.on("chainChanged", (chainId) => {
         this.currentNetworkname = CHAINS[chainId]
       });
-      this.needReconnect = true
       this.onConnectReal()
     },
-    async baseGetWeb3(providerurl, networkname) {
+    async baseGetWeb3(/*providerurl, networkname*/) {
       // if (window.web3 && window.web3.chainId) return window.web3;
 
-      this.web3provider = await baseGetWeb3Provider(providerurl, networkname)
+      console.log('baseGetWeb3 running')
       this.onSetWeb3provider()
       if (this.needReconnect) {
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
@@ -121,8 +146,8 @@ export default {
       }
       return this.web3
     },
-    async getChainId(providerurl, networkname) { // TODO: Used?
-      const web3 = await this.baseGetWeb3(providerurl, networkname);
+    async getChainId(/*providerurl, networkname*/) { // TODO: Used?
+      const web3 = await this.baseGetWeb3(/*providerurl, networkname*/);
       if (!web3) {
         return null;
       }
@@ -141,23 +166,22 @@ export default {
     onConnectReal() {
       this.connectStyle = 'none'
       this.disconnectStyle = 'inline'
+      console.log('changenetworkname', this.networkname)
       this.$emit('changenetworkname', this.networkname)
     },
     onDisconnectReal() {
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
+      console.log('changenetworkname', "NULL")
       this.$emit('changenetworkname', null)
     },
     myGetWeb3Modal(networkname) {
       return getWeb3Modal(networkname);
     },
     async connectAsync() {
-      this.web3 = await this.baseGetWeb3(self.providerurl, self.networkname)
-      const chainIdPromise = new Promise((accept, /*reject*/) => {
-        this.web3.eth.getChainId().then(accept);
-      });
-      const chainId = await chainIdPromise
-      this.currentNetworkname = CHAINS[chainId]
+      console.log('www', this.providerurl, this.networkname)
+      const self = this;
+      this.web3 = await this.baseGetWeb3(/*self.providerurl, self.networkname*/)
       this.$emit('change', this.web3)
       return this.web3
     },
