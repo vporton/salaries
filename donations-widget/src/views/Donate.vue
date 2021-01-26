@@ -169,6 +169,8 @@ export default {
   },
   data() {
     return {
+      web3: null,
+
       oracleId: null, // TODO: should be a property instead
 
       paymentKind: 'bequestTokens',
@@ -351,7 +353,7 @@ export default {
       return date < currentDate;
     },
     async getWeb3() {
-      return this.web3Getter ? await this.web3Getter() : window.web3
+      return this.web3 = this.web3Getter ? await this.web3Getter() : window.web3
     },
   },
 }

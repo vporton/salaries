@@ -409,7 +409,7 @@ export default {
       this.updateSalary()
     },
     async getWeb3() {
-      return this.web3Getter ? await this.web3Getter() : window.web3
+      return this.web3 = this.web3Getter ? await this.web3Getter() : window.web3
     },
   },
 }
