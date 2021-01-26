@@ -5,8 +5,6 @@
         ref="connector"
         :networkname="this.networkname"
         :providerurl="this.providerurl"
-        @change="web3 = $event"
-        @change-networkname="$refs.donate.networkname = $event"
       />
     </p>
     <p>
@@ -22,7 +20,7 @@
       ref="donate"
       :prefix="this.prefix"
       :chainid="this.chainid"
-      :networkname="this.networkname"
+      :networkname="this.currentNetworkname"
       :providerurl="this.providerurl"
       :web3Getter="web3Getter"
     />
@@ -44,6 +42,7 @@ export default {
   data() {
     return {
       web3: null,
+      currentNetworkname: this.networkname,
     }
   },
   components: {
@@ -53,9 +52,8 @@ export default {
   methods: {
     async web3Getter() {
       await this.$refs.connector.connectAsync()
-      this.providerurl = this.$refs.connector.providerurl
-      this.networkname = this.$refs.connector.networkname
-    }
+      this.currentNetworkname = this.$refs.connector.currentNetworkname
+    },
   },
 }
 </script>

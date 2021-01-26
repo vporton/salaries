@@ -335,6 +335,7 @@ export default {
       const self = this
       async function loadData() {
         const web3 = await await self.getWeb3();
+        console.log('ppp', self.providerurl, self.networkname)
         const account = (await getAccounts(self.providerurl, self.networkname))[0];
         if (web3 && account !== undefined) {
           const addresses = await self.myGetAddresses(self.prefix);
@@ -401,7 +402,6 @@ export default {
       this.updateSalary()
     },
     async getWeb3() {
-      console.log('ttt', this.web3Getter)
       return this.web3Getter ? await this.web3Getter() : window.web3
     },
   },
