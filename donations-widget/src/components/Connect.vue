@@ -69,47 +69,44 @@ export default {
     'networkname',
   ],
   data() {
-    const initPromiseResolve = () => {}
     return {
       web3: null,
       web3provider: null,
-      chainId: 1, // TODO: needed?
-      initPromiseResolve,
-      initPromise: new Promise(initPromiseResolve),
       needReconnect: true,
       connectStyle: 'inline',
       disconnectStyle: 'none',
-      web3Modal: this.myGetWeb3Modal(this.networkname),
-      currentNetworkname: this.networkname ? this.networkname : 'rinkeby', // FIXME
+      web3Modal: null,
+      currentNetworkname: this.networkname,
     }
   },
-  beforeUpdate() { // split
+  created() {
+    const self = this;
+    async function doIt() { // FIXME: Not here
+      if (!self.networkname) {
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
+        console.log('xxx', self.providerurl, self.currentNetworkname)
+      }
+      self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
+      self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
+    }
+    doIt()
+  },
+  beforeUpdate() { // TODO: Which hook?
     const self = this;
     self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
     self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'
 //     window.ethereum.on('networkChanged', function(/*networkId*/) { 
 //       // self.$emit('change', web3)
 //     })
-    // TODO: Duplicate code.
-    async function doIt() {
-      console.log('baseGetWeb3Provider', [self.providerurl, self.networkname])
-      await self.initPromise;
-      self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
-      self.initPromiseResolve(undefined) // Now `self.web3provider` is set.
-      console.log('initPromiseResolve')
-    }
-    doIt()
   },
   watch: {
-    chainId() {
-      console.log("CCC", this.chainId)
-      this.initPromiseResolve()
-      this.connectAsync() // TODO: Don't connect early.
-    },
-    networkname() {
-      console.log("this.networkname", this.networkname)
+    currentNetworkname(current, old) {
+      const self = this
+      console.log('c, o', current, old)
+      console.log("this.networkname", this.currentNetworkname)
       async function doIt() {
-        this.web3provider = await baseGetWeb3Provider(this.providerurl, this.currentNetworkname)
+        self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       }
       doIt()
       this.$emit('changenetworkname', this.networkname)
@@ -124,14 +121,14 @@ export default {
       console.log("A", this.web3Modal)
       this.web3Modal.on("connect", (/*info*/) => {
         console.log('connect')
-        this.onConnect()
+        //this.onConnect() // FIXME
       })
       this.web3Modal.on("disconnect", (/*error*/) => {
         console.log('disconnect')
         this.onDisconnect()
       })
       this.web3Modal.on("chainChanged", (chainId) => {
-        this.currentNetworkname = CHAINS[chainId]
+        this.currentNetworkname = CHAINS[chainId] // FIXME
       });
       this.onConnectReal()
     },
@@ -139,7 +136,7 @@ export default {
       // if (window.web3 && window.web3.chainId) return window.web3;
 
       console.log('baseGetWeb3 running')
-      this.onSetWeb3provider()
+      //this.onSetWeb3provider() // FIXME
       if (this.needReconnect) {
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
         this.needReconnect = false;
@@ -147,11 +144,12 @@ export default {
       return this.web3
     },
     async getChainId(/*providerurl, networkname*/) { // TODO: Used?
-      const web3 = await this.baseGetWeb3(/*providerurl, networkname*/);
-      if (!web3) {
-        return null;
-      }
-      return await web3.eth.getChainId();
+      return 1 // FIXME
+//      const web3 = await this.baseGetWeb3(/*providerurl, networkname*/);
+//      if (!web3) {
+//        return null;
+//      }
+//      return await web3.eth.getChainId();
     },
     onConnect() {
       if (window.ethereum.isConnected()) {
@@ -172,7 +170,7 @@ export default {
     onDisconnectReal() {
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
-      console.log('changenetworkname', "NULL")
+      console.log('onDisconnectReal', "NULL")
       this.$emit('changenetworkname', null)
     },
     myGetWeb3Modal(networkname) {
@@ -180,7 +178,6 @@ export default {
     },
     async connectAsync() {
       console.log('www', this.providerurl, this.networkname)
-      const self = this;
       this.web3 = await this.baseGetWeb3(/*self.providerurl, self.networkname*/)
       this.$emit('change', this.web3)
       return this.web3
@@ -191,7 +188,7 @@ export default {
     },
     disconnect() {
       console.log("disconnect command")
-      this.myGetWeb3Modal(this.networkname).clearCachedProvider()
+      this.web3Modal.clearCachedProvider()
       this.onDisconnect()
     },
   },

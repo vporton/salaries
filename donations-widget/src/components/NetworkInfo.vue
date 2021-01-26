@@ -23,21 +23,22 @@ export default {
   },
   methods: {
     updateWeb3() {
-      const self = this
-      if (self.web3) {
-        self.web3.eth.net.getId().then(netId => {
-          switch (netId) {
-            case 4: // rinkeby
-              self.showStyle = 'none'
-              break
-            default:
-              self.showStyle = 'block'
-              break
-          }
-        })
-      } else {
-        self.showStyle = 'block'
-      }
+      // FIXME
+//      const self = this
+//      if (self.web3) {
+//        self.web3.eth.net.getId().then(netId => {
+//          switch (netId) {
+//            case 4: // rinkeby
+//              self.showStyle = 'none'
+//              break
+//            default:
+//              self.showStyle = 'block'
+//              break
+//          }
+//        })
+//      } else {
+//        self.showStyle = 'block'
+//      }
     }
   }
 }
