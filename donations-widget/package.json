@@ -1,6 +1,6 @@
 {
   "name": "@vporton/donations-widget-vue",
-  "version": "0.1.36",
+  "version": "0.1.37",
   "author": "Victor Porton",
   "description": "App/widgets to accept crypto donations for the future.",
   "license": "GPL-3.0-or-later",

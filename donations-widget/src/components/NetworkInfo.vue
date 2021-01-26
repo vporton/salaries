@@ -1,6 +1,6 @@
 <template>
   <p :style="{display: this.showStyle, color: 'red'}">
-    Currently Future Salaries supports only <strong>Rinkeby</strong> testnet, switch to it.
+    Currently Future Salaries supports only <strong>Rinkeby</strong> or <strong>BSC testnet</strong>, switch to it.
   </p>
 </template>
 
@@ -27,7 +27,8 @@ export default {
       if (self.web3) {
         self.web3.eth.net.getId().then(netId => {
           switch (netId) {
-            case 4: // rinkeby
+            case 4:  // rinkeby
+            case 97: // BSC testnet
               self.showStyle = 'none'
               break
             default:
