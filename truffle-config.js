@@ -34,6 +34,22 @@ const config = {
       port: 8545,
       network_id: "4",
     },
+    bsc: {
+      provider: function() {
+        return new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: `https://bsc-dataseed1.binance.org`})
+      },
+      host: "localhost",
+      port: 8545,
+      network_id: "56",
+    },
+    bsctest: {
+      provider: function() {
+        return new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: `https://data-seed-prebsc-1-s1.binance.org:8545`})
+      },
+      host: "localhost",
+      port: 8545,
+      network_id: "97",
+    },
     xdai: {
       host: "localhost",
       port: 8545,
