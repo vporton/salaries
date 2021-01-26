@@ -64,7 +64,7 @@
 
 <script>
 import Web3 from 'web3'
-import { isUint256Valid, getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
+import { isUint256Valid, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import Uint256 from '@/components/Uint256.vue'
 import NetworkInfo from '@/components/NetworkInfo.vue'
 const BN = Web3.utils.BN
@@ -114,7 +114,7 @@ export default {
 
       const self = this
       async function doIt() {
-        const web3 = await self.myGetWeb3();
+        const web3 = await self.web3;
         if (web3) {
           const addresses = await self.myGetAddresses(self.prefix);
           if (!addresses) return;
@@ -149,7 +149,7 @@ export default {
     tokenId() {
       const self = this
       async function doIt() {
-        const web3 = await self.myGetWeb3();
+        const web3 = await self.web3;
         if (!web3) {
           return;
         }
@@ -207,19 +207,16 @@ export default {
         ? Web3.utils.fromWei(this.amountOnAccount)
         : '';
     },
+    web3() { // FIXME: Works on network change in MetaMask?
+      // TODO: Is the following correct?
+      this.updateRegisteredStatus()
+      this.updateAmountOnAccount()
+      this.updateRegistrationStyles()
+    },
   },
   created() {
     const self = this
-    window.ethereum.on('networkChanged', function(/*networkId*/) {
-      self.myGetWeb3().then(value => {
-        self.web3 = value
-        // TODO: Is the following correct?
-        self.updateRegisteredStatus()
-        self.updateAmountOnAccount()
-        self.updateRegistrationStyles()
-      })
-    })
-    self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
+    self.web3.then(value => self.web3 = value) // TODO: Don't use web3 anymore
     self.myGetAddresses(self.prefix)
       .then(function(abis) {
         self.oracleId = abis ? abis.oracleId : null
@@ -229,16 +226,13 @@ export default {
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
-    async myGetWeb3() {
-      return await getWeb3(this.providername, this.networkname)
-    },
     async myGetAddresses(PREFIX) {
-      return await getAddresses(PREFIX, this.providername, this.networkname)
+      return await getAddresses(PREFIX, this.networkname)
     },
     withdraw() {
       const self = this
       async function doIt() {
-        const web3 = await self.myGetWeb3();
+        const web3 = await self.web3;
         const account = (await getAccounts(self.providername, self.networkname))[0];
         if (account !== self.salaryRecipient) {
           alert("Use the salary recepient's account.")
@@ -250,7 +244,7 @@ export default {
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address)
           const tx = await mySend(
-            science,
+            this.web3, science,
             science.methods.mintSalary,
             [self.oracleId, self.conditionId, []],
             {from: account},
@@ -264,7 +258,7 @@ export default {
     updateAmountOnAccount() {
       const self = this
       async function doIt() {
-        const web3 = await self.myGetWeb3();
+        const web3 = await self.web3;
         // FIXME: Races!
         // It may be more efficient to use directly the Salary contract, but be aware of race conditions:
         const addresses = await self.myGetAddresses(self.prefix);
@@ -305,7 +299,7 @@ export default {
 //      }
       const self = this
       async function doIt() {
-        const web3 = await self.myGetWeb3();
+        const web3 = await self.web3;
         if (web3) {
           const addresses = await self.myGetAddresses(self.prefix);
           if (!addresses) return;
@@ -340,7 +334,7 @@ export default {
     updateRegisteredStatus() { // TODO: Rename.
       const self = this
       async function loadData() {
-        const web3 = await self.myGetWeb3();
+        const web3 = await self.web3;
         const account = (await getAccounts(self.providername, self.networkname))[0];
         if (web3 && account !== undefined) {
           const addresses = await self.myGetAddresses(self.prefix);
@@ -374,14 +368,14 @@ export default {
     },
     async register() {
       const self = this
-      const web3 = await this.myGetWeb3();
+      const web3 = await this.web3;
       const account = (await getAccounts(self.providername, self.networkname))[0];
       if (web3 && account !== undefined) {
         const addresses = await self.myGetAddresses(this.prefix);
         if (!addresses) return;
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-        await mySend(science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
+        await mySend(self.web3, science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
           .then(txData => {
             self.conditionId = txData.events.ConditionCreated.returnValues.condition;
             self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.

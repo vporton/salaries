@@ -1,20 +1,33 @@
 <template>
   <div>
     <p style="float: right">
-      <Disconnect :networkname="this.networkname" :providername="this.providername"/>
+      <Connect
+        :networkname="this.networkname"
+        :providername="this.providername"
+        @change="web3 = $event"
+        @change-networkname="$refs.register.networkname = $event"
+      />
     </p>
     <p>
         <router-link to="/">Donate/bequest for science, free software, or climate.</router-link>
         <br/> 
         <small>Just bequest all your funds here.</small>
     </p>
-    <Register :prefix="this.prefix" :chainid="this.chainid" :networkname="this.networkname" :providername="this.providername" :initialconditionid="this.initialconditionid"/>
+    <Register
+      ref="register"
+      :prefix="this.prefix"
+      :chainid="this.chainid"
+      :networkname="this.networkname"
+      :providername="this.providername"
+      :initialconditionid="this.initialconditionid"
+      :web3="this.web3"
+    />
   </div>
 </template>
 
 <script>
 import Register from './Register';
-import Disconnect from '@/components/Disconnect.vue'
+import Connect from '@/components/Connect.vue'
 
 export default {
   name: 'RegisterFull',
@@ -25,9 +38,14 @@ export default {
     'providername',
     'initialconditionid',
   ],
+  data() {
+    return {
+      web3: null,
+    }
+  },
   components: {
     Register,
-    Disconnect,
+    Connect,
   },
   mounted() {
     // Hack

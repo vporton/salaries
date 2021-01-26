@@ -115,14 +115,14 @@ import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 import Amount from '@/components/Amount.vue'
 import NetworkInfo from '@/components/NetworkInfo.vue'
-import { getWeb3, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
+import {  mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 
 import erc1155Abi from '../utils/ERC1155Abi';
 import erc20Abi from '../utils/ERC20Abi';
 
 export default {
   name: 'Donate',
-  props: ['prefix', 'chainid', 'networkname', 'providername'],
+  props: ['prefix', 'chainid', 'networkname', 'providername', 'web3'],
   components: {
     EthAddress,
     Uint256,
@@ -155,8 +155,6 @@ export default {
   },
   data() {
     return {
-      web3: null,
-
       oracleId: null, // TODO: should be a property instead
 
       paymentKind: 'bequestTokens',
@@ -178,22 +176,17 @@ export default {
   },
   created() {
     const self = this
-    window.ethereum.on('networkChanged', function(/*networkId*/) {
-      self.myGetWeb3().then(value => self.web3 = value)
-    })
-    self.myGetWeb3().then(value => self.web3 = value) // TODO: Don't use myGetWeb3() anymore
     self.myGetAddresses(self.prefix)
       .then(function(abis) {
-        self.oracleId = abis.oracleId
+        if (abis) {
+          self.oracleId = abis.oracleId
+        }
       })
     window.donateComponent = self // bug workaround used in GitCoin
   },
   methods: {
-    async myGetWeb3() {
-      return await getWeb3(this.providername, this.networkname)
-    },
     async myGetAddresses(PREFIX) {
-      return await getAddresses(PREFIX, this.providername, this.networkname)
+      return await getAddresses(PREFIX, this.networkname)
     },
     async obtainERC1155Token() {
       let collateralContractEthAddress, collateralTokenId;
@@ -207,7 +200,7 @@ export default {
           collateralTokenId = Web3.utils.toHex(this.tokenEthAddress);
 
           {
-            const web3 = await this.myGetWeb3();
+            const web3 = await this.web3;
             // if (web3 === null) return;
             const account = (await getAccounts(this.providername, this.networkname))[0];
             // if(!account) return;
@@ -219,7 +212,7 @@ export default {
             const halfBig = toBN(2).pow(toBN(128));
             if(allowance.lt(halfBig)) {
               const big = toBN(2).pow(toBN(256)).sub(toBN(1));
-              const tx = await mySend(erc20, erc20.methods.approve, [collateralContractEthAddress, big.toString()], {from: account}, null)
+              const tx = await mySend(this.web3, erc20, erc20.methods.approve, [collateralContractEthAddress, big.toString()], {from: account}, null)
                 // .catch(e => alert(e.message));
               await tx;
             }
@@ -234,7 +227,7 @@ export default {
     },
     async donateETH() {
       const wei = toWei(this.amount);
-      const web3 = await this.myGetWeb3();
+      const web3 = await this.web3;
       if (web3 !== null) {
         try {
           const contractAddress = (await this.myGetAddresses(this.prefix)).DonateETH.address;
@@ -245,7 +238,7 @@ export default {
             // setConnectedToAccount(false); // TODO
             return;
           }
-          await mySend(contract, contract.methods.donate,
+          await mySend(this.web3, contract, contract.methods.donate,
             [this.oracleId,
              account,
              []],
@@ -259,7 +252,7 @@ export default {
     },
     async donateToken() {
       const wei = toWei(this.amount);
-      const web3 = await this.myGetWeb3();
+      const web3 = await this.web3;
       if (web3 !== null) {
         try {
           const addresses = await this.myGetAddresses(this.prefix);
@@ -277,12 +270,12 @@ export default {
           const approved = await collateralContract.methods.isApprovedForAll(account, contractAddress).call();
           if (!approved) {
             const tx = await mySend(
-              collateralContract, collateralContract.methods.setApprovalForAll,
+              this.web3, collateralContract, collateralContract.methods.setApprovalForAll,
               [contractAddress, true], {from: account}, null
             );
             await tx;
           }
-          await mySend(science, science.methods.donate,
+          await mySend(this.web3, science, science.methods.donate,
             [collateralContractAddress,
              collateralTokenId,
              this.oracleId,
@@ -342,7 +335,7 @@ export default {
     isPastDate(date) {
       const currentDate = new Date();
       return date < currentDate;
-    }
+    },
   },
 }
 </script>
