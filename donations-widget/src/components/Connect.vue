@@ -82,12 +82,12 @@ export default {
   created() {
     const self = this;
     async function doIt() { // FIXME: Not here
+      self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
       if (!self.networkname) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
         console.log('xxx', self.providerurl, self.currentNetworkname)
       }
-      self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
       self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
     }
     doIt()
@@ -118,25 +118,29 @@ export default {
   methods: {
     // TODO: Inefficient.
     onSetWeb3provider() {
-      console.log("A", this.web3Modal)
-      this.web3Modal.on("connect", (/*info*/) => {
-        console.log('connect')
-        //this.onConnect() // FIXME
-      })
-      this.web3Modal.on("disconnect", (/*error*/) => {
-        console.log('disconnect')
-        this.onDisconnect()
-      })
-      this.web3Modal.on("chainChanged", (chainId) => {
-        this.currentNetworkname = CHAINS[chainId] // FIXME
-      });
+      if (self.web3provider) {
+        console.log("A", this.web3Modal)
+        self.web3provider.on("connect", (/*info*/) => {
+          console.log('connect')
+          //this.onConnect() // FIXME
+        })
+        self.web3provider.on("disconnect", (/*error*/) => {
+          console.log('disconnect')
+          this.onDisconnect()
+        })
+        console.log("ON")
+        self.web3provider.on("chainChanged", (chainId) => {
+          console.log("eee", chainId)
+          this.currentNetworkname = CHAINS[chainId] // FIXME
+        });
+      }
       this.onConnectReal()
     },
     async baseGetWeb3(/*providerurl, networkname*/) {
       // if (window.web3 && window.web3.chainId) return window.web3;
 
       console.log('baseGetWeb3 running')
-      //this.onSetWeb3provider() // FIXME
+      this.onSetWeb3provider() // FIXME
       if (this.needReconnect) {
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
         this.needReconnect = false;
