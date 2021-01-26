@@ -31,8 +31,6 @@ export const CHAINS = {
   '97': 'bsctest',
 }
 
-export let web3ModalProvider = null; // FIXME
-
 function getWeb3Modal(networkname) {
   const providerOptions = {
     portis: {
@@ -74,6 +72,7 @@ export default {
     return {
       web3: null,
       web3provider: null,
+      needReconnect: true,
       connectStyle: 'inline',
       disconnectStyle: 'none',
       web3Modal: this.myGetWeb3Modal(this.networkname),
@@ -92,28 +91,35 @@ export default {
     networkname() {
       this.$emit('changenetworkname', this.networkname)
     },
-    web3provider() {
-      this.web3provider.on("connect", (/*info*/) => {
+  },
+  methods: {
+    // TODO: Inefficient.
+    onSetWeb3provider() {
+      console.log("A", this.web3Modal)
+      this.web3Modal.on("connect", (/*info*/) => {
         console.log('connect')
         this.onConnect()
       })
-      this.web3provider.on("disconnect", (/*error*/) => {
+      this.web3Modal.on("disconnect", (/*error*/) => {
         console.log('disconnect')
         this.onDisconnect()
       })
-      this.web3provider.on("chainChanged", (chainId) => {
+      this.web3Modal.on("chainChanged", (chainId) => {
         this.currentNetworkname = CHAINS[chainId]
       });
+      this.needReconnect = true
+      this.onConnectReal()
     },
-  },
-  methods: {
     async baseGetWeb3(providerurl, networkname) {
       // if (window.web3 && window.web3.chainId) return window.web3;
 
       this.web3provider = await baseGetWeb3Provider(providerurl, networkname)
-      const web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
-      this.onConnectReal()
-      return web3
+      this.onSetWeb3provider()
+      if (this.needReconnect) {
+        this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
+        this.needReconnect = false;
+      }
+      return this.web3
     },
     async getChainId(providerurl, networkname) { // TODO: Used?
       const web3 = await this.baseGetWeb3(providerurl, networkname);
@@ -156,9 +162,8 @@ export default {
       return this.web3
     },
     connect() {
-      console.log("connect command")
+      console.log("connect command", window.ethereum.isConnected())
       this.connectAsync()
-      //this.onConnect()
     },
     disconnect() {
       console.log("disconnect command")
