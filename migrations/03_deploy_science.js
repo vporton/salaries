@@ -13,7 +13,7 @@ module.exports = async function(deployer, network, accounts) {
 
   // TODO: duplicate code
   {
-    const addressesFileName = `donations-widget/public/addresses.json`;
+    const addressesFileName = `abi/addresses.json`;
     let json;
     try {
         const text = fs.readFileSync(addressesFileName);
