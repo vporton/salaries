@@ -38,12 +38,12 @@ export async function fetchOnceJson(url) {
   }
 }
 
-// export async function getWeb3(providername, networkname) {
+// export async function getWeb3(providerurl, networkname) {
 //   try {
 //     window.ethereum.enable().catch(() => {}); // Without this catch Firefox 84.0 crashes on user pressing Cancel.
 //   }
 //   catch(_) { /* empty */ }
-//   const web3 = await baseGetWeb3(providername, networkname);
+//   const web3 = await baseGetWeb3(providerurl, networkname);
 //   getAccounts().then((/*accounts*/) => {
 //     // setConnectedToAccount(accounts.length !== 0); // TODO
 //   });

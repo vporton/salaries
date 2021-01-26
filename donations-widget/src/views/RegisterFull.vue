@@ -2,8 +2,9 @@
   <div>
     <p style="float: right">
       <Connect
+        ref="connector"
         :networkname="this.networkname"
-        :providername="this.providername"
+        :providerurl="this.providerurl"
         @change="web3 = $event"
         @change-networkname="$refs.register.networkname = $event"
       />
@@ -18,9 +19,9 @@
       :prefix="this.prefix"
       :chainid="this.chainid"
       :networkname="this.networkname"
-      :providername="this.providername"
+      :providerurl="this.providerurl"
       :initialconditionid="this.initialconditionid"
-      :web3="this.web3"
+      :web3Getter="web3Getter"
     />
   </div>
 </template>
@@ -35,7 +36,7 @@ export default {
     'prefix',
     'chainid',
     'networkname',
-    'providername',
+    'providerurl',
     'initialconditionid',
   ],
   data() {
@@ -50,6 +51,14 @@ export default {
   mounted() {
     // Hack
     window.registerComponent.addRegisterCallback(onConditionCreated);
+  },
+  methods: {
+    async web3Getter() {
+      await this.$refs.connector.connectAsync()
+      console.log(this.$refs.connector.providerurl)  
+      this.providerurl = this.$refs.connector.providerurl
+      this.networkname = this.$refs.connector.networkname
+    }
   },
 }
 

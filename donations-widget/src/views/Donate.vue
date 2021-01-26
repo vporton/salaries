@@ -122,7 +122,13 @@ import erc20Abi from '../utils/ERC20Abi';
 
 export default {
   name: 'Donate',
-  props: ['prefix', 'chainid', 'networkname', 'providername', 'web3'],
+  props: [
+    'prefix',
+    'chainid',
+    'networkname',
+    'providerurl',
+    'web3Getter',
+  ],
   components: {
     EthAddress,
     Uint256,
@@ -200,9 +206,9 @@ export default {
           collateralTokenId = Web3.utils.toHex(this.tokenEthAddress);
 
           {
-            const web3 = await this.web3;
+            const web3 = await await this.getWeb3();
             // if (web3 === null) return;
-            const account = (await getAccounts(this.providername, this.networkname))[0];
+            const account = (await getAccounts(this.providerurl, this.networkname))[0];
             // if(!account) return;
 
             // Approve ERC-20 spent
@@ -212,7 +218,7 @@ export default {
             const halfBig = toBN(2).pow(toBN(128));
             if(allowance.lt(halfBig)) {
               const big = toBN(2).pow(toBN(256)).sub(toBN(1));
-              const tx = await mySend(this.web3, erc20, erc20.methods.approve, [collateralContractEthAddress, big.toString()], {from: account}, null)
+              const tx = await mySend(await this.getWeb3(), erc20, erc20.methods.approve, [collateralContractEthAddress, big.toString()], {from: account}, null)
                 // .catch(e => alert(e.message));
               await tx;
             }
@@ -227,18 +233,18 @@ export default {
     },
     async donateETH() {
       const wei = toWei(this.amount);
-      const web3 = await this.web3;
+      const web3 = await await this.getWeb3();
       if (web3 !== null) {
         try {
           const contractAddress = (await this.myGetAddresses(this.prefix)).DonateETH.address;
           const abi = (await getABIs(this.prefix)).DonateETH;
           const contract = new web3.eth.Contract(abi, contractAddress);
-          const account = (await getAccounts(this.providername, this.networkname))[0];
+          const account = (await getAccounts(this.providerurl, this.networkname))[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
             return;
           }
-          await mySend(this.web3, contract, contract.methods.donate,
+          await mySend(await this.getWeb3(), contract, contract.methods.donate,
             [this.oracleId,
              account,
              []],
@@ -252,7 +258,7 @@ export default {
     },
     async donateToken() {
       const wei = toWei(this.amount);
-      const web3 = await this.web3;
+      const web3 = await await this.getWeb3();
       if (web3 !== null) {
         try {
           const addresses = await this.myGetAddresses(this.prefix);
@@ -260,7 +266,7 @@ export default {
           const contractAddress = await this.lockContract();
           const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-          const account = (await getAccounts(this.providername, this.networkname))[0];
+          const account = (await getAccounts(this.providerurl, this.networkname))[0];
           if(!account) {
             // setConnectedToAccount(false); // TODO
             return;
@@ -270,12 +276,12 @@ export default {
           const approved = await collateralContract.methods.isApprovedForAll(account, contractAddress).call();
           if (!approved) {
             const tx = await mySend(
-              this.web3, collateralContract, collateralContract.methods.setApprovalForAll,
+              await this.getWeb3(), collateralContract, collateralContract.methods.setApprovalForAll,
               [contractAddress, true], {from: account}, null
             );
             await tx;
           }
-          await mySend(this.web3, science, science.methods.donate,
+          await mySend(await this.getWeb3(), science, science.methods.donate,
             [collateralContractAddress,
              collateralTokenId,
              this.oracleId,
@@ -335,6 +341,9 @@ export default {
     isPastDate(date) {
       const currentDate = new Date();
       return date < currentDate;
+    },
+    async getWeb3() {
+      return this.web3Getter ? await this.web3Getter() : window.web3
     },
   },
 }

@@ -60,19 +60,19 @@ async function defaultWeb3Provider(networkname) {
   return await web3Modal.connect();
 }
 
-async function baseGetWeb3Provider(providername, networkname) {
-  return providername ? providername : await defaultWeb3Provider(networkname);
+async function baseGetWeb3Provider(providerurl, networkname) {
+  return providerurl ? providerurl : await defaultWeb3Provider(networkname);
 }
 
-async function baseGetWeb3(providername, networkname) {
+async function baseGetWeb3(providerurl, networkname) {
   // if (window.web3 && window.web3.chainId) return window.web3;
 
-  const _web3Provider = await baseGetWeb3Provider(providername, networkname)
+  const _web3Provider = await baseGetWeb3Provider(providerurl, networkname)
   return _web3Provider ? new Web3(_web3Provider) : Web3.givenProvider ? new Web3() : null;
 }
 
-export async function getChainId(providername, networkname) {
-  const web3 = await baseGetWeb3(providername, networkname);
+export async function getChainId(providerurl, networkname) {
+  const web3 = await baseGetWeb3(providerurl, networkname);
   if (!web3) {
     return null;
   }
@@ -82,7 +82,7 @@ export async function getChainId(providername, networkname) {
 export default {
   name: 'Connect',
   props: [
-    'providername',
+    'providerurl',
     'networkname',
   ],
   data() {
@@ -128,14 +128,14 @@ export default {
     myGetWeb3Modal(networkname) {
       return getWeb3Modal(networkname);
     },
+    async connectAsync() {
+      const web3 = await baseGetWeb3(self.providerurl, self.networkname)
+      this.$emit('change', web3)
+      return web3
+    },
     connect() {
-      const self = this
       console.log("connect command")
-      async function doIt() {
-        const web3 = await baseGetWeb3(self.providername, self.networkname)
-        self.$emit('change', web3)
-      }
-      doIt()
+      this.connectAsync()
     },
     disconnect() {
       console.log("disconnect command")

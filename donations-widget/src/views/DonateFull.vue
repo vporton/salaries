@@ -2,8 +2,9 @@
   <div>
     <p style="float: right">
       <Connect
+        ref="connector"
         :networkname="this.networkname"
-        :providername="this.providername"
+        :providerurl="this.providerurl"
         @change="web3 = $event"
         @change-networkname="$refs.donate.networkname = $event"
       />
@@ -22,8 +23,8 @@
       :prefix="this.prefix"
       :chainid="this.chainid"
       :networkname="this.networkname"
-      :providername="this.providername"
-      :web3="this.web3"
+      :providerurl="this.providerurl"
+      :web3Getter="web3Getter"
     />
   </div>
 </template>
@@ -34,7 +35,12 @@ import Connect from '@/components/Connect.vue'
 
 export default {
   name: 'DonateFull',
-  props: ['prefix', 'chainid', 'networkname', 'providername'],
+  props: [
+    'prefix',
+    'chainid',
+    'networkname',
+    'providerurl',
+  ],
   data() {
     return {
       web3: null,
@@ -43,6 +49,13 @@ export default {
   components: {
     Donate,
     Connect,
+  },
+  methods: {
+    async web3Getter() {
+      await this.$refs.connector.connectAsync()
+      this.providerurl = this.$refs.connector.providerurl
+      this.networkname = this.$refs.connector.networkname
+    }
   },
 }
 </script>
