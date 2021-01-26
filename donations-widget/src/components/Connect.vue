@@ -121,17 +121,19 @@ export default {
       });
     },
     networkname() {
-      this.$emit('change-networkname', this.networkname)
+      this.$emit('changenetworkname', this.networkname)
     }
   },
   methods: {
     onConnect() {
       this.connectStyle = 'none'
       this.disconnectStyle = 'inline'
+      this.$emit('changenetworkname', this.networkname)
     },
     onDisconnect() {
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
+      this.$emit('changenetworkname', null)
     },
     myGetWeb3Modal(networkname) {
       return getWeb3Modal(networkname);

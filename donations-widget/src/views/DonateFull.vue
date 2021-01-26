@@ -5,6 +5,7 @@
         ref="connector"
         :networkname="this.networkname"
         :providerurl="this.providerurl"
+        @changenetworkname="currentNetworkname = $event"
       />
     </p>
     <p>
