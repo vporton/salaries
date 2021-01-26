@@ -60,7 +60,6 @@ export async function getAccounts(web3) {
 
 // FIXME: returns Promise?
 export async function mySend(web3, contract, method, args, sendArgs, handler) {
-  console.log([ web3, contract, method, args, sendArgs, handler])
   sendArgs = sendArgs || {}
   const account = (await getAccounts(web3))[0];
   return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
