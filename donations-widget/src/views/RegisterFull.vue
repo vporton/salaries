@@ -54,7 +54,6 @@ export default {
     async web3Getter() {
       await this.$refs.connector.connectAsync()
       this.currentNetworkname = this.$refs.connector.currentNetworkname
-      console.log('ttt', this.$refs.connector.web3)
       return this.$refs.connector.web3
     },
   },

@@ -209,7 +209,15 @@ export default {
         : '';
     },
     web3() { // FIXME: Works on network change in MetaMask?
+    },
+    networkname() {
       // TODO: Is the following correct?
+      const self = this
+      async function doIt() {
+        const abis = await self.myGetAddresses(self.prefix);
+        self.oracleId = abis ? abis.oracleId : null
+      }
+      doIt()
       this.updateRegisteredStatus()
       this.updateAmountOnAccount()
       this.updateRegistrationStyles()
@@ -244,7 +252,7 @@ export default {
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address)
           const tx = await mySend(
-            await this.getWeb3(), science,
+            await self.getWeb3(), science,
             science.methods.mintSalary,
             [self.oracleId, self.conditionId, []],
             {from: account},

@@ -158,6 +158,14 @@ export default {
     bequestDate() {
       this.setBequestButtonDisabled();
     },
+    networkname() {
+      const self = this
+      async function doIt() {
+        const abis = await self.myGetAddresses(self.prefix);
+        self.oracleId = abis ? abis.oracleId : null
+      }
+      doIt()
+    },
   },
   data() {
     return {

@@ -55,12 +55,12 @@ export async function getABIs(PREFIX) {
 }
 
 export async function getAccounts(web3) {
-  console.log('fff', await web3.eth.getAccounts())
   return web3 ? await web3.eth.getAccounts() : null;
 }
 
 // FIXME: returns Promise?
 export async function mySend(web3, contract, method, args, sendArgs, handler) {
+  console.log([ web3, contract, method, args, sendArgs, handler])
   sendArgs = sendArgs || {}
   const account = (await getAccounts(web3))[0];
   return method.bind(contract)(...args).estimateGas({gas: '1000000', from: account, ...sendArgs})
@@ -75,9 +75,10 @@ export async function mySend(web3, contract, method, args, sendArgs, handler) {
 }
 
 export async function getAddresses(PREFIX, networkname) {
-  if (!addresses) return null;
+  if (!networkname) return null;
   const json = await fetchOnceJson(PREFIX + `addresses.json`);
   const addresses = json[networkname];
   if (!addresses.SalaryWithDAO) return null; // TODO: Crude hack here!
+  console.log(addresses)
   return addresses;
 }
