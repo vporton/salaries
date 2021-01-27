@@ -55,13 +55,11 @@ function getWeb3Modal(networkname) {
 
 async function defaultWeb3Provider(networkname) {
   const web3Modal = getWeb3Modal(networkname)
-  const provider = await web3Modal.connect();
-  return provider
+  return await web3Modal.connect();
 }
 
 async function baseGetWeb3Provider(providerurl, networkname) {
-  const provider = providerurl ? providerurl : await defaultWeb3Provider(networkname);
-  return provider
+  return providerurl ? providerurl : await defaultWeb3Provider(networkname);
 }
 
 export default {
@@ -102,7 +100,7 @@ export default {
     doIt()
   },
   watch: {
-    currentNetworkname(/*current, old*/ ) {
+    currentNetworkname() {
       if(!this.initProviderPromiseFinished) {
         return
       }
@@ -130,9 +128,7 @@ export default {
     },
   },
   methods: {
-    async baseGetWeb3(/*providerurl, networkname*/) {
-      // if (window.web3 && window.web3.chainId) return window.web3;
-
+    async baseGetWeb3() {
       if (this.needReconnect) {
         this.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
@@ -141,8 +137,8 @@ export default {
       }
       return this.web3
     },
-    async getChainId(/*providerurl, networkname*/) { // TODO: Used?
-      const web3 = await this.baseGetWeb3(/*providerurl, networkname*/);
+    async getChainId() { // TODO: Used?
+      const web3 = await this.baseGetWeb3();
       if (!web3) {
         return null;
       }
@@ -151,9 +147,7 @@ export default {
     onWeb3ModalConnect() {
       if (window.ethereum.isConnected()) {
         this.onConnectReal()
-      }/* else {
-        this.onDisconnectReal()
-      }*/
+      }
     },
     onWeb3ModalDisconnect() {
       this.onDisconnectReal()
@@ -173,7 +167,7 @@ export default {
     },
     async connectAsync() {
       await this.initProviderPromise;
-      this.web3 = await this.baseGetWeb3(/*self.providerurl, self.networkname*/)
+      this.web3 = await this.baseGetWeb3()
       this.$emit('change', this.web3)
       return this.web3
     },
