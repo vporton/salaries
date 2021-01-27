@@ -77,6 +77,7 @@ export async function getAddresses(PREFIX, networkname) {
   if (!networkname) return null;
   const json = await fetchOnceJson(PREFIX + `addresses.json`);
   const addresses = json[networkname];
+  if (!addresses) return null; // TODO: Crude hack here!
   if (!addresses.SalaryWithDAO) return null; // TODO: Crude hack here!
   return addresses;
 }
