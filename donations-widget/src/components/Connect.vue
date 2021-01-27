@@ -141,7 +141,7 @@ export default {
       }
       async function doIt() {
         await self.initNetworknamePromise;
-        this.$emit('changenetworkname', this.currentNetworkname)
+        self.$emit('changenetworkname', self.currentNetworkname)
       }
       doIt()
     },
