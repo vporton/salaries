@@ -81,11 +81,15 @@ export default {
       initProviderPromiseResolve: null,
       initProviderPromise: null,
       initProviderPromiseFinished: false,
+      initNetworknamePromiseResolve: null,
+      initNetworknamePromise: null,
+      initNetworknamePromiseFinished: false, // not needed?
     }
   },
   created() {
     const self = this;
     self.initProviderPromise = new Promise((resolve) => self.initProviderPromiseResolve = resolve)
+    self.initNetworknamePromise = new Promise((resolve) => self.initNetworknamePromiseResolve = resolve)
     async function doIt() {
       self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
       self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
@@ -94,6 +98,8 @@ export default {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
       }
+      self.initNetworknamePromiseResolve(undefined)
+      self.initNetworknamePromiseFinished = true
       self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       self.updateCurrentNetworknameButDontReconnect()
       self.initProviderPromiseResolve(undefined)
@@ -106,7 +112,6 @@ export default {
       this.needReconnect = true
 
       if(!this.web3provider) return;
-      // FIXME: Uncomment.
 //      this.web3provider.on("connect", (/*info*/) => {
 //        this.onWeb3ModalConnect()
 //      })
@@ -123,10 +128,15 @@ export default {
   },
   methods: {
     updateCurrentNetworknameButDontReconnect() {
+      const self = this
       if (this.currentNetworkname) {
         this.cachedNetworkname = this.currentNetworkname
       }
-      this.$emit('changenetworkname', this.currentNetworkname) // FIXME: causes no RESO
+      async function doIt() {
+        await self.initNetworknamePromise;
+        this.$emit('changenetworkname', this.currentNetworkname) // FIXME: causes no RESO2
+      }
+      doIt()
     },
     updateCurrentNetworkname() {
       this.updateCurrentNetworknameButDontReconnect()
@@ -196,7 +206,7 @@ export default {
       this.needReconnect = true
       this.onWeb3ModalDisconnect()
       this.currentNetworkname = undefined
-      this.updateCurrentNetworkname()
+      this.updateCurrentNetworknameButDontReconnect()
     },
   },
 }
