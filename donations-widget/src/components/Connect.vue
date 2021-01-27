@@ -31,8 +31,6 @@ export const CHAINS = {
   '97': 'bsctest',
 }
 
-let web3Modal = null; // FIXME
-
 function getWeb3Modal(networkname) {
   const providerOptions = {
     portis: {
@@ -48,7 +46,7 @@ function getWeb3Modal(networkname) {
       package: ethProvider // required
     }
   };  
-  return web3Modal = new Web3Modal({
+  return new Web3Modal({
     network: networkname, // optional
     cacheProvider: true, // optional
     providerOptions // required
@@ -56,7 +54,7 @@ function getWeb3Modal(networkname) {
 }
 
 async function defaultWeb3Provider(networkname) {
-  const web3Modal = getWeb3Modal(networkname)
+  const getWeb3Modal(networkname)
   const provider = await web3Modal.connect();
   return provider
 }
