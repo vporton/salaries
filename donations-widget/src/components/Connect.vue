@@ -54,7 +54,7 @@ function getWeb3Modal(networkname) {
 }
 
 async function defaultWeb3Provider(networkname) {
-  const getWeb3Modal(networkname)
+  const web3Modal = getWeb3Modal(networkname)
   const provider = await web3Modal.connect();
   return provider
 }
