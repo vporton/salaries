@@ -94,9 +94,7 @@ export default {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
       }
-      console.log("RESO1", self.currentNetworkname  )
       self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
-      console.log("RESO")
       self.updateCurrentNetworknameButDontReconnect()
       self.initProviderPromiseResolve(undefined)
       self.initProviderPromiseFinished = true
@@ -128,7 +126,6 @@ export default {
       if (this.currentNetworkname) {
         this.cachedNetworkname = this.currentNetworkname
       }
-      console.log("PP", this.currentNetworkname)
       this.$emit('changenetworkname', this.currentNetworkname) // FIXME: causes no RESO
     },
     updateCurrentNetworkname() {
@@ -142,7 +139,6 @@ export default {
       }
     },
     async baseGetWeb3() {
-      console.log("B", this.needReconnect)
       if (this.needReconnect) {
         this.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
@@ -150,7 +146,6 @@ export default {
           this.currentNetworkname = this.cachedNetworkname
           //this.updateCurrentNetworknameButDontReconnect()
         }
-        console.log('this.currentNetworkname', this.currentNetworkname)
         this.needReconnect = false;
         this.onConnectReal()
       }
@@ -174,25 +169,19 @@ export default {
     onConnectReal() {
       this.connectStyle = 'none'
       this.disconnectStyle = 'inline'
-      console.log("PP", this.currentNetworkname)
       this.$emit('changenetworkname', this.currentNetworkname)
     },
     onDisconnectReal() {
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
-      console.log("DD", null)
       this.$emit('changenetworkname', null)
     },
     myGetWeb3Modal(networkname) {
       return getWeb3Modal(networkname);
     },
     async connectAsync() {
-      console.log("A")
       await this.initProviderPromise;
-      console.log("X")
       this.web3 = await this.baseGetWeb3()
-      console.log("Y")
-      console.log("UUU", this.currentNetworkname)
       this.$emit('changenetworkname', this.currentNetworkname)
       this.$emit('change', this.web3)
       return this.web3
