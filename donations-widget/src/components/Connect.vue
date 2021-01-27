@@ -87,7 +87,7 @@ export default {
   created() {
     const self = this;
     self.initProviderPromise = new Promise((resolve) => self.initProviderPromiseResolve = resolve)
-    async function doIt() { // FIXME: Not here
+    async function doIt() {
       self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
       self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
       self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'
@@ -95,8 +95,7 @@ export default {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
       }
-      const provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
-      self.web3provider = provider
+      self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       self.initProviderPromiseResolve(undefined)
       self.initProviderPromiseFinished = true
     }
