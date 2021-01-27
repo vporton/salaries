@@ -55,7 +55,12 @@ function getWeb3Modal(networkname) {
 
 async function defaultWeb3Provider(networkname) {
   const web3Modal = getWeb3Modal(networkname)
-  return await web3Modal.connect();
+  try {
+    return await web3Modal.connect();
+  }
+  catch(e) {
+    return null;
+  }
 }
 
 async function baseGetWeb3Provider(providerurl, networkname) {
@@ -101,9 +106,11 @@ export default {
       self.initNetworknamePromiseResolve(undefined)
       self.initNetworknamePromiseFinished = true
       self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
-      self.updateCurrentNetworknameButDontReconnect()
-      self.initProviderPromiseResolve(undefined)
-      self.initProviderPromiseFinished = true
+      if (self.web3provider) {
+        self.updateCurrentNetworknameButDontReconnect()
+        self.initProviderPromiseResolve(undefined)
+        self.initProviderPromiseFinished = true
+      }
     }
     doIt()
   },
@@ -134,7 +141,7 @@ export default {
       }
       async function doIt() {
         await self.initNetworknamePromise;
-        this.$emit('changenetworkname', this.currentNetworkname) // FIXME: causes no RESO2
+        this.$emit('changenetworkname', this.currentNetworkname)
       }
       doIt()
     },
@@ -151,13 +158,15 @@ export default {
     async baseGetWeb3() {
       if (this.needReconnect) {
         this.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
-        this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
-        if (this.cachedNetworkname) {
-          this.currentNetworkname = this.cachedNetworkname
-          //this.updateCurrentNetworknameButDontReconnect()
+        if (this.web3provider) {
+          this.web3 = new Web3(this.web3provider);
+          if (this.cachedNetworkname) {
+            this.currentNetworkname = this.cachedNetworkname
+            //this.updateCurrentNetworknameButDontReconnect()
+          }
+          this.needReconnect = false;
+          this.onConnectReal()
         }
-        this.needReconnect = false;
-        this.onConnectReal()
       }
       return this.web3
     },
