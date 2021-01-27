@@ -77,18 +77,21 @@ export default {
       disconnectStyle: 'none',
       web3Modal: null,
       currentNetworkname: this.networkname,
+      initProviderPromiseResolve: null,
+      initProviderPromise: null,
     }
   },
   created() {
     const self = this;
+    self.initProviderPromise = new Promise((resolve) => self.initProviderPromiseResolve = resolve)
     async function doIt() { // FIXME: Not here
       self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
       if (!self.networkname) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
-        console.log('xxx', self.providerurl, self.currentNetworkname)
       }
       self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
+      self.initProviderPromiseResolve(undefined)
     }
     doIt()
   },
@@ -101,10 +104,8 @@ export default {
 //     })
   },
   watch: {
-    currentNetworkname(current, old) {
+    currentNetworkname(/*current, old*/ ) {
       const self = this
-      console.log('c, o', current, old)
-      console.log("this.networkname", this.currentNetworkname)
       async function doIt() {
         self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       }
@@ -119,28 +120,22 @@ export default {
     // TODO: Inefficient.
     onSetWeb3provider() {
       if (self.web3provider) {
-        console.log("A", this.web3Modal)
         self.web3provider.on("connect", (/*info*/) => {
-          console.log('connect')
           //this.onConnect() // FIXME
         })
         self.web3provider.on("disconnect", (/*error*/) => {
-          console.log('disconnect')
           this.onDisconnect()
         })
-        console.log("ON")
         self.web3provider.on("chainChanged", (chainId) => {
-          console.log("eee", chainId)
           this.currentNetworkname = CHAINS[chainId] // FIXME
         });
       }
-      this.onConnectReal()
+      //this.onConnectReal()
     },
     async baseGetWeb3(/*providerurl, networkname*/) {
       // if (window.web3 && window.web3.chainId) return window.web3;
 
-      console.log('baseGetWeb3 running')
-      this.onSetWeb3provider() // FIXME
+      //this.onSetWeb3provider() // FIXME
       if (this.needReconnect) {
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
         this.needReconnect = false;
@@ -148,12 +143,11 @@ export default {
       return this.web3
     },
     async getChainId(/*providerurl, networkname*/) { // TODO: Used?
-      return 1 // FIXME
-//      const web3 = await this.baseGetWeb3(/*providerurl, networkname*/);
-//      if (!web3) {
-//        return null;
-//      }
-//      return await web3.eth.getChainId();
+      const web3 = await this.baseGetWeb3(/*providerurl, networkname*/);
+      if (!web3) {
+        return null;
+      }
+      return await web3.eth.getChainId();
     },
     onConnect() {
       if (window.ethereum.isConnected()) {
@@ -168,30 +162,29 @@ export default {
     onConnectReal() {
       this.connectStyle = 'none'
       this.disconnectStyle = 'inline'
-      console.log('changenetworkname', this.networkname)
       this.$emit('changenetworkname', this.networkname)
     },
     onDisconnectReal() {
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
-      console.log('onDisconnectReal', "NULL")
-      this.$emit('changenetworkname', null)
+      this.$emit('changenetworkname3', null)
     },
     myGetWeb3Modal(networkname) {
       return getWeb3Modal(networkname);
     },
     async connectAsync() {
-      console.log('www', this.providerurl, this.networkname)
+      await this.initProviderPromise;
+      if (this.web3) {
+        return this.web3
+      }
       this.web3 = await this.baseGetWeb3(/*self.providerurl, self.networkname*/)
       this.$emit('change', this.web3)
       return this.web3
     },
     connect() {
-      console.log("connect command", window.ethereum.isConnected())
       this.connectAsync()
     },
     disconnect() {
-      console.log("disconnect command")
       this.web3Modal.clearCachedProvider()
       this.onDisconnect()
     },
