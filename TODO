@@ -10,3 +10,4 @@
 - Copy-to-clipboard button for the displayed Ethereum address
 - Show the amount of the token to be donated.
 - If I enter condition ID immediately after connecting to Portis, it says "No such condition ID".
+- Show the current wallet provider.
