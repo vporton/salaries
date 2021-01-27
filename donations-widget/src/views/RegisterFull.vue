@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     async web3Getter() {
-      await this.$refs.connector.connectAsync()
+      await this.$refs.connector.baseGetWeb3()
       this.currentNetworkname = this.$refs.connector.currentNetworkname
       return this.$refs.connector.web3
     },

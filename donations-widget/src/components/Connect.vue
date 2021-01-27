@@ -129,6 +129,7 @@ export default {
   },
   methods: {
     async baseGetWeb3() {
+      console.log("B", this.needReconnect)
       if (this.needReconnect) {
         this.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
