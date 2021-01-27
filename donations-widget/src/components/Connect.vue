@@ -77,6 +77,7 @@ export default {
       disconnectStyle: 'none',
       web3Modal: null,
       currentNetworkname: this.networkname,
+      cachedNetworkname: this.networkname,
       initProviderPromiseResolve: null,
       initProviderPromise: null,
       initProviderPromiseFinished: false,
@@ -101,6 +102,9 @@ export default {
   },
   watch: {
     currentNetworkname() {
+      if (this.currentNetworkname) {
+        this.cachedNetworkname = this.currentNetworkname
+      }
       const self = this
       async function doIt() {
         self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
@@ -168,11 +172,13 @@ export default {
     async connectAsync() {
       await this.initProviderPromise;
       this.web3 = await this.baseGetWeb3()
+      this.currentNetworkname = this.cachedNetworkname  
       this.$emit('change', this.web3)
       return this.web3
     },
     connect() {
-      this.disconnect() // needed?
+      //this.disconnect() // needed?
+      this.needReconnect = true
       this.connectAsync()
     },
     disconnect() {

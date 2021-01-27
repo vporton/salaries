@@ -5,7 +5,7 @@
         ref="connector"
         :networkname="this.networkname"
         :providerurl="this.providerurl"
-        @changenetworkname="currentNetworkname = $event"
+        @changenetworkname="setNetworkname($event)"
       />
     </p>
     <p>
@@ -56,6 +56,10 @@ export default {
       await this.$refs.connector.baseGetWeb3()
       this.currentNetworkname = this.$refs.connector.currentNetworkname
       return this.$refs.connector.web3
+    },
+    setNetworkname(name) {
+      console.log("setNetworkname", name)
+      this.currentNetworkname = name
     },
   },
 }
