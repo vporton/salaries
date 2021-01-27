@@ -101,14 +101,13 @@ export default {
   },
   watch: {
     currentNetworkname() {
-      if(!this.initProviderPromiseFinished) {
-        return
-      }
       const self = this
       async function doIt() {
         self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       }
-      doIt()
+      if(this.initProviderPromiseFinished) {
+        doIt()
+      }
       this.$emit('changenetworkname', this.currentNetworkname)
     },
     web3provider() {
@@ -180,6 +179,7 @@ export default {
       this.web3Modal.clearCachedProvider()
       this.needReconnect = true
       this.onWeb3ModalDisconnect()
+      this.currentNetworkname = undefined
     },
   },
 }

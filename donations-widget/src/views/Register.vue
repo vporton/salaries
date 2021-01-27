@@ -218,10 +218,16 @@ export default {
         self.oracleId = abis ? abis.oracleId : null
       }
       doIt()
-      // FIXME: It connects again immediately after disconnect.
-      this.updateRegisteredStatus()
-      this.updateAmountOnAccount()
-      this.updateRegistrationStyles()
+      if (!self.networkname) {
+        self.lastSalaryDate = undefined
+        self.amountOnAccount = undefined
+        self.registrationDate = undefined
+        self.updateRegistrationStyles()
+      } else {
+        this.updateAmountOnAccount()
+        this.updateRegisteredStatus()
+        this.updateRegistrationStyles()
+      }
     },
   },
   created() {
@@ -365,7 +371,7 @@ export default {
           self.updateRegistrationStyles()
         } 
       }
-      if (self.conditionId !== undefined && isUint256Valid(self.conditionId)) {
+      if (self.networkname && self.conditionId !== undefined && isUint256Valid(self.conditionId)) {
         loadData()
         self.startShowingSalary()
       } else {
