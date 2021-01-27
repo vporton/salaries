@@ -96,13 +96,13 @@ export default {
     self.initProviderPromise = new Promise((resolve) => self.initProviderPromiseResolve = resolve)
     self.initNetworknamePromise = new Promise((resolve) => self.initNetworknamePromiseResolve = resolve)
     async function doIt() {
+      if (!self.networkname) {
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        self.cachedNetworkname = self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
+      }
       self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
       self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
       self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'
-      if (!self.networkname) {
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
-      }
       self.initNetworknamePromiseResolve(undefined)
       self.initNetworknamePromiseFinished = true
       self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
@@ -119,7 +119,6 @@ export default {
   },
   methods: {
     updateWeb3provider() {
-      console.log("Watched web3provider")
       this.needReconnect = true
 
       if(!this.web3provider) return;
@@ -159,9 +158,8 @@ export default {
       }
     },
     async baseGetWeb3() {
-      console.log("baseGetWeb3: this.needReconnect", this.needReconnect)
       if (this.needReconnect) {
-        this.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
+        this.web3provider = await baseGetWeb3Provider(self.providerurl, this.cachedNetworkname)
         if (this.web3provider) {
           this.web3 = new Web3(this.web3provider);
           if (this.cachedNetworkname) {
