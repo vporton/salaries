@@ -118,7 +118,7 @@ export default {
 
       if(!this.web3provider) return;
       this.web3provider.on("connect", (/*info*/) => {
-        this.onWeb3ModalConnect() // FIXME
+        this.onWeb3ModalConnect()
       })
       this.web3provider.on("disconnect", (/*error*/) => {
         this.onWeb3ModalDisconnect()
@@ -127,8 +127,6 @@ export default {
         console.log("chainChanged!!")
         this.currentNetworkname = CHAINS[chainId] // FIXME
       });
-//      }
-      //this.onConnectReal()
     },
   },
   methods: {
@@ -153,9 +151,9 @@ export default {
     onWeb3ModalConnect() {
       if (window.ethereum.isConnected()) {
         this.onConnectReal()
-      } else {
+      }/* else {
         this.onDisconnectReal()
-      }
+      }*/
     },
     onWeb3ModalDisconnect() {
       this.onDisconnectReal()
@@ -168,7 +166,7 @@ export default {
     onDisconnectReal() {
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
-      this.$emit('changenetworkname3', null)
+      this.$emit('changenetworkname', null)
     },
     myGetWeb3Modal(networkname) {
       return getWeb3Modal(networkname);
