@@ -55,11 +55,13 @@ function getWeb3Modal(networkname) {
 
 async function defaultWeb3Provider(networkname) {
   const web3Modal = getWeb3Modal(networkname)
-  return await web3Modal.connect();
+  const provider = await web3Modal.connect();
+  return provider
 }
 
 async function baseGetWeb3Provider(providerurl, networkname) {
-  return providerurl ? providerurl : await defaultWeb3Provider(networkname);
+  const provider = providerurl ? providerurl : await defaultWeb3Provider(networkname);
+  return provider
 }
 
 export default {
@@ -79,6 +81,7 @@ export default {
       currentNetworkname: this.networkname,
       initProviderPromiseResolve: null,
       initProviderPromise: null,
+      initProviderPromiseFinished: false,
     }
   },
   created() {
@@ -90,8 +93,11 @@ export default {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
       }
-      self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
+      const provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
+      self.web3provider = provider
       self.initProviderPromiseResolve(undefined)
+      self.initProviderPromiseFinished = true
+      self.onSetWeb3provider()
     }
     doIt()
   },
@@ -105,11 +111,15 @@ export default {
   },
   watch: {
     currentNetworkname(/*current, old*/ ) {
+      if(!this.initProviderPromiseFinished) {
+        return
+      }
       const self = this
       async function doIt() {
         self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       }
       doIt()
+      this.onSetWeb3provider() // FIXME
       this.$emit('changenetworkname', this.networkname)
     },
     web3provider() {
@@ -121,7 +131,7 @@ export default {
     onSetWeb3provider() {
       if (self.web3provider) {
         self.web3provider.on("connect", (/*info*/) => {
-          //this.onConnect() // FIXME
+          this.onConnect() // FIXME
         })
         self.web3provider.on("disconnect", (/*error*/) => {
           this.onDisconnect()
@@ -135,10 +145,10 @@ export default {
     async baseGetWeb3(/*providerurl, networkname*/) {
       // if (window.web3 && window.web3.chainId) return window.web3;
 
-      //this.onSetWeb3provider() // FIXME
       if (this.needReconnect) {
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
         this.needReconnect = false;
+        this.onConnectReal()
       }
       return this.web3
     },
