@@ -45,7 +45,7 @@ function getWeb3Modal(networkname) {
     frame: {
       package: ethProvider // required
     }
-  };  
+  };
   return new Web3Modal({
     network: networkname, // optional
     cacheProvider: true, // optional
@@ -106,6 +106,7 @@ export default {
       self.initNetworknamePromiseResolve(undefined)
       self.initNetworknamePromiseFinished = true
       self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
+      self.updateWeb3provider()
       if (self.web3provider) {
         self.updateCurrentNetworknameButDontReconnect()
         self.initProviderPromiseResolve(undefined)
@@ -115,7 +116,10 @@ export default {
     doIt()
   },
   watch: {
-    web3provider() {
+  },
+  methods: {
+    updateWeb3provider() {
+      console.log("Watched web3provider")
       this.needReconnect = true
 
       if(!this.web3provider) return;
@@ -132,8 +136,6 @@ export default {
         this.updateCurrentNetworknameButDontReconnect()
       });
     },
-  },
-  methods: {
     updateCurrentNetworknameButDontReconnect() {
       const self = this
       if (this.currentNetworkname) {
@@ -150,12 +152,14 @@ export default {
       const self = this
       async function doIt() {
         self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
+        self.updateWeb3provider()
       }
       if(this.initProviderPromiseFinished) {
         doIt()
       }
     },
     async baseGetWeb3() {
+      console.log("baseGetWeb3: this.needReconnect", this.needReconnect)
       if (this.needReconnect) {
         this.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
         if (this.web3provider) {
@@ -207,11 +211,13 @@ export default {
     },
     connect() {
       //this.disconnect() // needed?
+      console.log("connect()")
       this.needReconnect = true
       this.connectAsync()
     },
     disconnect() {
       this.web3Modal.clearCachedProvider()
+      console.log("disconnect()")
       this.needReconnect = true
       this.onWeb3ModalDisconnect()
       this.currentNetworkname = undefined
