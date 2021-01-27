@@ -31,6 +31,8 @@ export const CHAINS = {
   '97': 'bsctest',
 }
 
+let web3Modal = null; // FIXME
+
 function getWeb3Modal(networkname) {
   const providerOptions = {
     portis: {
@@ -46,7 +48,7 @@ function getWeb3Modal(networkname) {
       package: ethProvider // required
     }
   };  
-  return new Web3Modal({
+  return web3Modal = new Web3Modal({
     network: networkname, // optional
     cacheProvider: true, // optional
     providerOptions // required
@@ -89,6 +91,9 @@ export default {
     self.initProviderPromise = new Promise((resolve) => self.initProviderPromiseResolve = resolve)
     async function doIt() { // FIXME: Not here
       self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
+      self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
+      self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'
+      self.onSetWeb3provider()
       if (!self.networkname) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
@@ -97,17 +102,8 @@ export default {
       self.web3provider = provider
       self.initProviderPromiseResolve(undefined)
       self.initProviderPromiseFinished = true
-      self.onSetWeb3provider()
     }
     doIt()
-  },
-  beforeUpdate() { // TODO: Which hook?
-    const self = this;
-    self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
-    self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'
-//     window.ethereum.on('networkChanged', function(/*networkId*/) { 
-//       // self.$emit('change', web3)
-//     })
   },
   watch: {
     currentNetworkname(/*current, old*/ ) {
@@ -119,7 +115,7 @@ export default {
         self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       }
       doIt()
-      this.onSetWeb3provider() // FIXME
+      this.onSetWeb3provider();  // FIXME
       this.$emit('changenetworkname', this.networkname)
     },
     web3provider() {
@@ -129,17 +125,19 @@ export default {
   methods: {
     // TODO: Inefficient.
     onSetWeb3provider() {
-      if (self.web3provider) {
-        self.web3provider.on("connect", (/*info*/) => {
-          this.onConnect() // FIXME
-        })
-        self.web3provider.on("disconnect", (/*error*/) => {
-          this.onDisconnect()
-        })
-        self.web3provider.on("chainChanged", (chainId) => {
-          this.currentNetworkname = CHAINS[chainId] // FIXME
-        });
-      }
+      if(!this.web3provider) return;
+      this.web3provider.on("connect", (/*info*/) => {
+        this.onConnect() // FIXME
+      })
+      this.web3provider.on("disconnect", (/*error*/) => {
+        this.onDisconnect()
+      })
+      console.log("Setting chainChanged")
+      this.web3provider.on("chainChanged", (chainId) => {
+        console.log("chainChanged!!")
+        this.currentNetworkname = CHAINS[chainId] // FIXME
+      });
+//      }
       //this.onConnectReal()
     },
     async baseGetWeb3(/*providerurl, networkname*/) {
@@ -148,6 +146,7 @@ export default {
       if (this.needReconnect) {
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
         this.needReconnect = false;
+        console.log("Actually connected")
         this.onConnectReal()
       }
       return this.web3
@@ -170,11 +169,13 @@ export default {
       this.onDisconnectReal()
     },
     onConnectReal() {
+      console.log("onConnectReal")
       this.connectStyle = 'none'
       this.disconnectStyle = 'inline'
       this.$emit('changenetworkname', this.networkname)
     },
     onDisconnectReal() {
+      console.log("onDisconnectReal")
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
       this.$emit('changenetworkname3', null)
@@ -188,6 +189,7 @@ export default {
         return this.web3
       }
       this.web3 = await this.baseGetWeb3(/*self.providerurl, self.networkname*/)
+      this.onSetWeb3provider()
       this.$emit('change', this.web3)
       return this.web3
     },
