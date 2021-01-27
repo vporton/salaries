@@ -1,6 +1,6 @@
 <template>
   <p :style="{display: this.showStyle, color: 'red'}">
-    Currently Future Salaries supports only <strong>Rinkeby</strong> testnet, switch to it.
+    Currently Future Salaries supports only <strong>Rinkeby</strong> or <strong>BSC testnet</strong>, switch to it.
   </p>
 </template>
 
