@@ -130,7 +130,6 @@ export default {
       this.web3provider.on("disconnect", (/*error*/) => {
         this.onDisconnect()
       })
-      console.log("Setting chainChanged")
       this.web3provider.on("chainChanged", (chainId) => {
         console.log("chainChanged!!")
         this.currentNetworkname = CHAINS[chainId] // FIXME
@@ -142,9 +141,9 @@ export default {
       // if (window.web3 && window.web3.chainId) return window.web3;
 
       if (this.needReconnect) {
+        this.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
         this.web3 = this.web3provider ? new Web3(this.web3provider) : Web3.givenProvider ? new Web3() : null;
         this.needReconnect = false;
-        console.log("Actually connected")
         this.onConnectReal()
       }
       return this.web3
@@ -167,13 +166,11 @@ export default {
       this.onDisconnectReal()
     },
     onConnectReal() {
-      console.log("onConnectReal")
       this.connectStyle = 'none'
       this.disconnectStyle = 'inline'
       this.$emit('changenetworkname', this.networkname)
     },
     onDisconnectReal() {
-      console.log("onDisconnectReal")
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
       this.$emit('changenetworkname3', null)
@@ -183,19 +180,21 @@ export default {
     },
     async connectAsync() {
       await this.initProviderPromise;
-      if (this.web3) {
-        return this.web3
-      }
+//      if (this.web3) {
+//        return this.web3
+//      }
       this.web3 = await this.baseGetWeb3(/*self.providerurl, self.networkname*/)
       this.onSetWeb3provider()
       this.$emit('change', this.web3)
       return this.web3
     },
     connect() {
+      this.disconnect() // needed?
       this.connectAsync()
     },
     disconnect() {
       this.web3Modal.clearCachedProvider()
+      this.needReconnect = true
       this.onDisconnect()
     },
   },
