@@ -19,24 +19,28 @@ export default {
   watch: {
     networkname() { // FIXME: a wrong property to watch
       this.updateWeb3()
-    }
+    },
+    web3() { // FIXME: a wrong property to watch
+      this.updateWeb3()
+    },
   },
   methods: {
     updateWeb3() {
       const self = this
       if (self.web3) {
         self.web3.eth.net.getId().then(netId => {
-        switch (netId) {
-          case 4: // rinkeby
-            self.showStyle = 'none'
-            break
-          default:
-            self.showStyle = 'block'
-            break
+          console.log('updateWeb3', netId)
+          switch (netId) {
+            case 4: // rinkeby
+              self.showStyle = 'none'
+              break
+            default:
+              self.showStyle = 'block'
+              break
           }
         })
       } else {
-        self.showStyle = 'block'
+        self.showStyle = 'none'
       }
     }
   }

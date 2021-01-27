@@ -214,6 +214,7 @@ export default {
       // TODO: Is the following correct?
       const self = this
       async function doIt() {
+        self.web3 = self.web3Getter ? await self.web3Getter() : window.web3 // Duplicate code
         const abis = await self.myGetAddresses(self.prefix);
         self.oracleId = abis ? abis.oracleId : null
       }
@@ -424,7 +425,7 @@ export default {
       this.updateSalary()
     },
     async getWeb3() {
-      return this.web3 = this.web3Getter ? await this.web3Getter() : window.web3
+      return this.web3 = this.web3Getter ? await this.web3Getter() : window.web3 // Duplicate code
     },
   },
 }
