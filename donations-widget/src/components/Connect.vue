@@ -118,10 +118,10 @@ export default {
 
       if(!this.web3provider) return;
       this.web3provider.on("connect", (/*info*/) => {
-        this.onConnect() // FIXME
+        this.onWeb3ModalConnect() // FIXME
       })
       this.web3provider.on("disconnect", (/*error*/) => {
-        this.onDisconnect()
+        this.onWeb3ModalDisconnect()
       })
       this.web3provider.on("chainChanged", (chainId) => {
         console.log("chainChanged!!")
@@ -150,14 +150,14 @@ export default {
       }
       return await web3.eth.getChainId();
     },
-    onConnect() {
+    onWeb3ModalConnect() {
       if (window.ethereum.isConnected()) {
         this.onConnectReal()
       } else {
         this.onDisconnectReal()
       }
     },
-    onDisconnect() {
+    onWeb3ModalDisconnect() {
       this.onDisconnectReal()
     },
     onConnectReal() {
@@ -186,7 +186,7 @@ export default {
     disconnect() {
       this.web3Modal.clearCachedProvider()
       this.needReconnect = true
-      this.onDisconnect()
+      this.onWeb3ModalDisconnect()
     },
   },
 }
