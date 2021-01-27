@@ -91,7 +91,6 @@ export default {
       self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
       self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
       self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'
-      self.onSetWeb3provider()
       if (!self.networkname) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
@@ -113,16 +112,11 @@ export default {
         self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       }
       doIt()
-      this.onSetWeb3provider();  // FIXME
       this.$emit('changenetworkname', this.networkname)
     },
     web3provider() {
       this.needReconnect = true
-    },
-  },
-  methods: {
-    // TODO: Inefficient.
-    onSetWeb3provider() {
+
       if(!this.web3provider) return;
       this.web3provider.on("connect", (/*info*/) => {
         this.onConnect() // FIXME
@@ -137,6 +131,8 @@ export default {
 //      }
       //this.onConnectReal()
     },
+  },
+  methods: {
     async baseGetWeb3(/*providerurl, networkname*/) {
       // if (window.web3 && window.web3.chainId) return window.web3;
 
@@ -180,11 +176,7 @@ export default {
     },
     async connectAsync() {
       await this.initProviderPromise;
-//      if (this.web3) {
-//        return this.web3
-//      }
       this.web3 = await this.baseGetWeb3(/*self.providerurl, self.networkname*/)
-      this.onSetWeb3provider()
       this.$emit('change', this.web3)
       return this.web3
     },
