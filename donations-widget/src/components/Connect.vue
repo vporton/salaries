@@ -93,11 +93,11 @@ export default {
       if (!self.networkname) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
-        self.updateCurrentNetworknameButDontReconnect()
       }
       console.log("RESO1", self.currentNetworkname  )
       self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       console.log("RESO")
+      self.updateCurrentNetworknameButDontReconnect()
       self.initProviderPromiseResolve(undefined)
       self.initProviderPromiseFinished = true
     }
