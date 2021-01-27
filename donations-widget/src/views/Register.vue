@@ -272,6 +272,13 @@ export default {
     },
     updateAmountOnAccount() {
       const self = this
+      if (!self.networkname) {
+        // Hack.
+        self.lastSalaryDate = undefined
+        self.amountOnAccount = undefined
+        self.registrationDate = undefined
+        self.updateRegistrationStyles()
+      }
       async function doIt() {
         const web3 = await self.getWeb3();
         // FIXME: Races!
@@ -348,6 +355,7 @@ export default {
     },
     updateRegisteredStatus() { // TODO: Rename.
       const self = this
+      if (!self.networkname) return; // hack
       async function loadData() {
         const web3 = await self.getWeb3();
         const account = (await getAccounts(web3))[0];
