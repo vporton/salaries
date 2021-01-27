@@ -7,7 +7,7 @@
 <script>
 export default {
   name: 'NetworkInfo',
-  props: ['chainid', 'web3'],
+  props: ['networkname', 'web3'],
   data() {
     return {
       showStyle: 'none',
@@ -17,28 +17,27 @@ export default {
     this.updateWeb3()
   },
   watch: {
-    web3() {
+    networkname() { // FIXME: a wrong property to watch
       this.updateWeb3()
     }
   },
   methods: {
     updateWeb3() {
-      // FIXME
-//      const self = this
-//      if (self.web3) {
-//        self.web3.eth.net.getId().then(netId => {
-//          switch (netId) {
-//            case 4: // rinkeby
-//              self.showStyle = 'none'
-//              break
-//            default:
-//              self.showStyle = 'block'
-//              break
-//          }
-//        })
-//      } else {
-//        self.showStyle = 'block'
-//      }
+      const self = this
+      if (self.web3) {
+        self.web3.eth.net.getId().then(netId => {
+        switch (netId) {
+          case 4: // rinkeby
+            self.showStyle = 'none'
+            break
+          default:
+            self.showStyle = 'block'
+            break
+          }
+        })
+      } else {
+        self.showStyle = 'block'
+      }
     }
   }
 }
