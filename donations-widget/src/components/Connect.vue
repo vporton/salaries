@@ -109,7 +109,7 @@ export default {
         self.web3provider = await baseGetWeb3Provider(self.providerurl, self.currentNetworkname)
       }
       doIt()
-      this.$emit('changenetworkname', this.networkname)
+      this.$emit('changenetworkname', this.currentNetworkname)
     },
     web3provider() {
       this.needReconnect = true
@@ -123,7 +123,7 @@ export default {
       })
       this.web3provider.on("chainChanged", (chainId) => {
         console.log("chainChanged!!")
-        this.currentNetworkname = CHAINS[chainId] // FIXME
+        this.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
       });
     },
   },
