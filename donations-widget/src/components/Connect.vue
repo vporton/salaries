@@ -96,7 +96,7 @@ export default {
     self.initProviderPromise = new Promise((resolve) => self.initProviderPromiseResolve = resolve)
     self.initNetworknamePromise = new Promise((resolve) => self.initNetworknamePromiseResolve = resolve)
     async function doIt() {
-      if (!self.networkname) {
+      if (!self.networkname && window.ethereum) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.cachedNetworkname = self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
       }
@@ -109,9 +109,9 @@ export default {
       self.updateWeb3provider()
       if (self.web3provider) {
         self.updateCurrentNetworknameButDontReconnect()
-        self.initProviderPromiseResolve(undefined)
-        self.initProviderPromiseFinished = true
       }
+      self.initProviderPromiseResolve(undefined)
+      self.initProviderPromiseFinished = true
     }
     doIt()
   },
@@ -180,7 +180,7 @@ export default {
       return await web3.eth.getChainId();
     },
     onWeb3ModalConnect() {
-      if (window.ethereum.isConnected()) {
+      if (!window.ethereum || window.ethereum.isConnected()) {
         this.onConnectReal()
       }
     },
