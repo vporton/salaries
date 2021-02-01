@@ -20,10 +20,15 @@
           size="20"/>
         <span>
           {{' '}}
-          <span :style="{display: isDefaultID}">(Your default condition ID)</span>
-          <span :style="{display: isNotDefaultID}">
-            <button @click="setDefaultID">Go to default ID</button>
+          <span :style="{display: isDefaultID}">
+            (Your default condition ID)
           </span>
+          <button @click="setDefaultID" :style="{display: showGoToDefault}">
+            Go to default ID
+          </button>
+          <button @click="setDefaultID" :style="{display: showResetDefault}">
+            Reset
+          </button>
         </span>
         <span :style="{display: noSuchConditionStyle, color: 'red'}"><br/>No such condition ID</span>
     </p>
@@ -100,7 +105,8 @@ export default {
       lastSalaryDate: null,
       noSuchConditionStyle: 'none',
       isDefaultID: 'none',
-      isNotDefaultID: 'none',
+      showGoToDefault: 'none',
+      showResetDefault: 'none',
       timeoutHandle: null,
       salaryRecipient: undefined,
       amountOnAccount: undefined,
@@ -335,8 +341,16 @@ export default {
         }
       }
       doIt()
-      this.isDefaultID = this.conditionId !== undefined && this.conditionId === this.initialconditionid ? 'inline' : 'none'
-      this.isNotDefaultID = this.conditionId !== this.initialconditionid ? 'inline' : 'none'
+      this.isDefaultID = this.conditionId == this.initialconditionid && this.conditionId !== undefined ? 'inline': 'none'
+      this.showGoToDefault =
+        this.conditionId !== this.initialconditionid &&
+        this.initialconditionid !== undefined &&
+        this.initialconditionid !== ''
+        ? 'inline': 'none'
+      this.showResetDefault =
+        this.conditionId !== this.initialconditionid &&
+        (this.initialconditionid === undefined || this.initialconditionid === '')
+        ? 'inline': 'none'
     },
     setDefaultID() {
       this.conditionId = this.initialconditionid
