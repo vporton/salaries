@@ -1,5 +1,3 @@
-- GnosisSafe wallet bequest support.
-- Take bequest back, change bequest date.
 - DAO.
 - Make possible to donate ETH directly to an address, so taking donations directly from sites like Binance.
 - Tests.
@@ -11,5 +9,3 @@
 - Show the amount of the token to be donated.
 - If I enter condition ID immediately after connecting to Portis, it says "No such condition ID".
 - Show the current wallet provider.
-- Make it fit to a smartphone.
-- Upgrade wrap-tokens and future-contracts contracts addresses (security bugs were fixed)
