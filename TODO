@@ -9,3 +9,4 @@
 - Show the amount of the token to be donated.
 - If I enter condition ID immediately after connecting to Portis, it says "No such condition ID".
 - Show the current wallet provider.
+- Make favicon work in a server subfolder.
