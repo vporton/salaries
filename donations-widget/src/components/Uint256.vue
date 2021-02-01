@@ -1,8 +1,10 @@
 <template>
+  <!-- FIXME: It supports only 64 bit values. -->
   <span class="Uint256">
     <input
       type="text"
-      maxLength="78"
+      :style="{maxWidth: '11em', width: '100%'}"
+      maxLength="20"
       :size="this.size ? this.size : 94"
       :value="currentValue"
       @input="input"

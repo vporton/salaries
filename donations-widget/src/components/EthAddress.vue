@@ -2,6 +2,7 @@
   <span class="EthAddress">
     <input
       type="text"
+      :style="{maxWidth: '23.5em', width: '100%'}"
       maxLength="42"
       size="50"
       :value="value2"
