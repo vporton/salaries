@@ -1432,10 +1432,10 @@
     "@openzeppelin/contracts" "^3.3.0"
     abdk-libraries-solidity "^2.4.0"
 
-"@vporton/wrap-tokens@^2.1.3":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@vporton/wrap-tokens/-/wrap-tokens-2.1.3.tgz#e92c696042ef15f7cb83dce7e5684c298f7d65b7"
-  integrity sha512-UCFnLvX8jrYCTufXgnKlYkOpj/+mNuKwp7TOwnkf9A+5YUJQPQlsvN0Xx3cSMxcDVuPxDtyCUCZoiw6iQjRA7g==
+"@vporton/wrap-tokens@^2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@vporton/wrap-tokens/-/wrap-tokens-2.1.5.tgz#f97330c5a439394aac19a924733520affaa81279"
+  integrity sha512-xVpC/XnnpX8EnkNaD9KNujkVEYUR6y3T/Il9RQWGsw3Z9qSgGG9MimbvS3aDAoqyFN/xVy0+ST6Kx7WufTghpQ==
   dependencies:
     "@openzeppelin/contracts" "^3.3.0"
     "@symfoni/hardhat-react" "^0.1.6"
