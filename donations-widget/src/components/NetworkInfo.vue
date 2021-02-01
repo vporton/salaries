@@ -29,7 +29,6 @@ export default {
       const self = this
       if (self.web3) {
         self.web3.eth.net.getId().then(netId => {
-          console.log('updateWeb3', netId)
           switch (netId) {
             case 4: // rinkeby
               self.showStyle = 'none'

@@ -24,10 +24,10 @@
         <input
           type="radio"
           name="paymentKind"
-          @click="setPaymentKind('bequestGnosis')"
+          @click="setPaymentKind('bequestSafe')"
           checked=""
         />
-        &nbsp;Bequest all funds on a Gnosis Safe smart wallet
+        &nbsp;Bequest all funds on a smart wallet
       </label>
     </p>
     <p :style="{display: tokenDisplayBlock}">
@@ -59,26 +59,29 @@
       <br />
       <small>(Don't use stablecoins for long-time funding.)</small>
     </p>
-    <p>
-      <span :style="{display: walletDisplayInline}">Wallet address:</span>
-      <span :style="{display: tokenDisplayInline}">Token address:</span>
+    <p :style="{display: tokenDisplayInline}">
+      <span>Token address:</span>
       {{' '}}
-      <span :style="{display: addressDisplayInline}">
-        <EthAddress v-model="tokenEthAddress"/>
-      </span>
+      <EthAddress v-model="tokenEthAddress"/>
     </p>
-    <p :style="{display: paymentKind !== 'bequestGnosis' && tokenKind === 'erc1155' ? 'block' : 'none'}">
+    <p :style="{display: walletDisplayInline}">
+      Gnosis Safe address:
+      {{' '}}
+      <EthAddress v-model="safeAddress"/>
+      <br/>
+      <button
+        target="_blank"
+        rel="noopener noreferrer"
+        @click="bequest"
+        :disabled="bequestDisabled"
+        class="donateButton"
+      >
+        Bequest all funds on a Gnosis Safe
+      </button>
+    </p>
+    <p :style="{display: paymentKind !== 'bequestSafe' && tokenKind === 'erc1155' ? 'block' : 'none'}">
       Token ID:
       <Uint256 v-model="tokenId"/>
-    </p>
-    <p :style="{display: paymentKind !== 'donate' ? 'block' : 'none'}">
-      <span :style="{display: walletDisplayInline}">The bequest can be taken after:</span>
-      <span :style="{display: tokenDisplayInline}">
-        {{bequestDate !== null ? bequestDate.toString() : ""}}
-      </span>
-      <span :style="{display: walletDisplayInline}">
-        <VueCtkDateTimePicker v-model="bequestDate" style="width: 20em"></VueCtkDateTimePicker>
-      </span>
     </p>
     <div :style="{display: tokenDisplayBlock}">
       <p>
@@ -88,11 +91,6 @@
         <button @click="donate()" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>
-    <p :style="{display: walletDisplayBlock}">
-      <button class="donateButton" :disabled="bequestButtonDisabled" @click="bequestAll()">
-        Bequest!
-      </button>
-    </p>
   </div>
 </template>
 
@@ -101,13 +99,8 @@ import Web3 from 'web3';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
-import Vue from 'vue'
-import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
-import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 
 import validators from '../utils/validators'
-
-Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 const { toBN, toWei } = Web3.utils;
 
@@ -115,7 +108,7 @@ import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 import Amount from '@/components/Amount.vue'
 import NetworkInfo from '@/components/NetworkInfo.vue'
-import {  mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
+import { mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 
 import erc1155Abi from '../utils/ERC1155Abi';
 import erc20Abi from '../utils/ERC20Abi';
@@ -133,7 +126,6 @@ export default {
     EthAddress,
     Uint256,
     Amount,
-    VueCtkDateTimePicker,
     NetworkInfo,
   },
   watch: {
@@ -150,22 +142,25 @@ export default {
     },
     tokenEthAddress() {
       this.setDonateButtonDisabled();
-      this.setBequestButtonDisabled();
     },
     tokenId() {
       this.setDonateButtonDisabled();
     },
-    bequestDate() {
-      this.setBequestButtonDisabled();
+    safeAddress() {
+      this.setBequestURI();
+    },
+    gnosisBequestApp() {
+      this.setBequestURI();
     },
     networkname() {
       const self = this
       async function doIt() {
         self.web3 = self.web3Getter ? await self.web3Getter() : window.web3 // Duplicate code
         const abis = await self.myGetAddresses(self.prefix);
-        self.oracleId = abis ? abis.oracleId : null
+        self.oracleId = abis ? abis.oracleId : null;
+        self.gnosisBequestApp = abis ? abis.gnosisBequestApp : null; // FIXME: Use the same app for all networks.
       }
-      doIt()
+      doIt();
     },
   },
   data() {
@@ -174,21 +169,22 @@ export default {
 
       oracleId: null, // TODO: should be a property instead
 
-      paymentKind: 'bequestTokens',
+      paymentKind: 'bequestSafe',
       tokenKind: '',
-      bequestDate: null,
       tokenEthAddress: '',
       tokenId: '',
       amount: '',
+      safeAddress: '',
+      gnosisBequestApp: null,
+      gnosisBequestAppInSafe: '',
       donateButtonDisabled: true,
-      bequestButtonDisabled: true,
+      bequestDisabled: true,
       
       // TODO: too many:
       walletDisplayInline: 'inline',
       walletDisplayBlock: 'block',
       tokenDisplayInline: 'none',
       tokenDisplayBlock: 'none',
-      addressDisplayInline: 'inline',
     }
   },
   created() {
@@ -241,6 +237,12 @@ export default {
     async lockContract() {
       const addresses = await this.myGetAddresses(this.prefix);
       return addresses.SalaryWithDAO.address;
+    },
+    setBequestURI() {
+      this.bequestDisabled = !validators.isEthAddressValid(this.safeAddress);
+      const safeUI = `https://rinkeby.gnosis-safe.io/app/#/safes/${this.safeAddress}`;
+      this.gnosisBequestAppInSafe =
+        `${safeUI}/apps?appUrl=` + window.encodeURIComponent(this.gnosisBequestApp);
     },
     async donateETH() {
       const wei = toWei(this.amount);
@@ -315,17 +317,11 @@ export default {
         this.donateToken();
       }
     },
-    async bequestAll() {
-      alert("Bequesting all funds is not yet supported!");
-    },
     setDonateButtonDisabled() {
       this.donateButtonDisabled =
         !validators.isRealNumber(this.amount) || this.paymentKind === '' || this.tokenKind === '' ||
         (this.tokenKind !== 'eth' && !validators.isEthAddressValid(this.tokenEthAddress)) ||
         (this.tokenKind === 'erc1155' && !validators.isUint256Valid(this.tokenId));
-    },
-    setBequestButtonDisabled() {
-      this.bequestButtonDisabled = !validators.isEthAddressValid(this.tokenEthAddress) || this.bequestDate === null;
     },
     setPaymentKind(value) {
       this.paymentKind = value;
@@ -343,15 +339,17 @@ export default {
       this.value = value;
     },
     updateWalletTokenDisplay() {
-      this.walletDisplayInline = this.paymentKind === 'bequestGnosis' ? 'inline' : 'none'
-      this.walletDisplayBlock = this.paymentKind === 'bequestGnosis' ? 'block' : 'none'
-      this.tokenDisplayInline = this.paymentKind !== 'bequestGnosis' && this.tokenKind !== 'eth' ? 'inline' : 'none'
-      this.tokenDisplayBlock = this.paymentKind !== 'bequestGnosis' ? 'block' : 'none'
-      this.addressDisplayInline = this.paymentKind === 'bequestGnosis' || this.tokenKind !== 'eth' ? 'inline' : 'none'
+      this.walletDisplayInline = this.paymentKind === 'bequestSafe' ? 'inline' : 'none'
+      this.walletDisplayBlock = this.paymentKind === 'bequestSafe' ? 'block' : 'none'
+      this.tokenDisplayInline = this.paymentKind !== 'bequestSafe' && this.tokenKind !== 'eth' ? 'inline' : 'none'
+      this.tokenDisplayBlock = this.paymentKind !== 'bequestSafe' ? 'block' : 'none'
     },
     isPastDate(date) {
       const currentDate = new Date();
       return date < currentDate;
+    },
+    bequest() {
+      window.open(this.gnosisBequestAppInSafe);
     },
     async getWeb3() {
       return this.web3 = this.web3Getter ? await this.web3Getter() : window.web3 // Duplicate code

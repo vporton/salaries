@@ -1,5 +1,6 @@
 {
-    "bsctest" : {
+   "bsctest" : {
+      "gnosisBequestApp": "https://cloudflare-ipfs.com/ipfs/QmSQQot27piEV2m7MaHc2w6RMJXEauw1w7uGNw5ncEf8QG",
       "ERC1155LockedERC20" : {
          "address" : "0x699a983637432A77891806E21F2aecf476edA26B",
          "block" : 5892930
@@ -81,6 +82,7 @@
        "oracleId" : "1"
     },
     "rinkeby" : {
+      "gnosisBequestApp": "https://cloudflare-ipfs.com/ipfs/QmSQQot27piEV2m7MaHc2w6RMJXEauw1w7uGNw5ncEf8QG",
       "ERC1155LockedERC20" : {
          "address" : "0x6cf5d4F622DD9A5CFE342Ff962d63D1AD83cEC65",
          "block" : 7994576
