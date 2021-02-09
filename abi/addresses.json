@@ -161,6 +161,9 @@
         "SalaryWithDAO": {
             "address": "0xB8F8908edcB5384de18Be1E78bEB874607a636eE"
         },
+        "DonateETH": {
+            "address": "0x6bD321F887dc76e9Fd546AD7CB1F604c064d3641"
+        },
         "UnitedSalaryTokenWrapper": {
             "address": "0x20EE151bEd5410E716c0A7E96B9450009Aaf10f6"
         },
