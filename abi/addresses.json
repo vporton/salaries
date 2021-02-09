@@ -39,6 +39,9 @@
         "UnitedSalaryTokenWrapper": {
             "address": "0xdfd1e5175FE5b30320C3abE8B4bD2d4bB5c5990b"
         },
+        "DonateETH": {
+            "address": "0x0b1c089AD44374DB5eF4B8A5B6845a19265c9CcB"
+        },
         "oracleId": "1"
     },
     "mumbai": {
