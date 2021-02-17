@@ -1,7 +1,9 @@
-# salaries
+# Future Salaries
 Clever system for carbon accounting and salaries for scientists and free software developers in Ethereum blockchain.
 
 [Demo app](https://vporton.github.io/future-salary/)
+
+Smart contracts: https://github.com/vporton/future-contracts
 
 To run on your PC:
 
