@@ -11,3 +11,4 @@
 - Show the current wallet provider.
 - Make favicon work in a server subfolder.
 - Display BNB/ETH/... instead of just ETH.
+- Button to change the recipient account.
