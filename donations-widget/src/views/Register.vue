@@ -72,7 +72,7 @@
       name="registeringDialog"
       @on-close="closeRegisteringDialog"
       :headerOptions="{
-        title: 'You are being registering.',
+        title: 'You are being registered.',
       }"
       :footerOptions="{
         btn1: 'Close',
@@ -492,25 +492,26 @@ export default {
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         try {
+          self.$vm2.open('registeringDialog');
           const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null);
-          this.$vm2.open('registeringDialog');
           const txData = await tx;
           this.$vm2.close('registeringDialog');
           self.conditionId = txData.events.ConditionCreated.returnValues.condition;
           console.log('conditionId:', self.conditionId);
           self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
+          this.$emit('conditionCreated', self.conditionId);
           self.showORCIDData();
           for(let f of self.registerCallbacks) {
             f(self.conditionId);
           }
         }
         catch(e) {
+          this.$vm2.close('registeringDialog');
           alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
         }
       }
     },
     showORCIDData() {
-      this.$emit('conditionCreated', self.conditionId);
       this.$refs.grantNumberOracle.textContent = `${this.networkname}/${this.oracleId}`;
       this.$refs.grantNumberCondition.textContent = `${this.conditionId}`;
       this.$refs.grantNumber.textContent = `${this.networkname}/${this.oracleId}/${this.conditionId}`;
