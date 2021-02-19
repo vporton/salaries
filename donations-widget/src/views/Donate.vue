@@ -63,6 +63,8 @@
       <span>Token address:</span>
       {{' '}}
       <EthAddress v-model="tokenEthAddress"/>
+      <br/>
+      <small>Note that we do support DeFi tokens as donations.</small>
     </p>
     <p :style="{display: walletDisplayInline}">
       Gnosis Safe address:
