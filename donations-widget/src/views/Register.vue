@@ -105,6 +105,8 @@
       }"
     >
       <div :style="{margin: '1ex'}">
+        <p><strong>Write down</strong> your condition ID (kinda your salary account):
+          <code :style="{color: 'red'}">{{`${networkname}/${oracleId}/${conditionId}`}}</code>.</p>
         <p>Now to make your salary calculation work (if you don't, you are not to receive a salary),
           you need to enter the following data.
         <ul>
