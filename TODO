@@ -12,3 +12,4 @@
 - Make favicon work in a server subfolder.
 - Display BNB/ETH/... instead of just ETH.
 - Button to change the recipient account.
+- No Withdraw button if you are not the salary recipient.
