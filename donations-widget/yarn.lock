@@ -846,6 +846,11 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@burhanahmeed/vue-modal-2@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@burhanahmeed/vue-modal-2/-/vue-modal-2-1.1.6.tgz#0e9bba522c9a72c1e25e857ee916619efe96cf3f"
+  integrity sha512-SUdSKisLga5ZfHoW+RQIsQcILu8y4+tf/zpIDBb6Z6k3G5ePd80v17nx0ut8lMCutF2zo8ihc/C0FFspXPsKlg==
+
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"

@@ -25,6 +25,7 @@
     "binary": "node build-binary.js"
   },
   "dependencies": {
+    "@burhanahmeed/vue-modal-2": "^1.1.6",
     "@myetherwallet/mewconnect-web-client": "^2.1.21-beta.2",
     "@portis/web3": "^3.0.3",
     "@vporton/future-contracts": "git+ssh://git@github.com:vporton/future-contracts.git",

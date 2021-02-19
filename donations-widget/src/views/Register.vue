@@ -64,15 +64,83 @@
             such as your expected citations count in the future.
         </small>
     </p>
+    <vue-modal-2
+      name="registeringDialog"
+      @on-close="closeRegisteringDialog"
+      :headerOptions="{
+        title: 'You are being registering.',
+      }"
+      :footerOptions="{
+        btn1: 'Close',
+        btn2Style: {
+          display: 'none',
+        },
+        btn1OnClick: () => {
+          $vm2.close('registeringDialog');
+        },
+      }"
+    >
+      <p>Don't close the window.</p> <!-- TODO: Prevent closing browser window. -->
+    </vue-modal-2>
+    <vue-modal-2
+      name="registeredDialog"
+      :style="{fontSize: '60%', textAlign: 'left'}"
+      modalSize="full-w"
+      @on-close="closeRegisteredDialog"
+      :headerOptions="{
+        title: 'You have been registered.',
+      }"
+      :footerOptions="{
+        btn1: 'Close',
+        btn2Style: {
+          display: 'none',
+        },
+        btn1OnClick: () => {
+          $vm2.close('registeredDialog');
+        },
+      }"
+    >
+      <div :style="{margin: '1ex'}">
+      <p>Now to make your salary calculation work (if you don't, you are not to receive a salary),
+        you need to enter the following data as a <strong>Funding</strong>
+        in <a target="_blank" href="https://orcid.org/signin">ORCID site</a>:</p>
+      <dl>
+        <dt>Funding type</dt><dd>Anything you want to enter</dd>
+        <dt>Title of funded project</dt><dd>Your full name (or anything, if you want to stay anonymous)</dd>
+        <dt>Funding agency display name</dt><dd><code>Future Salaries</code>
+          (Enter exactly this, with the same amount of spaces between words, no spaces before and after,
+          the same capitalization, etc.)</dd>
+        <dt>Funding agency display country</dt><dd><code>Israel</code></dd>
+        <dt>Grant number</dt><dd><code ref="grantNumber"></code></dd>
+        <dt>Relationship</dt><dd><code>Self</code></dd>
+        <dt>Set visibility</dt>
+        <dd>
+          <code>everyone</code> (recommended for maximum salary) or
+          <code>trusted parties</code> (not recommended)
+        </dd>
+      </dl>
+      <p>You can leave the rest fields blank.</p>
+      <p>Note that for a given <q>oracle</q> like <code ref="grantNumberOracle"></code> you should have only one
+        <q>condition ID</q> <code ref="grantNumberCondition"></code>. (You can have multiple salary streams
+        for multiple oracles, but if for a single oracle you enter multiple condition IDs in ORCID site,
+        you may be even banned.)</p>
+      <!--p>Bear in mind that the first two components ()</p> <!-- FIXME -->
+      </div>
+    </vue-modal-2>
   </div>
 </template>
 
 <script>
 import Web3 from 'web3'
+import Vue from 'vue'
+import Modal from "@burhanahmeed/vue-modal-2"
 import { isUint256Valid, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import Uint256 from '@/components/Uint256.vue'
 import NetworkInfo from '@/components/NetworkInfo.vue'
+
 const BN = Web3.utils.BN
+
+Vue.use(Modal);
 
 export default {
   name: 'Register',
@@ -404,6 +472,12 @@ export default {
     addRegisterCallback(f) { // bug workaround used in GitCoin
       this.registerCallbacks.push(f)
     },
+    closeRegisteringDialog() {
+      this.$vm2.close('registeringDialog')
+    },
+    closeRegisteredDialog() {
+      this.$vm2.close('registeredDialog')
+    },
     async register() {
       const self = this
       const web3 = await this.getWeb3();
@@ -415,10 +489,17 @@ export default {
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
           .then(txData => {
+            // FIXME:
+            // this.$vm2.open('registeringDialog');
+            // this.$vm2.close('registeringDialog');
             self.conditionId = txData.events.ConditionCreated.returnValues.condition;
             self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
             console.log('conditionId:', self.conditionId);
             self.$emit('conditionCreated', self.conditionId);
+            this.$refs.grantNumberOracle.textContent = `${self.networkname}/${self.oracleId}`;
+            this.$refs.grantNumberCondition.textContent = `${self.conditionId}`;
+            this.$refs.grantNumber.textContent = `${self.networkname}/${self.oracleId}/${self.conditionId}`;
+            this.$vm2.open('registeredDialog');
             for(let f of self.registerCallbacks) {
               f(self.conditionId);
             }

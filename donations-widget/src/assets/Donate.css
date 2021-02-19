@@ -54,3 +54,7 @@ label {
 em, strong {
   color: green;
 }
+
+#vm2_box_registeredDialog {
+  width: 100% !important;
+}
