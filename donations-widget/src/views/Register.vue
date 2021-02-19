@@ -112,7 +112,7 @@
         <dt>Funding type</dt><dd>Anything you want to enter</dd>
         <dt>Title of funded project</dt><dd>Your full name (or anything, if you want to stay anonymous)</dd>
         <dt>Funding agency display name</dt><dd><code>Future Salaries</code>
-          (Enter exactly this, with the same amount of spaces between words, no spaces before and after,
+          (Enter exactly this, with one space between words, no spaces before and after,
           the same capitalization, etc.)</dd>
         <dt>Funding agency display country</dt><dd><code>Israel</code></dd>
         <dt>Grant number</dt><dd><code ref="grantNumber"></code></dd>
