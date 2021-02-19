@@ -57,4 +57,20 @@ em, strong {
 
 #vm2_box_registeredDialog {
   width: 100% !important;
+  height: 100% !important;
+  /* overflow-y: 'auto' !important; */
+}
+
+.vm2_body {
+  height: 60% !important; /* FIXME: 60% is arbitrary. */
+  overflow-y: 'auto' !important;
+}
+
+/* .vm2_footer {
+  height: 4ex !important;
+} */
+
+.vm2_body div {
+  height: 100% !important;
+  overflow-y: 'auto' !important;
 }
