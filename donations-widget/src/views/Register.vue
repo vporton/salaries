@@ -29,6 +29,10 @@
           <button @click="setDefaultID" :style="{display: showResetDefault}">
             Reset
           </button>
+          {{' '}}
+          <button @click="showORCIDData" :style="{display: this.conditionId !== undefined ? 'inline' : 'none'}">
+            Show data for ORCID
+          </button>
         </span>
         <span :style="{display: noSuchConditionStyle, color: 'red'}"><br/>No such condition ID</span>
     </p>
@@ -487,27 +491,30 @@ export default {
         if (!addresses) return;
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-        await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null)
-          .then(txData => {
-            // FIXME:
-            // this.$vm2.open('registeringDialog');
-            // this.$vm2.close('registeringDialog');
-            self.conditionId = txData.events.ConditionCreated.returnValues.condition;
-            self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
-            console.log('conditionId:', self.conditionId);
-            self.$emit('conditionCreated', self.conditionId);
-            this.$refs.grantNumberOracle.textContent = `${self.networkname}/${self.oracleId}`;
-            this.$refs.grantNumberCondition.textContent = `${self.conditionId}`;
-            this.$refs.grantNumber.textContent = `${self.networkname}/${self.oracleId}/${self.conditionId}`;
-            this.$vm2.open('registeredDialog');
-            for(let f of self.registerCallbacks) {
-              f(self.conditionId);
-            }
-          })
-          .catch(e => {
-            alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
-          })
+        try {
+          const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null);
+          this.$vm2.open('registeringDialog');
+          const txData = await tx;
+          this.$vm2.close('registeringDialog');
+          self.conditionId = txData.events.ConditionCreated.returnValues.condition;
+          console.log('conditionId:', self.conditionId);
+          self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
+          self.showORCIDData();
+          for(let f of self.registerCallbacks) {
+            f(self.conditionId);
+          }
+        }
+        catch(e) {
+          alert(/You are already registered\./.test(e.message) ? "You are already registered." : e.message);
+        }
       }
+    },
+    showORCIDData() {
+      this.$emit('conditionCreated', self.conditionId);
+      this.$refs.grantNumberOracle.textContent = `${this.networkname}/${this.oracleId}`;
+      this.$refs.grantNumberCondition.textContent = `${this.conditionId}`;
+      this.$refs.grantNumber.textContent = `${this.networkname}/${this.oracleId}/${this.conditionId}`;
+      this.$vm2.open('registeredDialog');
     },
     updateSalary() {
       const time = Date.now();
