@@ -114,7 +114,7 @@
         <dt>Funding agency display name</dt><dd><code>Future Salaries</code>
           (Enter exactly this, with one space between words, no spaces before and after,
           the same capitalization, etc.)</dd>
-        <dt>Funding agency display country</dt><dd><code>Israel</code></dd>
+        <dt>Funding agency display city</dt><dd><code>Ashkelon</code></dd>
         <dt>Grant number</dt><dd><code ref="grantNumber"></code></dd>
         <dt>Relationship</dt><dd><code>Self</code></dd>
         <dt>Set visibility</dt>
@@ -128,7 +128,6 @@
         <q>condition ID</q> <code ref="grantNumberCondition"></code>. (You can have multiple salary streams
         for multiple oracles, but if for a single oracle you enter multiple condition IDs in ORCID site,
         you may be even banned.)</p>
-      <!--p>Bear in mind that the first two components ()</p> <!-- FIXME -->
       </div>
     </vue-modal-2>
   </div>
