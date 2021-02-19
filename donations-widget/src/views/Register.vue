@@ -139,6 +139,7 @@
           (the file <code>accounts.json</code>  in the folder <code>.future-salaries</code>)
           of the following content in the repository
           <code>USER/USER</code> (where USER is your user name) with the following content:</p>
+        <!-- TODO: Make this file downloadable. -->
         <pre>[
   {
     ethereumNetwork: '{{networkname}}',

@@ -10,3 +10,4 @@
 - If I enter condition ID immediately after connecting to Portis, it says "No such condition ID".
 - Show the current wallet provider.
 - Make favicon work in a server subfolder.
+- Display BNB/ETH/... instead of just ETH.
