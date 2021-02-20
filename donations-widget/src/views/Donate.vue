@@ -63,10 +63,10 @@
       </label>
       <br />
       <small :style="{display: tokenKind !== 'erc721' ? 'inline' : 'none'}">
-        (Don't use stablecoins for long-time funding.)
+        Don't use stablecoins for long-time funding.
       </small>
-      <small :style="{display: tokenKind === 'erc721' ? 'inline' : 'none'}">
-        (You can donate expensive pictures or <a target="_blank" href="https://galtproject.io">real estate</a>.)
+      <small :style="{display: tokenKind === 'erc1155' || tokenKind === 'erc721' ? 'inline' : 'none'}">
+        You can donate expensive pictures or <a target="_blank" href="https://galtproject.io">real estate</a>.
       </small>
     </p>
     <p :style="{display: tokenDisplayInline}">
@@ -80,6 +80,11 @@
       Gnosis Safe address:
       {{' '}}
       <EthAddress v-model="safeAddress"/>
+      <br/>
+      <small>
+        Our system can take all ETH, ERC-20, ERC-721, and ERC-1155 tokens (and nothing other) from your safe.<br/>
+        Please put there money, DeFi/shares, expensive pictures, <a target="_blank" href="https://galtproject.io">real estate</a>, etc.
+      </small>
       <br/>
       <button
         target="_blank"
