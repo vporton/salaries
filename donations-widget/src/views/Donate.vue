@@ -2,7 +2,7 @@
   <div>
     <p>
       This is <strong>the</strong> donation app. <em>Donate and/or bequest</em> here for the software and the free
-      market to choose the best donation recepient.
+      market to choose the best donation recepients.
     </p>
     <p style="color: red">
       This is demo version for a testnet. Contracts are not enough tested and audited yet.
