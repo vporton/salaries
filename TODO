@@ -14,3 +14,4 @@
 - Button to change the salary recipient account.
 - No Withdraw button if you are not the salary recipient.
 - After switching account in MetaMask it appears as a withdrawal from somebody other's account.
+- I forgot to approve ERC-20, ETH, and ERC-721 wrappers in Bequest app.
