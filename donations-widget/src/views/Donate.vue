@@ -62,7 +62,12 @@
         &nbsp;ERC-721
       </label>
       <br />
-      <small>(Don't use stablecoins for long-time funding.)</small>
+      <small :style="{display: tokenKind !== 'erc721' ? 'inline' : 'none'}">
+        (Don't use stablecoins for long-time funding.)
+      </small>
+      <small :style="{display: tokenKind === 'erc721' ? 'inline' : 'none'}">
+        (You can donate expensive pictures or <a target="_blank" href="https://galtproject.io">real estate</a>.)
+      </small>
     </p>
     <p :style="{display: tokenDisplayInline}">
       <span>Token address:</span>
@@ -257,9 +262,10 @@ export default {
             const erc721 = new web3.eth.Contract(erc721Abi, this.tokenEthAddress);
 
             collateralTokenId = compositeTokenHash(this.tokenEthAddress, this.tokenId);
-            console.log('calculated ERC-1155: ', collateralTokenId)
             const erc1155Info = await erc1155.methods.tokens(collateralTokenId).call();
-            console.log('erc1155Info: ', erc1155Info)
+
+            // TODO: Don't transact if you are not owner of `this.tokenEthAddress`/`this.tokenId`.
+
             if(/^0x0+$/.test(erc1155Info.erc721Contract)) {
               const tx = await mySend(await this.getWeb3(), erc1155, erc1155.methods.registerERC721Token, [{erc721Contract: this.tokenEthAddress, erc721TokenId: this.tokenId}], {from: account}, null)
                 // .catch(e => alert(e.message));
