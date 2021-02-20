@@ -18,8 +18,7 @@
             "block": 5892939
         },
         "ERC1155OverERC721": {
-            "address": "0xCDa0212ffE2FD013393d79F751dc7240dFcBd861",
-            "block": 5892942
+            "address": "0x5fdbBFaB46e1dD479dde95ab36000113037A3a3F"
         },
         "ERC20LockedERC1155": {
             "address": "0x5cb02b5BEBA882A78839e0b59DC4B5b7D924e889",
@@ -61,8 +60,7 @@
             "address": "0x69f1812E59BD01e350475067e05eE5caCE0bb05d"
         },
         "ERC1155OverERC721": {
-            "address": "0x2887e133dc21b998249188F592c620ebf3EA3483",
-            "block": 10060408
+            "address": "0x7c50efa2CCc3FBc21F71Ec4F1aFB26b298B21321"
         },
         "ERC20LockedERC1155": {
             "address": "0x6AcD2CD736b8d1aEc1CE43D851fb4ddb8e485bC8",
