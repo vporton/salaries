@@ -146,8 +146,7 @@
             "block": 7994578
         },
         "ERC1155OverERC721": {
-            "address": "0x9eeFa0C66a5559DD296Ec4678FF1a9C0FB3a959D",
-            "block": 7994579
+            "address": "0x56749078daEd42fb923f771f718e38DC93E37516"
         },
         "ERC20LockedERC1155": {
             "address": "0xaF7bdCdFEc6355ffc39798F42ae81073e21050ED",

@@ -56,6 +56,11 @@
         <input type="radio" name="tokenKind" @click="setTokenKind('erc20')" />
         &nbsp;ERC-20
       </label>
+      {{' '}}
+      <label>
+        <input type="radio" name="tokenKind" @click="setTokenKind('erc721')" />
+        &nbsp;ERC-721
+      </label>
       <br />
       <small>(Don't use stablecoins for long-time funding.)</small>
     </p>
@@ -81,15 +86,17 @@
         Bequest all funds on a Gnosis Safe
       </button>
     </p>
-    <p :style="{display: paymentKind !== 'bequestSafe' && tokenKind === 'erc1155' ? 'block' : 'none'}">
+    <p :style="{display: paymentKind !== 'bequestSafe' && tokenKind === 'erc1155' || tokenKind === 'erc721' ? 'block' : 'none'}">
       Token ID:
       <Uint256 v-model="tokenId"/>
     </p>
     <div :style="{display: tokenDisplayBlock}">
       <p>
-        Donation amount:
-        <Amount v-model="amount"/>
-        {{' '}}
+        <span :style="{display: this.tokenKind === 'erc721' ? 'none' : 'inline'}">
+          Donation amount:
+          <Amount v-model="amount"/>
+          {{' '}}
+        </span>
         <button @click="donate()" :disabled="donateButtonDisabled">Donate</button>
       </p>
     </div>
@@ -106,6 +113,8 @@ import validators from '../utils/validators'
 
 const { toBN, toWei } = Web3.utils;
 
+import { compositeTokenHash } from '@vporton/wrap-tokens/lib/tokens-ethers'
+
 import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 import Amount from '@/components/Amount.vue'
@@ -114,6 +123,7 @@ import { mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 
 import erc1155Abi from '../utils/ERC1155Abi';
 import erc20Abi from '../utils/ERC20Abi';
+import erc721Abi from '../utils/ERC721Abi';
 
 export default {
   name: 'Donate',
@@ -233,6 +243,38 @@ export default {
             }
           }
           break;
+        case 'erc721':
+          collateralContractEthAddress = (await this.myGetAddresses(this.prefix)).ERC1155OverERC721.address;
+
+          {
+            const web3 = await this.getWeb3();
+            // if (web3 === null) return;
+            const account = (await getAccounts(web3))[0];
+            // if(!account) return;
+
+            const ourAbi = (await getABIs(this.prefix)).ERC1155OverERC721;
+            const erc1155 = new web3.eth.Contract(ourAbi, collateralContractEthAddress);
+            const erc721 = new web3.eth.Contract(erc721Abi, this.tokenEthAddress);
+
+            collateralTokenId = compositeTokenHash(this.tokenEthAddress, this.tokenId);
+            console.log('calculated ERC-1155: ', collateralTokenId)
+            const erc1155Info = await erc1155.methods.tokens(collateralTokenId).call();
+            console.log('erc1155Info: ', erc1155Info)
+            if(/^0x0+$/.test(erc1155Info.erc721Contract)) {
+              const tx = await mySend(await this.getWeb3(), erc1155, erc1155.methods.registerERC721Token, [{erc721Contract: this.tokenEthAddress, erc721TokenId: this.tokenId}], {from: account}, null)
+                // .catch(e => alert(e.message));
+              await tx;
+            }
+
+            // Approve ERC-721 spent
+            const approved = await erc721.methods.isApprovedForAll(this.tokenEthAddress, collateralContractEthAddress).call();
+            if(!approved) {
+              const tx = await mySend(await this.getWeb3(), erc721, erc721.methods.setApprovalForAll, [collateralContractEthAddress, true], {from: account}, null)
+                // .catch(e => alert(e.message));
+              await tx;
+            }
+          }
+          break;
       }
       return [collateralContractEthAddress, collateralTokenId];
     },
@@ -272,7 +314,7 @@ export default {
       }
     },
     async donateToken() {
-      const wei = toWei(this.amount);
+      const wei = this.tokenKind === 'erc721' ? 1 : toWei(this.amount);
       const web3 = await this.getWeb3();
       if (web3 !== null) {
         try {
@@ -321,9 +363,10 @@ export default {
     },
     setDonateButtonDisabled() {
       this.donateButtonDisabled =
-        !validators.isRealNumber(this.amount) || this.paymentKind === '' || this.tokenKind === '' ||
+        (!validators.isRealNumber(this.amount) && this.tokenKind !== 'erc721') ||
+        this.paymentKind === '' || this.tokenKind === '' ||
         (this.tokenKind !== 'eth' && !validators.isEthAddressValid(this.tokenEthAddress)) ||
-        (this.tokenKind === 'erc1155' && !validators.isUint256Valid(this.tokenId));
+        ((this.tokenKind === 'erc1155' || this.tokenKind === 'erc721') && !validators.isUint256Valid(this.tokenId));
     },
     setPaymentKind(value) {
       this.paymentKind = value;
@@ -343,7 +386,8 @@ export default {
     updateWalletTokenDisplay() {
       this.walletDisplayInline = this.paymentKind === 'bequestSafe' ? 'inline' : 'none'
       this.walletDisplayBlock = this.paymentKind === 'bequestSafe' ? 'block' : 'none'
-      this.tokenDisplayInline = this.paymentKind !== 'bequestSafe' && this.tokenKind !== 'eth' ? 'inline' : 'none'
+      this.tokenDisplayInline = this.paymentKind !== 'bequestSafe' && this.tokenKind !== 'eth'
+        ? 'inline' : 'none'
       this.tokenDisplayBlock = this.paymentKind !== 'bequestSafe' ? 'block' : 'none'
     },
     isPastDate(date) {
