@@ -9,6 +9,7 @@ const config = {
       host: "localhost",
       port: 8545,
       network_id: "1",
+      gasPrice: process.env.GAS_PRICE,
     },
     ropsten: {
       provider: function() {
@@ -72,7 +73,8 @@ const config = {
     local: {
       host: "localhost",
       port: 8545,
-      network_id: "*"
+      network_id: "*",
+      gasPrice: process.env.GAS_PRICE * 1000000000,
     }
   },
   mocha: {
