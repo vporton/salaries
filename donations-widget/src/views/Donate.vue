@@ -179,6 +179,19 @@ export default {
     },
     networkname() {
       const self = this
+      switch(this.networkname) {
+        case 'bsc':
+        case 'bsctest':
+          self.gasToken = 'BNB'
+          break
+        case 'matic':
+        case 'mumbai':
+          self.gasToken = 'MATIC'
+          break
+        default:
+          self.gasToken = 'ETH'
+          break
+      }
       async function doIt() {
         self.web3 = self.web3Getter ? await self.web3Getter() : window.web3 // Duplicate code
         const abis = await self.myGetAddresses(self.prefix);
@@ -204,6 +217,7 @@ export default {
       gnosisBequestAppInSafe: '',
       donateButtonDisabled: true,
       bequestDisabled: true,
+      gasToken: 'ETH',
       
       // TODO: too many:
       walletDisplayInline: 'inline',
@@ -231,7 +245,7 @@ export default {
       const transak = new transakSDK({
           apiKey: '1080530b-8cfd-4e16-85e8-880a92aecbb3',
           environment: production ? 'PRODUCTION' : 'STAGING',
-          cryptoCurrencyCode: 'ETH', // TODO: Make possible use other tokens
+          cryptoCurrencyCode: this.gasToken, // TODO: Make possible use other tokens
           //defaultCryptoCurrency: 'ETH',
           networks: this.networkname,
           walletAddress: donationAddress,
@@ -244,7 +258,7 @@ export default {
           widgetHeight: `${Math.min(document.body.clientHeight, 650)}px`, // FIXME: Make it work well both on PC and phone.
 //          widgetWidth: '450px',
           hideMenu: true,
-          isDisableCrypto: true,
+          //isDisableCrypto: true,
       });
 
       transak.init();
