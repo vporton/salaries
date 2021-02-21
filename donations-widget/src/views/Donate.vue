@@ -62,7 +62,7 @@
         &nbsp;ERC-721
       </label>
       <br />
-      <small :style="{display: tokenKind !== 'erc721' ? 'inline' : 'none'}">
+      <small :style="{display: tokenKind != 'eth' && tokenKind !== 'erc721' ? 'inline' : 'none'}">
         Don't use stablecoins for long-time funding.
       </small>
       <small :style="{display: tokenKind === 'erc1155' || tokenKind === 'erc721' ? 'inline' : 'none'}">
