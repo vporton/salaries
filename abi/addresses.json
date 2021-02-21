@@ -87,20 +87,20 @@
     },
     "local": {
         "DonateETH": {
-            "address": "0x26b4AFb60d6C903165150C6F0AA14F8016bE4aec"
+            "address": "0x5b9b42d6e4B2e4Bf8d42Eba32D46918e10899B66"
         },
         "ERC1155LockedERC20": {
             "address": "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab",
             "block": 1
         },
         "ERC1155LockedETH": {
-            "address": "0x2612Af3A521c2df9EAF28422Ca335b04AdF3ac66"
+            "address": "0x2D8BE6BF0baA74e0A907016679CaE9190e80dD0A"
         },
         "ERC1155Mock": {
             "address": "0x3BbE4F5ea084aa9498d0b1CdBF9f41Af94006A74"
         },
         "ERC1155OverERC20": {
-            "address": "0x59d3631c86BbE35EF041872d502F218A39FBa150"
+            "address": "0x5017A545b09ab9a30499DE7F431DF0855bCb7275"
         },
         "ERC20LockedERC1155": {
             "address": "0xCfEB869F69431e42cdB54A4F4f105C19C080A601",
@@ -118,12 +118,15 @@
             "address": "0xB14E5225c90fF24E9384b91894211f6f6834A863"
         },
         "SalaryWithDAO": {
-            "address": "0xD833215cBcc3f914bD1C9ece3EE7BF8B14f841bb"
+            "address": "0x4bf749ec68270027C5910220CEAB30Cc284c7BA2"
         },
         "UnitedSalaryTokenWrapper": {
-            "address": "0x0E696947A06550DEf604e82C26fd9E493e576337"
+            "address": "0xEC5d4F247aF81A843612eb1371CBCfa88b762119"
         },
-        "oracleId": "1"
+        "oracleId": "1",
+        "ERC1155OverERC721": {
+            "address": "0x1b88Bdb8269A1aB1372459F5a4eC3663D6f5cCc4"
+        }
     },
     "rinkeby": {
         "gnosisBequestApp": "https://cloudflare-ipfs.com/ipfs/QmSQQot27piEV2m7MaHc2w6RMJXEauw1w7uGNw5ncEf8QG",
