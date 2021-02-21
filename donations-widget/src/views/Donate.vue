@@ -38,7 +38,7 @@
           name="tokenKind"
           @click="setTokenKind('eth')"
         />
-        &nbsp;ETH
+        &nbsp;{{gasToken}}
       </label>
       <small>(recommended)</small>
       {{' '}}
@@ -84,7 +84,7 @@
       <EthAddress v-model="safeAddress"/>
       <br/>
       <small>
-        Our system can take all ETH, ERC-20, ERC-721, and ERC-1155 tokens (and nothing other) from your safe.<br/>
+        Our system can take all {{gasToken}}, ERC-20, ERC-721, and ERC-1155 tokens (and nothing other) from your safe.<br/>
         Please put there money, DeFi/shares, expensive pictures, <a target="_blank" href="https://galtproject.io">real estate</a>, etc.
       </small>
       <br/>
@@ -246,7 +246,7 @@ export default {
           apiKey: '1080530b-8cfd-4e16-85e8-880a92aecbb3',
           environment: production ? 'PRODUCTION' : 'STAGING',
           cryptoCurrencyCode: this.gasToken, // TODO: Make possible use other tokens
-          //defaultCryptoCurrency: 'ETH',
+          //defaultCryptoCurrency: this.gasToken,
           networks: this.networkname,
           walletAddress: donationAddress,
           disableWalletAddressForm: true,
