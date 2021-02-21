@@ -61,6 +61,8 @@
         <input type="radio" name="tokenKind" @click="setTokenKind('erc721')" />
         &nbsp;ERC-721
       </label>
+      <br/>
+      <button @click="initCardProcessing">Donate by credit card</button>
       <br />
       <small :style="{display: tokenKind != 'eth' && tokenKind !== 'erc721' ? 'inline' : 'none'}">
         Don't use stablecoins for long-time funding.
@@ -118,6 +120,7 @@ import Web3 from 'web3';
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
+import transakSDK from '@transak/transak-sdk'
 
 import validators from '../utils/validators'
 
@@ -217,9 +220,46 @@ export default {
           self.oracleId = abis.oracleId
         }
       })
+
     window.donateComponent = self // bug workaround used in GitCoin
   },
   methods: {
+    async initCardProcessing() {
+      // TODO: Don't allow if DonateETH isn't deployed.
+      const production = this.networkname == 'mainnet' || this.networkname == 'bsc' || this.networkname === 'matic'; // TODO
+      const donationAddress = (await this.myGetAddresses(this.prefix)).DonateETH.address;
+      const transak = new transakSDK({
+          apiKey: '1080530b-8cfd-4e16-85e8-880a92aecbb3',
+          environment: production ? 'PRODUCTION' : 'STAGING',
+          cryptoCurrencyCode: 'ETH', // TODO: Make possible use other tokens
+          //defaultCryptoCurrency: 'ETH',
+          networks: this.networkname,
+          walletAddress: donationAddress,
+          disableWalletAddressForm: true,
+          exchangeScreenTitle: "Donate for common goods",
+          themeColor: '000000', // App theme color
+          fiatCurrency: '', // INR/GBP
+          redirectURL: '',
+          hostURL: window.location.origin,
+          widgetHeight: `${Math.min(document.body.clientHeight, 650)}px`, // FIXME: Make it work well both on PC and phone.
+//          widgetWidth: '450px',
+          hideMenu: true,
+          isDisableCrypto: true,
+      });
+
+      transak.init();
+
+      // To get all the events
+      transak.on(transak.ALL_EVENTS, (data) => {
+          console.log(data)
+      });
+
+      // This will trigger when the user marks payment is made.
+      transak.on(transak.EVENTS.TRANSAK_ORDER_SUCCESSFUL, (orderData) => {
+          console.log(orderData);
+          transak.close();
+      });
+    },
     async myGetAddresses(PREFIX) {
       return await getAddresses(PREFIX, this.networkname)
     },
