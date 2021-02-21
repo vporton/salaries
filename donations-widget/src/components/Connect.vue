@@ -104,6 +104,9 @@ export default {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.cachedNetworkname = self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
       }
+      if(!self.networkname && !window.ethereum) {
+        self.cachedNetworkname = 'mainnet'
+      }
       self.web3Modal = self.myGetWeb3Modal(self.currentNetworkname)
       self.connectStyle = self.web3Modal.cachedProvider ? 'none' : 'inline'
       self.disconnectStyle = self.web3Modal.cachedProvider ? 'inline' : 'none'

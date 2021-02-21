@@ -18,3 +18,4 @@
 - Google Analytics.
 - Transak has high fees and low limits. Use another credit card processor.
 - Make credit cards donations a separate radio button.
+- If connected with a non-MetaMask wallet, switching network in MetaMask should not update current network.
