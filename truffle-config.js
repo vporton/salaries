@@ -4,56 +4,44 @@ const config = {
   networks: {
     mainnet: {
       provider: function() {
-        return new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: "https://mainnet.infura.io/v3/"+process.env.INFURA_KEY})
+        return () => new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: "https://mainnet.infura.io/v3/"+process.env.INFURA_KEY})
       },
-      host: "localhost",
-      port: 8545,
       network_id: "1",
       gasPrice: process.env.GAS_PRICE,
     },
     ropsten: {
       provider: function() {
-        return new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: "https://ropsten.infura.io/v3/"+process.env.INFURA_KEY})
+        return () => new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: "https://ropsten.infura.io/v3/"+process.env.INFURA_KEY})
       },
-      host: "localhost",
-      port: 8545,
       network_id: "3",
     },
     kovan: {
       provider: function() {
-        return new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: "https://kovan.infura.io/v3/"+process.env.INFURA_KEY})
+        return () => new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: "https://kovan.infura.io/v3/"+process.env.INFURA_KEY})
       },
-      host: "localhost",
-      port: 8545,
       network_id: "42",
     },
     rinkeby: {
       provider: function() {
-        return new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: "https://rinkeby.infura.io/v3/"+process.env.INFURA_KEY})
+        return () => new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: "https://rinkeby.infura.io/v3/"+process.env.INFURA_KEY})
       },
-      host: "localhost",
-      port: 8545,
       network_id: "4",
     },
     bsc: {
       provider: function() {
-        return new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: `https://bsc-dataseed1.binance.org`})
+        return () => new HDWalletProvider({privateKeys: [process.env.MAINNET_PRIVATE_KEY], providerOrUrl: `https://bsc-dataseed1.binance.org`})
       },
-      host: "localhost",
-      port: 8545,
       network_id: "56",
     },
     bsctest: {
       provider: function() {
-        return new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: `https://data-seed-prebsc-1-s3.binance.org:8545/`})
+        return () => new HDWalletProvider({privateKeys: [process.env.TESTNET_PRIVATE_KEY], providerOrUrl: `https://data-seed-prebsc-1-s3.binance.org:8545/`})
       },
-      host: "localhost",
-      port: 8545,
       network_id: "97",
     },
     mumbai: {
       provider: function() {
-        return new HDWalletProvider({
+        return () => new HDWalletProvider({
           privateKeys: [process.env.TESTNET_PRIVATE_KEY],
           providerOrUrl:
             "https://rpc-mumbai.maticvigil.com/v1/" + process.env.MATIC_KEY
@@ -66,8 +54,9 @@ const config = {
       network_id: 80001
     },
     xdai: {
-      host: "rpc.xdaichain.com",
-      port: 80,
+      provider: function() {
+        return () => new HDWalletProvider({privateKeys: [process.env.MAINET_PRIVATE_KEY], providerOrUrl: `https://rpc.xdaichain.com`})
+      },
       network_id: "100",
       gasPrice: '1000000000', // 1 Gwei
     },
