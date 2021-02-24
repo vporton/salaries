@@ -25,7 +25,9 @@ module.exports = async function(deployer, network, accounts) {
   const provider = new ethers.providers.Web3Provider(web3.currentProvider);
   const testDAOAddress = await provider.getStorageAt(
     daoPluginProxy.address, '0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103');
-  assert(testDAOAddress.toLocaleLowerCase() === process.env.DAO_ADDRESS.toLocaleLowerCase());
+  assert(
+    testDAOAddress.replace(/^0x0*/, '0x').toLowerCase() ===
+    process.env.DAO_ADDRESS.replace(/^0x0*/, '0x').toLowerCase());
 
   const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", daoPlugin.address, `urn:uuid:${uuid}`);
 
