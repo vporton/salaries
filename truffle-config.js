@@ -66,15 +66,16 @@ const config = {
       network_id: 80001
     },
     xdai: {
-      host: "localhost",
-      port: 8545,
+      host: "rpc.xdaichain.com",
+      port: 80,
       network_id: "100",
+      gasPrice: '1000000000', // 1 Gwei
     },
-    local: {
+    development: {
       host: "localhost",
       port: 8545,
       network_id: "*",
-      gasPrice: process.env.GAS_PRICE * 1000000000,
+      gasPrice: process.env.GAS_PRICE !== undefined ? process.env.GAS_PRICE * 1000000000 : 1,
     }
   },
   mocha: {

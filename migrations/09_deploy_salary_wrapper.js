@@ -9,6 +9,7 @@ module.exports = async function(deployer, network, accounts) {
     const text = fs.readFileSync(addressesFileName);
     json = JSON.parse(text);
 
-    const salaries = json[network].SalaryWithDAO.address;
+    const j = json[network === 'development' ? 'local' : network];
+    const salaries = j.SalaryWithDAO.address;
     await myDeploy(deployer, network, accounts, "UnitedSalaryTokenWrapper", salaries, `urn:uuid:${uuid}`);
 };
