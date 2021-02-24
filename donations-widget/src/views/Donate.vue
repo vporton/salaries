@@ -1,13 +1,20 @@
 <template>
   <div>
     <p>
+      <small>
+        <span style="color: red">No warranty!</span> Not all smart contracts were audited.
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/vporton/future-contracts/raw/master/docs/Audit-TechRate.pdf"
+        >
+          Audit report.
+        </a>
+      </small>
+    </p>
+    <p>
       This is <strong>the</strong> donation app. <em>Donate and/or bequest</em> here for the software and the free
       market to choose the best donation recipients.
-    </p>
-    <p style="color: red">
-      This is demo version for a testnet. Contracts are not enough tested and audited yet.
-      <a target="_blank" href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan">Donate</a>
-      for contract audit!
     </p>
     <NetworkInfo :chainid="chainid" :networkname="networkname" :web3="web3"/>
     <p>
@@ -61,8 +68,10 @@
         <input type="radio" name="tokenKind" @click="setTokenKind('erc721')" />
         &nbsp;ERC-721
       </label>
-      <br/>
-      <button @click="initCardProcessing">Donate by credit card</button>
+      <span :style="{display: networkname.toLowerCase() !== 'xdai' ? 'inline' : 'none'}">
+        <br/>
+        <button @click="initCardProcessing">Donate by credit card</button>
+      </span>
       <br />
       <small :style="{display: tokenKind != 'eth' && tokenKind !== 'erc721' ? 'inline' : 'none'}">
         Don't use stablecoins for long-time funding.
@@ -87,6 +96,8 @@
         Our system can take all {{gasToken}}, ERC-20, ERC-721, and ERC-1155 tokens (and nothing other) from your safe.<br/>
         Please put there money, DeFi/shares, expensive pictures, <a target="_blank" href="https://galtproject.io">real estate</a>, etc.
       </small>
+      <br/>
+      <small :style="{color: 'red'}">Bequests are not yet supported.</small>  
       <br/>
       <button
         target="_blank"

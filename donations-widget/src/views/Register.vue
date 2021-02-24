@@ -1,9 +1,16 @@
 <template>
   <div>
-    <p style="color: red">
-      This is demo version for a testnet. Contracts are not enough tested and audited yet.
-      <a target="_blank" href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan">Donate</a>
-      for contract audit!
+    <p>
+      <small>
+        <span style="color: red">No warranty!</span> Not all smart contracts were audited.
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/vporton/future-contracts/raw/master/docs/Audit-TechRate.pdf"
+        >
+          Audit report.
+        </a>
+      </small>
     </p>
     <NetworkInfo :chainid="chainid" :networkname="networkname" :web3="web3"/>
     <p>

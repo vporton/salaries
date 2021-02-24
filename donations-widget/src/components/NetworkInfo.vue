@@ -1,6 +1,14 @@
 <template>
   <p :style="{display: this.showStyle, color: 'red'}">
-    Currently Future Salaries supports only <strong>Rinkeby</strong>, <strong>Mumbai</strong>, or <strong>BSC testnet</strong>, switch to it.
+    Currently Future Salaries supports only
+    <strong>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.xdaichain.com/for-users/wallets/metamask/metamask-setup"
+      >xDai</a>
+    </strong>
+    network, switch to it! (also <strong>Mumbai</strong> or <strong>BSC testnet</strong> for testing).
   </p>
 </template>
 
@@ -30,6 +38,7 @@ export default {
       if (self.web3) {
         self.web3.eth.net.getId().then(netId => {
           switch (netId) {
+            case 100: // xDai
             case 4: // rinkeby
             case 97: // BSC Testnet
             case 80001: // Mumbai
