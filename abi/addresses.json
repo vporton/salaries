@@ -159,22 +159,22 @@
     },
     "local": {
         "SalaryWithDAO": {
-            "address": "0x18706F2EeAe13383bB8e2C6d8E9C1f11B00112AE"
+            "address": "0xdEe5E09e2851BF2f0847c9deb48FFC952Fef9012"
         },
         "ERC1155LockedETH": {
-            "address": "0x03BA748C043Ef8c2122f438fC4aB0ac41c276613"
+            "address": "0x5D94a387B0264e0390C896A4A17bA2782ad6A7eB"
         },
         "DonateETH": {
-            "address": "0x4c51C686CBE79e26B8Cc93b04BF0f530E7B0a872"
+            "address": "0xfBD1e45815c07EfaD2EF6FA445984C2dFa50d554"
         },
         "ERC1155OverERC20": {
-            "address": "0x573eBC3c7C9651a12d31Fe5F4326eB8Db9302f9d"
+            "address": "0x0b19679bdEBA8Ae070534dA587cd4161D0053d75"
         },
         "UnitedSalaryTokenWrapper": {
-            "address": "0x6e345199d274269B43a19d67343d2132ea7fA378"
+            "address": "0xDD407CE1bCAD846bC2f0e9D05c5ED1Dee6f6485b"
         },
         "ERC1155OverERC721": {
-            "address": "0x989B76F53109Cc63432f1DB2FEe80bf3200e52Aa"
+            "address": "0x466fcbC689D8506D29095745DA8B8578E3D9CD33"
         }
     }
 }
