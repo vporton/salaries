@@ -8,7 +8,7 @@
         @changenetworkname="currentNetworkname = $event"
       />
     </p>
-    <p>
+    <p :style="{clear: 'both'}">
         <router-link to="/">Donate/bequest for science, free software, or climate.</router-link>
         <br/> 
         <small>Just bequest all your funds here.</small>

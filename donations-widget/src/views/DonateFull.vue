@@ -8,7 +8,7 @@
         @changenetworkname="currentNetworkname = $event"
       />
     </p>
-    <p>
+    <p :style="{clear: 'both'}">
       <small>Free software authors, scientists/inventors, science/software publishers,
         carbon accounters, and other common good producers:</small>
       <br/>
