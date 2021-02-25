@@ -195,6 +195,9 @@ export default {
         case 'bsctest':
           self.gasToken = 'BNB'
           break
+        case 'xdai':
+          self.gasToken = 'XDAI'
+          break
         case 'matic':
         case 'mumbai':
           self.gasToken = 'MATIC'

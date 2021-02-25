@@ -153,9 +153,9 @@
         <!-- TODO: Make this file downloadable. -->
         <pre>[
   {
-    ethereumNetwork: '{{networkname}}',
-    oracleId: {{oracleId}},
-    conditionId: {{conditionId}}
+    "ethereumNetwork": "{{networkname}}",
+    "oracleId": {{oracleId}},
+    "conditionId": {{conditionId}}
   }
 ]</pre>
         <p>You can have it enumerated through comma for multiple networks and/or oracle IDs.
