@@ -17,7 +17,9 @@
     "@vporton/future-contracts": "1.0.0",
     "abdk-libraries-solidity": "^2.4.0",
     "eslint": "^6.6.0",
-    "truffle": "^5.1.58"
+    "sol-merger": "^3.1.0",
+    "truffle": "^5.1.58",
+    "truffle-source-verify": "^0.0.6"
   },
   "devDependencies": {
     "@vporton/wrap-tokens": "^2.1.5",

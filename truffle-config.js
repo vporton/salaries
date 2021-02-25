@@ -86,7 +86,10 @@ const config = {
         }
       }
     }
-  }
+  },
+  plugins: [
+    'truffle-source-verify'
+  ]
 };
 
 try {
