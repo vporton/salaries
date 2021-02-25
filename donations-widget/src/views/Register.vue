@@ -353,6 +353,9 @@ export default {
       })
     self.onUpdateConditionId()
     self.updateRegisteredStatus()
+    if(!self.networkname) {
+      self.updateRegistrationStyles()
+    }
     window.registerComponent = self // bug workaround used in GitCoin
   },
   methods: {
@@ -465,7 +468,8 @@ export default {
       this.updateRegisteredStatus()
     },
     updateRegistrationStyles() {
-      if (this.registrationDate === undefined) {
+      console.log('this.registrationDate', this.registrationDate)
+      if (!this.networkname || this.registrationDate === undefined) {
         // TODO: For a non-supported Ethereum network use 'none'.
         this.noSuchConditionStyle = this.conditionId !== undefined ? 'inline' : 'none'
         this.registerStyle = 'inline'
