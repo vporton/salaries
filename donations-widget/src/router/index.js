@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import VueGtag from "vue-gtag";
 import DonateFull from '../views/DonateFull.vue'
 import RegisterFull from '../views/RegisterFull.vue'
 
@@ -44,5 +45,14 @@ router.beforeEach((to, from, next) => {
   document.title = to.meta?.title
   next()
 })
+
+Vue.use(VueGtag, {
+  config: { 
+    id: "G-1N4160KEQP",
+    params: {
+      send_page_view: false,
+    },
+  },
+}, router)
 
 export default router
