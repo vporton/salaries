@@ -68,7 +68,7 @@
         <input type="radio" name="tokenKind" @click="setTokenKind('erc721')" />
         &nbsp;ERC-721
       </label>
-      <span :style="{display: networkname.toLowerCase() !== 'xdai' ? 'inline' : 'none'}">
+      <span :style="{display: networkname && networkname.toLowerCase() !== 'xdai' ? 'inline' : 'none'}">
         <br/>
         <button @click="initCardProcessing">Donate by credit card</button>
       </span>
