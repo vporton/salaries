@@ -8,7 +8,8 @@
         href="https://www.xdaichain.com/for-users/wallets/metamask/metamask-setup"
       >xDai</a>
     </strong>
-    network, switch to it! (also <strong>Mumbai</strong> or <strong>BSC testnet</strong> for testing).
+    network (<a target="_blank" rel="noopener noreferrer" href="https://metamask.io/download">Install!</a>),
+    switch to it! (also <strong>Mumbai</strong> or <strong>BSC testnet</strong> for testing).
   </p>
 </template>
 

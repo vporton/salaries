@@ -129,9 +129,11 @@
           <dt>Funding agency display name</dt><dd><code>Future Salaries</code>
             (Enter exactly this, with one space between words, no spaces before and after,
             the same capitalization, etc.)</dd>
+          <dt>Funding agency display country</dt><dd><code>Israel</code></dd>
           <dt>Funding agency display city</dt><dd><code>Ashkelon</code></dd>
           <dt>Grant number</dt><dd><code>{{`${networkname}/${oracleId}/${conditionId}`}}</code></dd>
           <dt>Relationship</dt><dd><code>Self</code></dd>
+          <dt>Grant URL</dt><dd><code>https://vporton.github.io/future-salary/</code></dd>
           <dt>Set visibility</dt>
           <dd>
             <code>everyone</code> (recommended for maximum salary) or
