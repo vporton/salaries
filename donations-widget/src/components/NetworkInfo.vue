@@ -51,7 +51,7 @@ export default {
           }
         })
       } else {
-        self.showStyle = 'none'
+        self.showStyle = 'block'
       }
     }
   }
