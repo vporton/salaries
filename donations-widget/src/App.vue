@@ -4,7 +4,7 @@
       <router-view/>
     </header>
     <p>
-      <a rel="noopener" target="_blank" href="https://github.com/vporton/donations">
+      <a rel="noopener noreferrer" target="_blank" href="https://github.com/vporton/donations">
         <img src="GitHub-Mark-32px.png" width="32" height="32" alt="Source at GitHub"/>
       </a>
     </p>
