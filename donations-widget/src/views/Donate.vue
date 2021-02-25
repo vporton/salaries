@@ -257,7 +257,7 @@ export default {
       const production = this.networkname == 'mainnet' || this.networkname == 'bsc' || this.networkname === 'matic'; // TODO
       const donationAddress = (await this.myGetAddresses(this.prefix)).DonateETH.address;
       const transak = new transakSDK({
-          apiKey: '1080530b-8cfd-4e16-85e8-880a92aecbb3',
+          apiKey: production ? 'cee43b4a-4bba-4b69-96b1-01032f9e8a49' : '1080530b-8cfd-4e16-85e8-880a92aecbb3',
           environment: production ? 'PRODUCTION' : 'STAGING',
           cryptoCurrencyCode: this.gasToken, // TODO: Make possible use other tokens
           //defaultCryptoCurrency: this.gasToken,
