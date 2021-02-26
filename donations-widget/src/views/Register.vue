@@ -44,7 +44,11 @@
         <span :style="{display: noSuchConditionStyle, color: 'red'}"><br/>No such condition ID</span>
     </p>
     <p>
-        <button class="donateButton" :style="{display: registerStyle}" @click="register">Register for a salary</button>
+        <button
+          class="donateButton"
+          :style="{display: registerStyle}"
+          @click="register"
+        >Register for a salary (create condition ID)</button>
         <span :style="{display: alreadyRegisterStyle, textAlign: 'left'}">
           <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code> <br/>
           <label>On account:</label> {{amountOnAccountFormatted}} personal tokens. <br/>
@@ -119,6 +123,7 @@
         <ul>
           <li><a href="#orcidData">For scientists</a></li>
           <li><a href="#githubData">For software developers</a></li>
+          <li><a href="#wikidata">For organizations</a></li>
         </ul>
         <h2 id="orcidData">ORCID</h2>
         <p>If you are a scientist, enter the following data as <strong>Funding</strong>
