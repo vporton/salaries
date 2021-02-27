@@ -68,7 +68,7 @@
         <input type="radio" name="tokenKind" @click="setTokenKind('erc721')" />
         &nbsp;ERC-721
       </label>
-      <span :style="{display: networkname && networkname.toLowerCase() !== 'xdai' ? 'inline' : 'none'}">
+      <span :style="{display: networkname && this.donationAddress ? 'inline' : 'none'}">
         <br/>
         <button @click="initCardProcessing">Donate by credit card</button>
       </span>
@@ -146,7 +146,7 @@ import VueClipboard from 'vue-clipboard2'
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
-import transakSDK from '@transak/transak-sdk'
+import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
 
 import validators from '../utils/validators'
 
@@ -228,6 +228,9 @@ export default {
         const abis = await self.myGetAddresses(self.prefix);
         self.oracleId = abis ? abis.oracleId : null;
         self.gnosisBequestApp = abis ? abis.gnosisBequestApp : null; // FIXME: Use the same app for all networks.
+        const addresses = await self.myGetAddresses(self.prefix);
+        self.donationAddress = addresses && addresses.DonateETH ? addresses.DonateETH.address : null;
+        console.log('self.donationAddress', self.donationAddress)
       }
       doIt();
     },
@@ -243,6 +246,7 @@ export default {
       tokenEthAddress: '',
       tokenId: '',
       amount: '',
+      donationAddress: null,
       safeAddress: '',
       gnosisBequestApp: null,
       gnosisBequestAppInSafe: '',
@@ -263,6 +267,7 @@ export default {
       .then(function(abis) {
         if (abis) {
           self.oracleId = abis.oracleId
+          self.onNetworkNameUpdated() // TODO: Remove this line?
         }
       })
 
@@ -271,39 +276,20 @@ export default {
   methods: {
     async initCardProcessing() {
       // TODO: Don't allow if DonateETH isn't deployed.
-      const production = this.networkname == 'mainnet' || this.networkname == 'bsc' || this.networkname === 'matic'; // TODO
-      const donationAddress = (await this.myGetAddresses(this.prefix)).DonateETH.address;
-      const transak = new transakSDK({
-          apiKey: production ? 'cee43b4a-4bba-4b69-96b1-01032f9e8a49' : '1080530b-8cfd-4e16-85e8-880a92aecbb3',
-          environment: production ? 'PRODUCTION' : 'STAGING',
-          cryptoCurrencyCode: this.gasToken, // TODO: Make possible use other tokens
-          //defaultCryptoCurrency: this.gasToken,
-          networks: this.networkname,
-          walletAddress: donationAddress,
-          disableWalletAddressForm: true,
-          exchangeScreenTitle: "Donate for common goods",
-          themeColor: '000000', // App theme color
-          fiatCurrency: '', // INR/GBP
-          redirectURL: '',
-          hostURL: window.location.origin,
-          widgetHeight: `${Math.min(document.body.clientHeight, 650)}px`, // FIXME: Make it work well both on PC and phone.
-//          widgetWidth: '450px',
-          hideMenu: true,
-          //isDisableCrypto: true,
-      });
+      const networkname = this.networkname.toLowerCase();
+      const production = networkname === 'xdai' || networkname == 'mainnet' || networkname == 'bsc' || networkname === 'matic'; // TODO
+      if(!production) {
+        alert("You are on a test Ethereum network, can't pay.");
+        return;
+      }
 
-      transak.init();
-
-      // To get all the events
-      transak.on(transak.ALL_EVENTS, (data) => {
-          console.log(data)
-      });
-
-      // This will trigger when the user marks payment is made.
-      transak.on(transak.EVENTS.TRANSAK_ORDER_SUCCESSFUL, (orderData) => {
-          console.log(orderData);
-          transak.close();
-      });
+      new RampInstantSDK({
+        hostAppName: 'Future Salaries',
+        hostLogoUrl: 'https://vporton.github.io/future-salary/noun_salary_1453098.svg',
+        swapAsset: this.gasToken,
+        userAddress: this.donationAddress,
+        // hostApiKey: TODO,
+      }).show();
     },
     async myGetAddresses(PREFIX) {
       return await getAddresses(PREFIX, this.networkname)
