@@ -93,6 +93,18 @@
       <EthAddress v-model="safeAddress"/>
       <br/>
       <small>
+        <a
+          rel="noopener noreferrer"
+          :href="`https://${this.networkname}.gnosis-safe.io/app/#/open`"
+        >Create a new safe!</a> |
+        <a 
+          rel="noopener noreferrer"
+          href="#"
+          @click.prevent="copyBequestAppToClipboard"
+        >The Bequest app for Gnosis Safe</a> (click to copy)
+      </small>
+      <br/>
+      <small>
         Our system can take all {{gasToken}}, ERC-20, ERC-721, and ERC-1155 tokens (and nothing other) from your safe.<br/>
         Please put there money, DeFi/shares, expensive pictures, <a target="_blank" href="https://galtproject.io">real estate</a>, etc.
       </small>
@@ -127,7 +139,9 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import Web3 from 'web3';
+import VueClipboard from 'vue-clipboard2'
 // MEWConnect does not work on Firefox 84.0 for Ubuntu.
 // import Web3Modal from "web3modal";
 // import MewConnect from '@myetherwallet/mewconnect-web-client';
@@ -148,6 +162,8 @@ import { mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import erc1155Abi from '../utils/ERC1155Abi';
 import erc20Abi from '../utils/ERC20Abi';
 import erc721Abi from '../utils/ERC721Abi';
+
+Vue.use(VueClipboard)
 
 export default {
   name: 'Donate',
@@ -475,6 +491,15 @@ export default {
     },
     bequest() {
       window.open(this.gnosisBequestAppInSafe);
+    },
+    copyBequestAppToClipboard() {
+      const self = this
+      async function doIt() {
+        const abis = await self.myGetAddresses(self.prefix);
+        console.log("QQ", abis.gnosisBequestApp)
+        self.$copyText(abis.gnosisBequestApp).then(() => window.alert('URL copied to clipboard.'))
+      }
+      doIt()
     },
     async getWeb3() {
       return this.web3 = this.web3Getter ? await this.web3Getter() : window.web3 // Duplicate code
