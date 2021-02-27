@@ -1,6 +1,6 @@
 {
     "bsctest": {
-        "gnosisBequestApp": "https://cloudflare-ipfs.com/ipfs/QmSQQot27piEV2m7MaHc2w6RMJXEauw1w7uGNw5ncEf8QG",
+        "gnosisBequestApp": "https://ipfs.io/ipfs/QmWhuwFToNhEWJojRvVFYHaeTqCD3JXwMQUNAhPsXntR54/",
         "ERC1155LockedERC20": {
             "address": "0x699a983637432A77891806E21F2aecf476edA26B",
             "block": 5892930
@@ -44,7 +44,7 @@
         "oracleId": "1"
     },
     "mumbai": {
-        "gnosisBequestApp": "https://cloudflare-ipfs.com/ipfs/QmSQQot27piEV2m7MaHc2w6RMJXEauw1w7uGNw5ncEf8QG",
+        "gnosisBequestApp": "https://ipfs.io/ipfs/QmWhuwFToNhEWJojRvVFYHaeTqCD3JXwMQUNAhPsXntR54/",
         "ERC1155LockedERC20": {
             "address": "0xd2D38bFD7B73F58169b04137A7b2871Dad3b7236",
             "block": 10060356
@@ -86,7 +86,7 @@
         }
     },
     "rinkeby": {
-        "gnosisBequestApp": "https://cloudflare-ipfs.com/ipfs/QmSQQot27piEV2m7MaHc2w6RMJXEauw1w7uGNw5ncEf8QG",
+        "gnosisBequestApp": "https://ipfs.io/ipfs/QmWhuwFToNhEWJojRvVFYHaeTqCD3JXwMQUNAhPsXntR54/",
         "ERC1155LockedERC20": {
             "address": "0x6cf5d4F622DD9A5CFE342Ff962d63D1AD83cEC65",
             "block": 7994576
@@ -130,7 +130,7 @@
         "oracleId": "1"
     },
     "xdai": {
-        "gnosisBequestApp": "https://cloudflare-ipfs.com/ipfs/QmSQQot27piEV2m7MaHc2w6RMJXEauw1w7uGNw5ncEf8QG",
+        "gnosisBequestApp": "https://ipfs.io/ipfs/QmWhuwFToNhEWJojRvVFYHaeTqCD3JXwMQUNAhPsXntR54/",
         "ERC1155LockedERC20": {
             "address": "0x0D3e93CeeB31760EbB38e18DA61ECA10a948BA9f"
         },

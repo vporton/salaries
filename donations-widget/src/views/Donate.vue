@@ -97,8 +97,8 @@
         Please put there money, DeFi/shares, expensive pictures, <a target="_blank" href="https://galtproject.io">real estate</a>, etc.
       </small>
       <br/>
-      <small :style="{color: 'red'}">Bequests are not yet supported.</small>  
-      <br/>
+      <!--small :style="{color: 'red'}">Bequests are supported only on xDai network.</small>
+      <br/-->
       <button
         target="_blank"
         rel="noopener noreferrer"
@@ -363,7 +363,7 @@ export default {
     },
     setBequestURI() {
       this.bequestDisabled = !validators.isEthAddressValid(this.safeAddress);
-      const safeUI = `https://rinkeby.gnosis-safe.io/app/#/safes/${this.safeAddress}`;
+      const safeUI = `https://${this.networkname}.gnosis-safe.io/app/#/safes/${this.safeAddress}`;
       this.gnosisBequestAppInSafe =
         `${safeUI}/apps?appUrl=` + window.encodeURIComponent(this.gnosisBequestApp);
     },
