@@ -68,10 +68,11 @@
         <input type="radio" name="tokenKind" @click="setTokenKind('erc721')" />
         &nbsp;ERC-721
       </label>
-      <span :style="{display: networkname && this.donationAddress ? 'inline' : 'none'}">
+      <!-- TODO: Enable credit card donations only after we can accept converting to tokens of user choice. -->
+      <!--span :style="{display: networkname && this.donationAddress ? 'inline' : 'none'}">
         <br/>
         <button @click="initCardProcessing">Donate by credit card</button>
-      </span>
+      </span-->
       <br />
       <small :style="{display: tokenKind != 'eth' && tokenKind !== 'erc721' ? 'inline' : 'none'}">
         Don't use stablecoins for long-time funding.
