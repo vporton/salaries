@@ -23,3 +23,4 @@
 - "Standardized" URLs of condition IDs.
 - Create an investment contract.
 - Donation by credit card should be able to choose a token.
+- "Our system can take all ETH" changes to "Our system can take all XDAI", after the UI was already shown.
