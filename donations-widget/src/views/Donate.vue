@@ -97,7 +97,13 @@
           rel="noopener noreferrer"
           target="_blank"
           :href="`https://${this.networkname}.gnosis-safe.io/app/#/open`"
-        >Create a new safe!</a> |
+        >Create</a>
+        a new
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          :href="`https://${this.networkname}.gnosis-safe.io/app/`"
+        >safe wallet</a>. |
         <a 
           rel="noopener noreferrer"
           href="#"
