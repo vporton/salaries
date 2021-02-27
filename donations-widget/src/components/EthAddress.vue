@@ -39,9 +39,7 @@ export default {
     async transform(v) {
       const valid = validators.isEthAddressValid(v)
       if (!valid && v !== "") {
-        const w3 = window.web3
-          ? window.web3
-          : new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/1d0c278301fc40f3a8f40f25ae3bd328"));
+        const w3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/1d0c278301fc40f3a8f40f25ae3bd328"));
         try {
           return await w3.eth.ens.getAddress(v)
         }
