@@ -95,6 +95,7 @@
       <small>
         <a
           rel="noopener noreferrer"
+          target="_blank"
           :href="`https://${this.networkname}.gnosis-safe.io/app/#/open`"
         >Create a new safe!</a> |
         <a 
