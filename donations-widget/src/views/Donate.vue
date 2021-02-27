@@ -6,7 +6,7 @@
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href="https://github.com/vporton/future-contracts/raw/master/docs/Audit-TechRate.pdf"
+          href="https://github.com/TechRate/Smart-Contract-Audits/blob/main/Future%20Salaries%20%20Smart%20Contract%20Audit.pdf"
         >
           Audit report.
         </a>
