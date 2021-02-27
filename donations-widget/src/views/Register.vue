@@ -68,7 +68,7 @@
     </p>
     <p>
         <small>
-            Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.
+            Registration is free. The earlier you register, the more money you get.
         </small>
         <br/>
         <small>
