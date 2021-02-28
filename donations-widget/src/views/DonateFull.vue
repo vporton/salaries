@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-bottom: 10px">
     <p style="float: right">
       <Connect
         ref="connector"
@@ -8,14 +8,9 @@
         @changenetworkname="currentNetworkname = $event"
       />
     </p>
-    <p style="float: left">
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan"
-        style="margin: 5px; color: red"
-      >Donate</a>
-    </p>
+    <div style="float: left">
+      <DonateForApp/>
+    </div>
     <p :style="{clear: 'both'}">
       <small>Free software authors, scientists/inventors, science/software publishers,
         carbon accounters, and other common good producers:</small>
@@ -37,8 +32,10 @@
 </template>
 
 <script>
+// import Vue from 'vue';
 import Donate from './Donate';
 import Connect from '@/components/Connect.vue'
+import DonateForApp from '@/components/DonateForApp.vue'
 
 export default {
   name: 'DonateFull',
@@ -56,6 +53,7 @@ export default {
   components: {
     Donate,
     Connect,
+    DonateForApp,
   },
   methods: {
     async web3Getter() {

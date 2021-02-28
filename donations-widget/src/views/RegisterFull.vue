@@ -8,14 +8,9 @@
         @changenetworkname="currentNetworkname = $event"
       />
     </p>
-    <p style="float: left">
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://gitcoin.co/grants/1591/science-of-the-future-the-100-years-forward-plan"
-        style="margin: 5px; color: red"
-      >Donate</a>
-    </p>
+    <div style="float: left">
+      <DonateForApp/>
+    </div>
     <p :style="{clear: 'both'}">
         <router-link to="/">Donate/bequest for science, free software, or climate.</router-link>
         <br/> 
@@ -34,8 +29,10 @@
 </template>
 
 <script>
+// import Vue from 'vue';
 import Register from './Register';
 import Connect from '@/components/Connect.vue'
+import DonateForApp from '@/components/DonateForApp.vue'
 
 export default {
   name: 'RegisterFull',
@@ -54,6 +51,7 @@ export default {
   components: {
     Register,
     Connect,
+    DonateForApp,
   },
   mounted() {
     // Hack
