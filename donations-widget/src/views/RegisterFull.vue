@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="float: right">
+    <div style="float: right; margin: 8px">
       <Connect
         ref="connector"
         :networkname="this.networkname"

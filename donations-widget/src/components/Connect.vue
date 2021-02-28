@@ -1,7 +1,7 @@
 <template>
-  <span :style="{margin: '7px', background: 'gray'}">
+  <span :style="{margin: '7px', background: 'gray', padding: '5px'}">
     <button @click="connect()" :style="{display: connectStyle}">Connect</button>
-    <span :style="{display: disconnectStyle, padding: '5px'}">
+    <span :style="{display: disconnectStyle}">
       <small>Connected to {{currentNetworkname}}</small>
       {{' '}}
       <button @click="disconnect()">Disconnect</button>
