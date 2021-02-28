@@ -1,5 +1,5 @@
 <template>
-  <p style="margin: 5px; line-height: 70%">
+  <p style="margin: 7px; line-height: 70%">
     <small>
       Donate for app development and marketing:
       <br/>

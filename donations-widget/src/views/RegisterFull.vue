@@ -1,13 +1,13 @@
 <template>
   <div>
-    <p style="float: right">
+    <div style="float: right">
       <Connect
         ref="connector"
         :networkname="this.networkname"
         :providerurl="this.providerurl"
         @changenetworkname="currentNetworkname = $event"
       />
-    </p>
+    </div>
     <div style="float: left">
       <DonateForApp/>
     </div>

@@ -1,12 +1,12 @@
 <template>
-  <div :style="{background: 'gray', margin: '10px'}">
+  <span :style="{margin: '7px', background: 'gray'}">
     <button @click="connect()" :style="{display: connectStyle}">Connect</button>
     <span :style="{display: disconnectStyle, padding: '5px'}">
       <small>Connected to {{currentNetworkname}}</small>
       {{' '}}
       <button @click="disconnect()">Disconnect</button>
     </span>
-  </div >
+  </span>
 </template>
 
 <script>
