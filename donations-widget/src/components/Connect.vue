@@ -122,8 +122,6 @@ export default {
     }
     doIt()
   },
-  watch: {
-  },
   methods: {
     updateWeb3provider() {
       this.needReconnect = true
@@ -166,7 +164,7 @@ export default {
     },
     async baseGetWeb3() {
       if (this.needReconnect) {
-        this.web3provider = await baseGetWeb3Provider(self.providerurl, this.cachedNetworkname)
+        this.web3provider = await baseGetWeb3Provider(this.providerurl, this.cachedNetworkname)
         if (this.web3provider) {
           this.web3 = new Web3(this.web3provider);
           if (this.cachedNetworkname) {

@@ -53,10 +53,6 @@ export default {
     Connect,
     DonateForApp,
   },
-  mounted() {
-    // Hack
-    window.registerComponent.addRegisterCallback(onConditionCreated);
-  },
   methods: {
     async web3Getter() {
       await this.$refs.connector.baseGetWeb3()
@@ -64,10 +60,5 @@ export default {
       return this.$refs.connector.web3
     },
   },
-}
-
-function onConditionCreated(/*conditionId*/) {
-  // TODO: Show a HTML dialog.
-  // alert(`Your condition ID is ${conditionId}. Write it down.`)
 }
 </script>

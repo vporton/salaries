@@ -1,3 +1,4 @@
+- On /register page cannot connect after connection dialog closure, if MetaMask is not installed.
 - DAO.
 - Make possible to donate ETH directly to an address, so taking donations directly from sites like Binance.
 - Tests.
