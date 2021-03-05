@@ -14,10 +14,10 @@ contract DonateETH is ERC1155TokenReceiver {
     constructor(BaseLock _locker, ERC1155LockedETH _erc1155LockedETH) {
         locker = _locker;
         erc1155LockedETH = _erc1155LockedETH;
+        erc1155LockedETH.setApprovalForAll(address(locker), true);
     }
 
     function donate(uint64 _oracleId, address _to, bytes calldata _data) public payable {
-        erc1155LockedETH.setApprovalForAll(address(locker), true);
         erc1155LockedETH.borrowETH{value: msg.value}(address(this), _data);
         locker.donate(
             erc1155LockedETH,

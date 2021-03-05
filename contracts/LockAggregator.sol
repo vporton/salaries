@@ -38,10 +38,11 @@ contract LockAggregator is ERC1155TokenReceiver {
         erc1155LockedETH = _erc1155LockedETH;
         erc20Wrapper = _erc20Wrapper;
         erc721Wrapper = _erc721Wrapper;
+        erc1155LockedETH.setApprovalForAll(address(locker), true);
     }
 
-    function donate(address _to, bytes calldata _data) public payable {
-        erc1155LockedETH.setApprovalForAll(address(locker), true);
+    receive() external payable {
+        bytes memory _data; 
         erc1155LockedETH.borrowETH{value: msg.value}(address(this), _data);
         locker.donate(
             erc1155LockedETH,
@@ -49,7 +50,7 @@ contract LockAggregator is ERC1155TokenReceiver {
             oracleId,
             msg.value,
             address(this),
-            _to,
+            msg.sender,
             _data);
     }
 
