@@ -53,46 +53,11 @@ contract LockAggregator is ERC1155TokenReceiver {
             _data);
     }
 
-    function donateERC1155(
-        IERC1155 _erc1155,
-        uint256 _tokenId,
-        uint256 _amount,
-        address _to,
-        bytes calldata _data
-    ) public {
-        uint256 _tokenHash = _erc1155Hash(_erc1155, _tokenId, oracleId);
-        tokenAmounts[_tokenHash] = tokenAmounts[_tokenHash].add(_amount);
-        // TODO: event
-    }
-
-    function donateERC721(
-        IERC721 _erc721,
-        uint256 _tokenId,
-        uint256 _amount,
-        address _to,
-        bytes calldata _data
-    ) public {
-        uint256 _tokenHash = _erc721Hash(_erc721, _tokenId, oracleId);
-        tokenAmounts[_tokenHash] = tokenAmounts[_tokenHash].add(_amount);
-        // TODO: event
-    }
-
-    function donateERC20(
-        IERC20 _erc20,
-        uint256 _amount,
-        address _to,
-        bytes calldata _data
-    ) public {
-        uint256 _tokenHash = _erc20Hash(_erc20, oracleId);
-        tokenAmounts[_tokenHash] = tokenAmounts[_tokenHash].add(_amount);
-        // TODO: event
-    }
-
     function takeDonationERC1155(IERC1155 _erc1155, uint256 _tokenId, bytes memory data)
         public
     {
         uint256 _tokenHash = _erc1155Hash(_erc1155, _tokenId, oracleId);
-        uint256 _amount = tokenAmounts[_tokenHash];
+        uint256 _amount = _erc1155.balanceOf(address(this), _tokenId);
         // Last against reentrancy vulnerabilty:
         locker.donate(
             _erc1155,
@@ -100,7 +65,7 @@ contract LockAggregator is ERC1155TokenReceiver {
             oracleId,
             _amount,
             address(this),
-            address(this), // TODO: original donor instead?
+            msg.sender,
             "");
     }
 
@@ -145,14 +110,14 @@ contract LockAggregator is ERC1155TokenReceiver {
     uint8 constant TOKEN_ERC20 = 2;
 
     function _erc1155Hash(IERC1155 _erc1155, uint256 _tokenId, uint64 _oracleId) internal returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(TOKEN_ERC1155, _erc1155, _tokenId, _oracleId)));
+        return uint256(keccak256(abi.encodePacked(TOKEN_ERC1155, _erc1155, _tokenId)));
     }
 
     function _erc721Hash(IERC721 _erc721, uint256 _tokenId, uint64 _oracleId) internal returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(TOKEN_ERC721, _erc721, _tokenId, _oracleId)));
+        return uint256(keccak256(abi.encodePacked(TOKEN_ERC721, _erc721, _tokenId)));
     }
 
     function _erc20Hash(IERC20 _erc20, uint64 _oracleId) internal returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(TOKEN_ERC20, _erc20, _oracleId)));
+        return uint256(keccak256(abi.encodePacked(TOKEN_ERC20, _erc20)));
     }
 }
