@@ -68,11 +68,13 @@
         <input type="radio" name="tokenKind" @click="setTokenKind('erc721')" />
         &nbsp;ERC-721
       </label>
-      <!-- TODO: Enable credit card donations only after we can accept converting to tokens of user choice. -->
-      <!--span :style="{display: networkname && this.donationAddress ? 'inline' : 'none'}">
-        <br/>
-        <button @click="initCardProcessing">Donate by credit card</button>
-      </span-->
+      <span :style="{display: this.donationAddress ? 'inline' : 'none'}">
+        {{' '}}
+        <label>
+          <input type="radio" name="tokenKind" @click="setTokenKind('card')" />
+          &nbsp;Money or card
+        </label>
+      </span>
       <br />
       <small :style="{display: tokenKind != 'eth' && tokenKind !== 'erc721' ? 'inline' : 'none'}">
         Don't use stablecoins for long-time funding.
@@ -135,7 +137,7 @@
     </p>
     <div :style="{display: tokenDisplayBlock}">
       <p>
-        <span :style="{display: this.tokenKind === 'erc721' ? 'none' : 'inline'}">
+        <span :style="{display: this.tokenKind === 'erc721' || this.tokenKind === 'card' ? 'none' : 'inline'}">
           Donation amount:
           <Amount v-model="amount"/>
           {{' '}}
@@ -236,7 +238,7 @@ export default {
         self.oracleId = abis ? abis.oracleId : null;
         self.gnosisBequestApp = abis ? abis.gnosisBequestApp : null; // FIXME: Use the same app for all networks.
         const addresses = await self.myGetAddresses(self.prefix);
-        self.donationAddress = addresses && addresses.DonateETH ? addresses.DonateETH.address : null;
+        self.donationAddress = addresses && addresses.LockAggregator ? addresses.LockAggregator.address : null;
         console.log('self.donationAddress', self.donationAddress)
       }
       doIt();
@@ -285,17 +287,17 @@ export default {
       // TODO: Don't allow if DonateETH isn't deployed.
       const networkname = this.networkname.toLowerCase();
       const production = networkname === 'xdai' || networkname == 'mainnet' || networkname == 'bsc' || networkname === 'matic'; // TODO
-      if(!production) {
+      if (!production) {
         alert("You are on a test Ethereum network, can't pay.");
-        return;
       }
 
       new RampInstantSDK({
         hostAppName: 'Future Salaries',
         hostLogoUrl: 'https://vporton.github.io/future-salary/noun_salary_1453098.svg',
-        swapAsset: this.gasToken,
+        // swapAsset: this.gasToken,
         userAddress: this.donationAddress,
         hostApiKey: production ? 'gd9nmr8grvvecoxerfstt3mapj35mbgcyb7krqcm' : '6g9agoc6apcbwfmf3raautzhv57t9qxy9ueoq5zx',
+        url: production ? undefined : 'https://ri-widget-staging.firebaseapp.com/',
       }).show();
     },
     async myGetAddresses(PREFIX) {
@@ -444,18 +446,24 @@ export default {
       }
     },
     async donate() {
-      if (this.tokenKind === 'eth') {
+      if (this.tokenKind === 'card') {
+        this.initCardProcessing();
+      } else if (this.tokenKind === 'eth') {
         this.donateETH();
       } else {
         this.donateToken();
       }
     },
     setDonateButtonDisabled() {
-      this.donateButtonDisabled =
-        (!validators.isRealNumber(this.amount) && this.tokenKind !== 'erc721') ||
-        this.paymentKind === '' || this.tokenKind === '' ||
-        (this.tokenKind !== 'eth' && !validators.isEthAddressValid(this.tokenEthAddress)) ||
-        ((this.tokenKind === 'erc1155' || this.tokenKind === 'erc721') && !validators.isUint256Valid(this.tokenId));
+      if (this.tokenKind === 'card') {  
+        this.donateButtonDisabled = false;
+      } else {
+        this.donateButtonDisabled =
+          (!validators.isRealNumber(this.amount) && this.tokenKind !== 'erc721') ||
+          this.paymentKind === '' || this.tokenKind === '' ||
+          (this.tokenKind !== 'eth' && !validators.isEthAddressValid(this.tokenEthAddress)) ||
+          ((this.tokenKind === 'erc1155' || this.tokenKind === 'erc721') && !validators.isUint256Valid(this.tokenId));
+      } 
     },
     setPaymentKind(value) {
       this.paymentKind = value;
@@ -475,7 +483,7 @@ export default {
     updateWalletTokenDisplay() {
       this.walletDisplayInline = this.paymentKind === 'bequestSafe' ? 'inline' : 'none'
       this.walletDisplayBlock = this.paymentKind === 'bequestSafe' ? 'block' : 'none'
-      this.tokenDisplayInline = this.paymentKind !== 'bequestSafe' && this.tokenKind !== 'eth'
+      this.tokenDisplayInline = this.paymentKind !== 'bequestSafe' && this.tokenKind !== 'eth' && this.tokenKind !== 'card'
         ? 'inline' : 'none'
       this.tokenDisplayBlock = this.paymentKind !== 'bequestSafe' ? 'block' : 'none'
     },
