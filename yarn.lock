@@ -1670,10 +1670,10 @@
     truffle "^5.1.50"
     truffle-assertions "^0.9.2"
 
-"@vporton/wrap-tokens@^2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@vporton/wrap-tokens/-/wrap-tokens-2.1.5.tgz#f97330c5a439394aac19a924733520affaa81279"
-  integrity sha512-xVpC/XnnpX8EnkNaD9KNujkVEYUR6y3T/Il9RQWGsw3Z9qSgGG9MimbvS3aDAoqyFN/xVy0+ST6Kx7WufTghpQ==
+"@vporton/wrap-tokens@^2.1.7":
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/@vporton/wrap-tokens/-/wrap-tokens-2.1.7.tgz#5913dfcd8bd76b1532b03df436fa5a3b076157e4"
+  integrity sha512-rhygT54ux73XDRd1dx09zWe9nVJ5CoPNuVV7PjYF7rLyl2LKgcAPsGtycS6UQdNcz2GcnIn1pOGrhzm8DMEkwg==
   dependencies:
     "@openzeppelin/contracts" "^3.3.0"
     "@symfoni/hardhat-react" "^0.1.6"

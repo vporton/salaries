@@ -22,7 +22,7 @@
     "truffle-source-verify": "^0.0.6"
   },
   "devDependencies": {
-    "@vporton/wrap-tokens": "^2.1.5",
+    "@vporton/wrap-tokens": "^2.1.7",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0"
