@@ -74,6 +74,7 @@
           <input type="radio" name="tokenKind" @click="setTokenKind('card')" />
           &nbsp;Money or card
         </label>
+        <small>(recommended)</small>
       </span>
       <br />
       <small :style="{display: tokenKind != 'eth' && tokenKind !== 'erc721' ? 'inline' : 'none'}">
