@@ -30,7 +30,7 @@ export default {
         hostLogoUrl: 'https://vporton.github.io/future-salary/noun_salary_1453098.svg',
         swapAsset: 'BNB,ADA,ETH,USDT,XDAI',
         userAddress: '0x722cE03C15670c313f9596544CDB582c19f810e2',
-        // hostApiKey: TODO,
+        hostApiKey: 'gd9nmr8grvvecoxerfstt3mapj35mbgcyb7krqcm',
       }).show();
     },
   },

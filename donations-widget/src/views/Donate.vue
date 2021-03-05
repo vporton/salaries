@@ -295,7 +295,7 @@ export default {
         hostLogoUrl: 'https://vporton.github.io/future-salary/noun_salary_1453098.svg',
         swapAsset: this.gasToken,
         userAddress: this.donationAddress,
-        // hostApiKey: TODO,
+        hostApiKey: production ? 'gd9nmr8grvvecoxerfstt3mapj35mbgcyb7krqcm' : '6g9agoc6apcbwfmf3raautzhv57t9qxy9ueoq5zx',
       }).show();
     },
     async myGetAddresses(PREFIX) {
