@@ -52,7 +52,7 @@ contract UnitedSalaryTokenWrapper is ERC165, IERC1155/*, IERC1155Views*/ {
     // solhint-enable func-visibility
 
     /// Conforms to `IERC1155Views`.
-    function totalSupply(uint256 _id) public view   returns (uint256) {
+    function totalSupply(uint256 _id) public view returns (uint256) {
         return IERC1155Views(address(salaries)).totalSupply(_id);
     }
 
