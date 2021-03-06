@@ -8,6 +8,7 @@ import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/Trans
 
 import { SalaryWithDAO } from "@vporton/future-contracts/contracts/SalaryWithDAO.sol";
 import { DefaultDAOInterface } from "@vporton/future-contracts/contracts/DefaultDAOInterface.sol";
+import { NFTRestoreContract } from "@vporton/future-contracts/contracts/NFTRestoreContract.sol";
 
 import { ERC1155OverERC20 } from "@vporton/wrap-tokens/contracts/ERC1155OverERC20.sol";
 import { ERC1155OverERC721 } from "@vporton/wrap-tokens/contracts/ERC1155OverERC721.sol";

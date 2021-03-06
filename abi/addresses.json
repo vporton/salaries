@@ -167,6 +167,9 @@
         },
         "LockAggregator": {
             "address": "0x87c2d0Bf2729eED59972E56A0B4dAB1707803996"
+        },
+        "NFTRestoreContract": {
+            "address": "0xd98950E2f6442f8A3f8cE2355398748c0371aadb"
         }
     },
     "local": {
