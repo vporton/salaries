@@ -68,14 +68,15 @@
         <input type="radio" name="tokenKind" @click="setTokenKind('erc721')" />
         &nbsp;ERC-721
       </label>
-      <span :style="{display: this.donationAddress ? 'inline' : 'none'}">
+      <!-- TODO: We don't accept money donations here, because we have only an xDai donations address. -->
+      <!--span :style="{display: this.donationAddress ? 'inline' : 'none'}">
         {{' '}}
         <label>
           <input type="radio" name="tokenKind" @click="setTokenKind('card')" />
           &nbsp;Money or card
         </label>
         <small>(recommended)</small>
-      </span>
+      </span-->
       <br />
       <small :style="{display: tokenKind != 'eth' && tokenKind !== 'erc721' ? 'inline' : 'none'}">
         Don't use stablecoins for long-time funding.
@@ -299,6 +300,7 @@ export default {
         userAddress: this.donationAddress,
         hostApiKey: production ? 'gd9nmr8grvvecoxerfstt3mapj35mbgcyb7krqcm' : '6g9agoc6apcbwfmf3raautzhv57t9qxy9ueoq5zx',
         url: production ? undefined : 'https://ri-widget-staging.firebaseapp.com/',
+
       }).show();
     },
     async myGetAddresses(PREFIX) {
