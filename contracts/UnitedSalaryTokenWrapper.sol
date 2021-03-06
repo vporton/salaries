@@ -34,7 +34,7 @@ contract UnitedSalaryTokenWrapper is ERC165, IERC1155/*, IERC1155Views*/ {
      */
     bytes4 private constant _INTERFACE_ID_ERC1155_VIEWS = 0xc2a743b0;
 
-    MyBase salaries;
+    MyBase public salaries;
 
     string internal uri_;
 
