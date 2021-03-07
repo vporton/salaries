@@ -5,12 +5,17 @@
         ref="connector"
         :networkname="this.networkname"
         :providerurl="this.providerurl"
-        @changenetworkname="currentNetworkname = $event"
+        @changenetworkname="onChangeNetworkName($event)"
       />
     </div>
     <div style="float: left">
       <DonateForApp/>
     </div>
+    <p :style="{textAlign: 'center'}">
+      <small>Oracle ID:</small>
+      {{' '}}
+      <input type="numeric" ref="oracleId"/>
+    </p>
     <p :style="{clear: 'both'}">
       <small>Free software authors, scientists/inventors, science/software publishers,
         carbon accounters, and other common good producers:</small>
@@ -24,6 +29,7 @@
       ref="donate"
       :prefix="this.prefix"
       :chainid="this.chainid"
+      :oracleid="this.currentOracleId"
       :networkname="this.currentNetworkname"
       :providerurl="this.providerurl"
       :web3Getter="web3Getter"
@@ -42,12 +48,15 @@ export default {
   props: [
     'prefix',
     'chainid',
+    'oracleid',
     'networkname',
     'providerurl',
   ],
   data() {
     return {
+      web3: null,
       currentNetworkname: this.networkname,
+      currentOracleId: this.oracleid,
     }
   },
   components: {
@@ -60,6 +69,11 @@ export default {
       await this.$refs.connector.baseGetWeb3()
       this.currentNetworkname = this.$refs.connector.currentNetworkname
       return this.$refs.connector.web3
+    },
+    onChangeNetworkName($event) {
+      this.currentNetworkname = $event
+      console.log("OOOOOOOOOOOOOOO", this.currentNetworkname)
+      this.$emit('changenetworkname', $event);
     },
   },
 }

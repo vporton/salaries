@@ -103,6 +103,7 @@ export default {
       if (!self.networkname && window.ethereum) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.cachedNetworkname = self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
+        console.log([self.currentNetworkname])
       }
       if(!self.networkname && !window.ethereum) {
         self.cachedNetworkname = 'mainnet'
@@ -147,7 +148,7 @@ export default {
       }
       async function doIt() {
         await self.initNetworknamePromise;
-        self.$emit('changenetworkname', self.currentNetworkname)
+        //self.$emit('changenetworkname', self.currentNetworkname)
       }
       doIt()
     },
@@ -195,12 +196,12 @@ export default {
     onConnectReal() {
       this.connectStyle = 'none'
       this.disconnectStyle = 'inline'
-      this.$emit('changenetworkname', this.currentNetworkname)
+      //this.$emit('changenetworkname', this.currentNetworkname)
     },
     onDisconnectReal() {
       this.connectStyle = 'inline'
       this.disconnectStyle = 'none'
-      this.$emit('changenetworkname', null)
+      //this.$emit('changenetworkname', null)
     },
     myGetWeb3Modal(networkname) {
       return getWeb3Modal(networkname);
@@ -208,7 +209,7 @@ export default {
     async connectAsync() {
       await this.initProviderPromise;
       this.web3 = await this.baseGetWeb3()
-      this.$emit('changenetworkname', this.currentNetworkname)
+      //this.$emit('changenetworkname', this.currentNetworkname)
       this.$emit('change', this.web3)
       return this.web3
     },
@@ -227,5 +228,11 @@ export default {
       this.updateCurrentNetworknameButDontReconnect()
     },
   },
+  watch: {
+    currentNetworkname() {
+      console.log('ppp', this.currentNetworkname)
+      this.$emit('changenetworkname', this.currentNetworkname)
+    }
+  }
 }
 </script>

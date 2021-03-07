@@ -182,6 +182,7 @@ export default {
   props: [
     'prefix',
     'chainid',
+    'oracleid',
     'networkname',
     'providerurl',
     'web3Getter',
@@ -218,6 +219,7 @@ export default {
     },
     networkname() {
       const self = this
+      console.log('hhh2', self.networkname)
       switch(this.networkname) {
         case 'bsc':
         case 'bsctest':
@@ -237,7 +239,7 @@ export default {
       async function doIt() {
         self.web3 = self.web3Getter ? await self.web3Getter() : window.web3 // Duplicate code
         const abis = await self.myGetAddresses(self.prefix);
-        self.oracleId = abis ? abis.oracleId : null;
+        self.currentOracleId = abis.oracleId
         self.gnosisBequestApp = abis ? abis.gnosisBequestApp : null; // FIXME: Use the same app for all networks.
         const addresses = await self.myGetAddresses(self.prefix);
         self.donationAddress = addresses && addresses.LockAggregator ? addresses.LockAggregator.address : null;
@@ -250,7 +252,7 @@ export default {
     return {
       web3: null,
 
-      oracleId: null, // TODO: should be a property instead
+      currentOracleId: null, // TODO: should be a property instead
 
       paymentKind: 'bequestSafe',
       tokenKind: '',
@@ -275,9 +277,11 @@ export default {
   created() {
     const self = this
     self.myGetAddresses(self.prefix)
-      .then(function(abis) {
+      .then(async function(abis) {
         if (abis) {
-          self.oracleId = abis.oracleId
+          self.web3 = self.web3Getter ? await self.web3Getter() : window.web3 // Duplicate code
+          const abis = await self.myGetAddresses(self.prefix);
+          self.currentOracleId = self.oracleid !== undefined ? self.oracleid : (abis ? abis.oracleId : null);
           self.onNetworkNameUpdated() // TODO: Remove this line?
         }
       })
@@ -396,7 +400,7 @@ export default {
             return;
           }
           await mySend(await this.getWeb3(), contract, contract.methods.donate,
-            [this.oracleId,
+            [this.currentOracleId,
              account,
              []],
             {from: account, value: wei}, null
@@ -435,7 +439,7 @@ export default {
           await mySend(await this.getWeb3(), science, science.methods.donate,
             [collateralContractAddress,
              collateralTokenId,
-             this.oracleId,
+             this.currentOracleId,
              wei,
              account,
              account,

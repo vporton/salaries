@@ -16,8 +16,8 @@ const routes = [
     },
     props: {
       default: true,
-      prefix: './',
-      oracleId: null,
+      prefix: './', // TODO: Instead get from <App>
+      oracleid: undefined,
       ref: 'donate',
     },
   },
@@ -30,8 +30,8 @@ const routes = [
     },
     props: {
       default: true,
-      prefix: './',
-      oracleId: null,
+      prefix: './', // TODO: Instead get from <App>
+      oracleid: undefined,
       ref: 'register',
     },
   },

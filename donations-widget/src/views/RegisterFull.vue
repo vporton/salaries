@@ -5,7 +5,7 @@
         ref="connector"
         :networkname="this.networkname"
         :providerurl="this.providerurl"
-        @changenetworkname="currentNetworkname = $event"
+        @changenetworkname="onChangeNetworkName($event)"
       />
     </div>
     <div style="float: left">
@@ -20,6 +20,7 @@
       ref="register"
       :prefix="this.prefix"
       :chainid="this.chainid"
+      :oracleid="this.currentOracleId"
       :networkname="this.currentNetworkname"
       :providerurl="this.providerurl"
       :initialconditionid="this.initialconditionid"
@@ -39,13 +40,16 @@ export default {
   props: [
     'prefix',
     'chainid',
+    'oracleid',
     'networkname',
     'providerurl',
     'initialconditionid',
   ],
   data() {
     return {
+      web3: null,
       currentNetworkname: this.networkname,
+      currentOracleId: this.oracleid,
     }
   },
   components: {
@@ -58,6 +62,11 @@ export default {
       await this.$refs.connector.baseGetWeb3()
       this.currentNetworkname = this.$refs.connector.currentNetworkname
       return this.$refs.connector.web3
+    },
+    onChangeNetworkName($event) {
+      this.currentNetworkname = $event
+      console.log("OOOOOOOOOOOOOOO", this.currentNetworkname)
+      this.$emit('changenetworkname', $event);
     },
   },
 }

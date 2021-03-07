@@ -27,6 +27,7 @@ export default {
   },
   watch: {
     networkname() { // FIXME: a wrong property to watch
+      console.log('hhhX', this.networkname)
       this.updateWeb3()
     },
     web3() { // FIXME: a wrong property to watch

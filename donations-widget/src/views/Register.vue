@@ -117,7 +117,7 @@
     >
       <div :style="{margin: '1ex'}">
         <p><strong>Write down</strong> your condition ID (kinda your salary account):
-          <code :style="{color: 'red'}">{{`${networkname}/${oracleId}/${conditionId}`}}</code>.</p>
+          <code :style="{color: 'red'}">{{`${networkname}/${currentOracleId}/${conditionId}`}}</code>.</p>
         <p>Now to make your salary calculation work (if you don't, you are not to receive a salary),
           you need to enter the following data.
         <ul>
@@ -136,7 +136,7 @@
             the same capitalization, etc.)</dd>
           <dt>Funding agency display country</dt><dd><code>Israel</code></dd>
           <dt>Funding agency display city</dt><dd><code>Ashkelon</code></dd>
-          <dt>Grant number</dt><dd><code>{{`${networkname}/${oracleId}/${conditionId}`}}</code></dd>
+          <dt>Grant number</dt><dd><code>{{`${networkname}/${currentOracleId}/${conditionId}`}}</code></dd>
           <dt>Relationship</dt><dd><code>Self</code></dd>
           <dt>Grant URL</dt><dd><code>https://vporton.github.io/future-salary/</code></dd>
           <dt>Set visibility</dt>
@@ -146,7 +146,7 @@
           </dd>
         </dl>
         <p>You can leave the rest fields blank.</p>
-        <p>Note that for a given <q>oracle</q> like <code>{{`${networkname}/${oracleId}`}}</code> you should have only one
+        <p>Note that for a given <q>oracle</q> like <code>{{`${networkname}/${currentOracleId}`}}</code> you should have only one
           <q>condition ID</q> <code>{{conditionId}}</code>. (You can have multiple salary streams
           for multiple oracles, but if for a single oracle you enter multiple condition IDs in ORCID site,
           you may be even banned.)</p>
@@ -159,7 +159,7 @@
         <pre>[
   {
     "ethereumNetwork": "{{networkname}}",
-    "oracleId": {{oracleId}},
+    "oracleId": {{currentOracleId}},
     "conditionId": {{conditionId}}
   }
 ]</pre>
@@ -192,6 +192,7 @@ export default {
   props: [
     'prefix',
     'chainid',
+    'oracleid',
     'networkname',
     'providerurl',
     'initialconditionid',
@@ -206,7 +207,7 @@ export default {
       ? undefined : this.initialconditionid
     return {
       web3: null,
-      oracleId: null,
+      currentOracleId: null,
       registerCallbacks: [],
       conditionId,
       tokenId: null, // TODO: Is this field needed?
@@ -335,7 +336,7 @@ export default {
       async function doIt() {
         self.web3 = self.web3Getter ? await self.web3Getter() : window.web3 // Duplicate code
         const abis = await self.myGetAddresses(self.prefix);
-        self.oracleId = abis ? abis.oracleId : null
+        self.currentOracleId = abis ? abis.oracleId : null
       }
       doIt()
       if (!self.networkname) {
@@ -354,7 +355,7 @@ export default {
     const self = this
     self.myGetAddresses(self.prefix)
       .then(function(abis) {
-        self.oracleId = abis ? abis.oracleId : null
+        self.currentOracleId = self.oracleid !== undefined ? self.oracleid : (abis ? abis.oracleId : null);
       })
     self.onUpdateConditionId()
     self.updateRegisteredStatus()
@@ -384,7 +385,7 @@ export default {
           const tx = await mySend(
             await self.getWeb3(), science,
             science.methods.mintSalary,
-            [self.oracleId, self.conditionId, []],
+            [self.currentOracleId, self.conditionId, []],
             {from: account},
             null)
           await tx
@@ -538,7 +539,7 @@ export default {
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         try {
           self.$vm2.open('registeringDialog');
-          const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, this.oracleId, true, []], {from: account}, null);
+          const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, this.currentOracleId, true, []], {from: account}, null);
           const txData = await tx;
           this.$vm2.close('registeringDialog');
           self.conditionId = txData.events.ConditionCreated.returnValues.condition;
