@@ -241,7 +241,7 @@ export default {
       async function doIt() {
         self.web3 = self.web3Getter ? await self.web3Getter() : window.web3 // Duplicate code
         const abis = await self.myGetAddresses(self.prefix);
-        self.currentOracleId = abis.oracleId
+        self.currentOracleId = abis ? abis.oracleId : null
         self.gnosisBequestApp = abis ? abis.gnosisBequestApp : null; // FIXME: Use the same app for all networks.
         const addresses = await self.myGetAddresses(self.prefix);
         self.donationAddress = addresses && addresses.LockAggregator ? addresses.LockAggregator.address : null;
@@ -464,6 +464,9 @@ export default {
       }
     },
     setDonateButtonDisabled() {
+      if (this.oracleId === null || this.oracleId === undefined) { // `undefined` seems superfluous
+        this.donateButtonDisabled = true;
+      }
       if (this.tokenKind === 'card') {  
         this.donateButtonDisabled = false;
       } else {

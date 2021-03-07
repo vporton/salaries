@@ -54,8 +54,7 @@ export default {
       const self = this
       async function doIt() {
         const abis = await self.myGetAddresses(self.prefix)
-        console.log('ddd', abis.oracleId)
-        self.currentOracleId = abis.oracleId
+        self.currentOracleId = abis ? abis.oracleId : null
       }
       doIt()
     },

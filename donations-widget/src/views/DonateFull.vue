@@ -11,11 +11,6 @@
     <div style="float: left">
       <DonateForApp/>
     </div>
-    <p :style="{textAlign: 'center'}">
-      <small>Oracle ID:</small>
-      {{' '}}
-      <input type="numeric" v-model="currentOracleId"/>
-    </p>
     <p :style="{clear: 'both'}">
       <small>Free software authors, scientists/inventors, science/software publishers,
         carbon accounters, and other common good producers:</small>
@@ -25,6 +20,21 @@
       <small>Registration is free (except of an Ethereum network fee). The earlier you register, the more money you get.</small>
     </p>
     <h1>Donate / Bequest</h1>
+    <p :style="{textAlign: 'center'}">
+      <small>Oracle ID:</small>
+      {{' '}}
+      <input type="numeric" v-model="currentOracleId" style="width: 5em"/>
+      <small :style="{display: currentOracleId && currentOracleId === mainOracleId ? 'inline' : 'none'}">
+        (the common goods DAO - donate to it)
+      </small>
+      {{' '}}
+      <button
+        :style="{display: currentOracleId !== mainOracleId ? 'inline' : 'none'}"
+        @click="currentOracleId = mainOracleId"
+      >
+        Go to the common goods DAO
+      </button>
+    </p>
     <Donate
       ref="donate"
       :prefix="this.prefix"
@@ -39,6 +49,7 @@
 
 <script>
 // import Vue from 'vue';
+import { getAddresses } from '../utils/AppLib'
 import Donate from './Donate';
 import Connect from '@/components/Connect.vue'
 import DonateForApp from '@/components/DonateForApp.vue'
@@ -57,12 +68,16 @@ export default {
       web3: null,
       currentNetworkname: this.networkname,
       currentOracleId: this.oracleid,
+      mainOracleId: null,
     }
   },
   components: {
     Donate,
     Connect,
     DonateForApp,
+  },
+  created() {
+    this.updateMainOracleId()
   },
   methods: {
     async web3Getter() {
@@ -74,6 +89,17 @@ export default {
       this.currentNetworkname = $event
       this.$emit('changenetworkname', $event);
     },
+    updateMainOracleId() {
+      const self = this
+      async function doIt() {
+        const abis = await self.myGetAddresses(self.prefix)
+        self.mainOracleId = abis ? abis.oracleId : null
+      }
+      doIt()
+    },
+    async myGetAddresses(PREFIX) {
+      return await getAddresses(PREFIX, this.networkname)
+    },
   },
   watch: {
     oracleid() {
@@ -81,6 +107,9 @@ export default {
     },
     currentOracleId() {
       this.$emit('changeoracleid', this.currentOracleId)
+    },
+    currentNetworkname() {
+      this.updateMainOracleId()
     },
   },
 }
