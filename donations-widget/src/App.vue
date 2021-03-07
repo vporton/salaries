@@ -1,6 +1,10 @@
 <template>
   <div id="app">
     <header class="App-header">
+      <span style="color: red">
+        There is a minor error (not a security vulnerability) in the smart contract.<br/>
+        You will need to register again after bug fix.<br/>Please don't donate.
+      </span>
       <router-view
         :networkname="this.currentNetworkname"
         @changenetworkname="updateNetworkname($event)"
