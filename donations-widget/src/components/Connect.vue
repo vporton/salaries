@@ -103,7 +103,6 @@ export default {
       if (!self.networkname && window.ethereum) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         self.cachedNetworkname = self.currentNetworkname = CHAINS[Number(chainId)] // Number() because it returns in hex
-        console.log([self.currentNetworkname])
       }
       if(!self.networkname && !window.ethereum) {
         self.cachedNetworkname = 'mainnet'
@@ -230,7 +229,6 @@ export default {
   },
   watch: {
     currentNetworkname() {
-      console.log('ppp', this.currentNetworkname)
       this.$emit('changenetworkname', this.currentNetworkname)
     }
   }

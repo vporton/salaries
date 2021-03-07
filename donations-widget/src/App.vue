@@ -2,7 +2,10 @@
   <div id="app">
     <header class="App-header">
       <router-view
-        @changenetworkname="currentNetworkname = $event"
+        :networkname="this.currentNetworkname"
+        @changenetworkname="updateNetworkname($event)"
+        :oracleid="this.currentOracleId"
+        @changeoracleid="currentOracleId = $event"
       />
     </header>
     <p>
@@ -24,6 +27,8 @@ export default {
   data() {
     return {
       prefix: './',
+      currentNetworkname: undefined,
+      currentOracleId: undefined,
     }
   },
   created() {
@@ -35,6 +40,7 @@ export default {
           const abis = await self.myGetAddresses(self.prefix);
           console.log('self.oracleid', self.oracleid)
           self.currentOracleId = self.oracleid !== undefined ? self.oracleid : (abis ? abis.oracleId : null);
+          console.log('self.currentOracleId' , self.currentOracleId)
         }
       })
   },
@@ -44,9 +50,11 @@ export default {
     document.body.appendChild(addThisScript)
   },
   watch: {
-    currentNetworkName() {
+    currentNetworkname() {
+      const self = this
       async function doIt() {
         const abis = await self.myGetAddresses(self.prefix)
+        console.log('ddd', abis.oracleId)
         self.currentOracleId = abis.oracleId
       }
       doIt()
@@ -54,8 +62,12 @@ export default {
   },
   methods: {
     async myGetAddresses(PREFIX) {
-      return await getAddresses(PREFIX, this.currentNetworkName)
+      return await getAddresses(PREFIX, this.currentNetworkname)
     },
+    updateNetworkname(name) {
+      console.log('pppppp', name)
+      this.currentNetworkname = name
+    }
   },
 }
 </script>

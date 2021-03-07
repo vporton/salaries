@@ -194,6 +194,9 @@ export default {
     NetworkInfo,
   },
   watch: {
+    oracleid() {
+      this.currentOracleId = this.oracleid
+    },
     amount() {
       this.setDonateButtonDisabled();
     },
@@ -219,7 +222,6 @@ export default {
     },
     networkname() {
       const self = this
-      console.log('hhh2', self.networkname)
       switch(this.networkname) {
         case 'bsc':
         case 'bsctest':

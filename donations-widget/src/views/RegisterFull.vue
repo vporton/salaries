@@ -20,7 +20,7 @@
       ref="register"
       :prefix="this.prefix"
       :chainid="this.chainid"
-      :oracleid="this.currentOracleId"
+      :oracleid="this.oracleid"
       :networkname="this.currentNetworkname"
       :providerurl="this.providerurl"
       :initialconditionid="this.initialconditionid"
@@ -49,7 +49,6 @@ export default {
     return {
       web3: null,
       currentNetworkname: this.networkname,
-      currentOracleId: this.oracleid,
     }
   },
   components: {
@@ -65,7 +64,6 @@ export default {
     },
     onChangeNetworkName($event) {
       this.currentNetworkname = $event
-      console.log("OOOOOOOOOOOOOOO", this.currentNetworkname)
       this.$emit('changenetworkname', $event);
     },
   },

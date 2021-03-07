@@ -231,38 +231,10 @@ export default {
   },
   watch: {
     conditionId() {
-      // this.updateRegisteredStatus()
-
-      const self = this
-      async function doIt() {
-        const web3 = await self.getWeb3();
-        if (web3) {
-          const addresses = await self.myGetAddresses(self.prefix);
-          if (!addresses) return;
-          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
-          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-
-          self.onUpdateConditionId()
-
-          for (let ev of self.salaryRecipientEvents) {
-            ev.unsubscribe();
-          }
-
-          if (self.conditionId !== undefined && self.salaryRecipient !== undefined) {
-            self.salaryRecipientEvents.push(science.events.ConditionReCreate({
-              filter: {customer: self.salaryRecipient, condition: self.conditionId}},
-              async (error, event) => {
-                if (!error) {
-                  self.tokenId = event.returnValues.newCondition;
-                }
-              }))
-
-            // after subscribing
-            self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call()
-          }
-        }
-      }
-      doIt();
+      this.onConditionChange()
+    },
+    oracleid() { // needed?
+      this.onConditionChange()
     },
     salaryRecipient() {
       this.updateAmountOnAccount()
@@ -572,6 +544,40 @@ export default {
     },
     async getWeb3() {
       return this.web3 = this.web3Getter ? await this.web3Getter() : window.web3 // Duplicate code
+    },
+    onConditionChange() {
+      // this.updateRegisteredStatus()
+
+      const self = this
+      async function doIt() {
+        const web3 = await self.getWeb3();
+        if (web3) {
+          const addresses = await self.myGetAddresses(self.prefix);
+          if (!addresses) return;
+          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
+          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+
+          self.onUpdateConditionId()
+
+          for (let ev of self.salaryRecipientEvents) {
+            ev.unsubscribe();
+          }
+
+          if (self.conditionId !== undefined && self.salaryRecipient !== undefined) {
+            self.salaryRecipientEvents.push(science.events.ConditionReCreate({
+              filter: {customer: self.salaryRecipient, condition: self.conditionId}},
+              async (error, event) => {
+                if (!error) {
+                  self.tokenId = event.returnValues.newCondition;
+                }
+              }))
+
+            // after subscribing
+            self.tokenId = await science.methods.firstToLastConditionInChain(self.conditionId).call()
+          }
+        }
+      }
+      doIt();
     },
   },
 }

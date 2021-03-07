@@ -22,3 +22,4 @@
 - "Our system can take all ETH" changes to "Our system can take all XDAI", after the UI was already shown.
 - "Index" token combining essentially the same salary from several blockchains or several oracles.
 - Make NFT that belong to one who can restore user's account. Propose the DAO to vote for a contract controlled by this NFT.
+- Code for changing oracle ID in the app is superfluous except of in donations.

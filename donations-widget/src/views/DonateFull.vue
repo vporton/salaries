@@ -14,7 +14,7 @@
     <p :style="{textAlign: 'center'}">
       <small>Oracle ID:</small>
       {{' '}}
-      <input type="numeric" ref="oracleId"/>
+      <input type="numeric" v-model="currentOracleId"/>
     </p>
     <p :style="{clear: 'both'}">
       <small>Free software authors, scientists/inventors, science/software publishers,
@@ -72,8 +72,15 @@ export default {
     },
     onChangeNetworkName($event) {
       this.currentNetworkname = $event
-      console.log("OOOOOOOOOOOOOOO", this.currentNetworkname)
       this.$emit('changenetworkname', $event);
+    },
+  },
+  watch: {
+    oracleid() {
+      this.currentOracleId = this.oracleid
+    },
+    currentOracleId() {
+      this.$emit('changeoracleid', this.currentOracleId)
     },
   },
 }
