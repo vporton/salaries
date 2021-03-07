@@ -25,3 +25,4 @@
 - Code for changing oracle ID in the app is superfluous except of in donations.
 - Create new oracles.
 - Remove oracle ID from the project ID.
+- refs.txt
