@@ -356,7 +356,7 @@ export default {
           const tx = await mySend(
             await self.getWeb3(), science,
             science.methods.mintSalary,
-            [self.currentOracleId, self.conditionId, []],
+            [self.conditionId, []],
             {from: account},
             null)
           await tx
