@@ -510,7 +510,7 @@ export default {
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         try {
           self.$vm2.open('registeringDialog');
-          const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, this.currentOracleId, true, []], {from: account}, null);
+          const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, true, []], {from: account}, null);
           const txData = await tx;
           this.$vm2.close('registeringDialog');
           self.conditionId = txData.events.ConditionCreated.returnValues.condition;
