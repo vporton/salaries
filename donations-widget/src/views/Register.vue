@@ -169,7 +169,7 @@
           but if for a single network you enter multiple condition IDs, you may be even banned.)</p>
         <p>It is OK to have the same <code>.future-salaries/accounts.json</code> file in multiple GitHub repositories.
           Also please add the same file to other your Git hosts (BitBucket, GitLab, etc.)</p>
-      </div>
+        </div>
     </vue-modal-2>
   </div>
 </template>
