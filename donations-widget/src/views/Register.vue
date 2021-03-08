@@ -117,7 +117,7 @@
     >
       <div :style="{margin: '1ex'}">
         <p><strong>Write down</strong> your condition ID (kinda your salary account):
-          <code :style="{color: 'red'}">{{`${networkname}/${currentOracleId}/${conditionId}`}}</code>.</p>
+          <code :style="{color: 'red'}">{{`${networkname}/${conditionId}`}}</code>.</p>
         <p>Now to make your salary calculation work (if you don't, you are not to receive a salary),
           you need to enter the following data.
         <ul>
@@ -136,7 +136,7 @@
             the same capitalization, etc.)</dd>
           <dt>Funding agency display country</dt><dd><code>Israel</code></dd>
           <dt>Funding agency display city</dt><dd><code>Ashkelon</code></dd>
-          <dt>Grant number</dt><dd><code>{{`${networkname}/${currentOracleId}/${conditionId}`}}</code></dd>
+          <dt>Grant number</dt><dd><code>{{`${networkname}/${conditionId}`}}</code></dd>
           <dt>Relationship</dt><dd><code>Self</code></dd>
           <dt>Grant URL</dt><dd><code>https://vporton.github.io/future-salary/</code></dd>
           <dt>Set visibility</dt>
@@ -146,9 +146,9 @@
           </dd>
         </dl>
         <p>You can leave the rest fields blank.</p>
-        <p>Note that for a given <q>oracle</q> like <code>{{`${networkname}/${currentOracleId}`}}</code> you should have only one
-          <q>condition ID</q> <code>{{conditionId}}</code>. (You can have multiple salary streams
-          for multiple oracles, but if for a single oracle you enter multiple condition IDs in ORCID site,
+        <p>Note that for a given <q>network</q> like <code>{{`${networkname}`}}</code> you should have only one
+          <q>condition ID</q> <code>{{conditionId}}</code> at ORCID site. (You can have multiple salary streams
+          for multiple networks, but if for a single network you enter multiple condition IDs in ORCID site,
           you may be even banned.)</p>
         <h2 id="githubData">GitHub</h2>
         <p>If you are a software developer, create a JSON file <code>.future-salaries/accounts.json</code>
@@ -159,15 +159,14 @@
         <pre>[
   {
     "ethereumNetwork": "{{networkname}}",
-    "oracleId": {{currentOracleId}},
     "conditionId": {{conditionId}}
   }
 ]</pre>
         <p>You can have it enumerated through comma for multiple networks and/or oracle IDs.
           (See any tutorial about JSON for the file format.)</p>
-        <p>Note that for a given combination of <code>ethereumNetwork</code> and <code>oracleId</code> you should have only one
-          <code>conditionId</code>. (You can have multiple salary streams for multiple oracles,
-          but if for a single oracle you enter multiple condition IDs, you may be even banned.)</p>
+        <p>Note that for a given <code>ethereumNetwork</code> you should have only one
+          <code>conditionId</code>. (You can have multiple salary streams for multiple networks,
+          but if for a single network you enter multiple condition IDs, you may be even banned.)</p>
         <p>It is OK to have the same <code>.future-salaries/accounts.json</code> file in multiple GitHub repositories.
           Also please add the same file to other your Git hosts (BitBucket, GitLab, etc.)</p>
       </div>
