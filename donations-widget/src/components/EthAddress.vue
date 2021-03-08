@@ -87,6 +87,7 @@ export default {
     },
     input(event) {
       this.baseInput(event.target.value)
+      this.$emit('input', this.address)
     },
     change(event) {
       this.baseInput(event.target.value)
@@ -101,6 +102,7 @@ export default {
       if(v !== this.address || v === '') {
         this.value2 = v
       }
+      this.className = this.isEthAddressValid(this.value2) ? '' : 'error'
     },
     address(v) {
       this.$emit('input', v)

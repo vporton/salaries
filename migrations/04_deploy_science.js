@@ -7,7 +7,6 @@ module.exports = async function(deployer, network, accounts) {
   const uuid = '4a4552a6-4644-11eb-a830-3f3c92c66629';
 
   // const Migrations = artifacts.require("Migrations");
-  const NFTRestoreContract = artifacts.require("NFTRestoreContract");
   // const DefaultDAOInterface = artifacts.require("DefaultDAOInterface");
   // const ProxyAdmin = artifacts.require("ProxyAdmin");
   // const TransparentUpgradeableProxy = artifacts.require("TransparentUpgradeableProxy");
@@ -30,14 +29,19 @@ module.exports = async function(deployer, network, accounts) {
   //   testDAOAddress.replace(/^0x0*/, '0x').toLowerCase() ===
   //   process.env.DAO_ADDRESS.replace(/^0x0*/, '0x').toLowerCase());
 
-  const restoreContract = await NFTRestoreContract.deployed();
+  const addressesFileName = `abi/addresses.json`;
+  let json;
+  const text = fs.readFileSync(addressesFileName);
+  json = JSON.parse(text);
 
-  const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", restoreContract.address, `urn:uuid:${uuid}`);
+  const j = json[network === 'development' ? 'local' : network];
+  const restoreContract = j.NFTRestoreContract.address;
 
-  // ({ logs } = await science.createOracle());
-  // const oracleId = logs[0].args.oracleId;
-  // await science.changeOracleOwner(process.env.DAO_ADDRESS, oracleId);
+  const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", restoreContract, `urn:uuid:${uuid}`);
 
+  ({ logs } = await science.createOracle(process.env.DAO_ADDRESS));
+  const oracleId = logs[0].args.oracleId;
+  
   // TODO: duplicate code
   {
     const addressesFileName = `abi/addresses.json`;
@@ -47,7 +51,7 @@ module.exports = async function(deployer, network, accounts) {
         json = JSON.parse(text);
     }
     catch(_) {
-        json = {};  
+        json = {};
     }
     updateAddress(json, network, 'oracleId', oracleId);
     fs.writeFileSync(addressesFileName, JSON.stringify(json, null, 4));

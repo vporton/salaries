@@ -29,7 +29,7 @@
     "@myetherwallet/mewconnect-web-client": "^2.1.21-beta.2",
     "@portis/web3": "^3.0.3",
     "@ramp-network/ramp-instant-sdk": "^2.3.2",
-    "@vporton/future-contracts": "git+ssh://git@github.com:vporton/future-contracts.git",
+    "@vporton/future-contracts": "^1.1.1",
     "@vue/web-component-wrapper": "^1.2.0",
     "authereum": "^0.1.0",
     "core-js": "^3.6.5",

@@ -1646,10 +1646,10 @@
   dependencies:
     web3 "*"
 
-"@vporton/future-contracts@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@vporton/future-contracts/-/future-contracts-1.1.0.tgz#2b66f24ccd6f70e5e5d153a8ced654de3522e968"
-  integrity sha512-usFCl6k+pFJavHcAo1XL1wPpFj9urq7gKpGPKFBGlUhelLh40jFD5Q8Wb6PJUxH38SCR1SukEQfkliyCekigAA==
+"@vporton/future-contracts@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@vporton/future-contracts/-/future-contracts-1.1.1.tgz#e66053e56a7a9683986cd2e549489a26f207c0cb"
+  integrity sha512-/SBZUPCqKerzjuUQ9BbWJL+znM0uL5L/d4ju1VM6u+pG3mapWnAnLnWHjBx7UTrTbNzg62P9IdlumSl/lucI0Q==
   dependencies:
     "@openzeppelin/contracts" "^3.3.0"
     "@vporton/safe-bequest-module" "^0.0.1"
