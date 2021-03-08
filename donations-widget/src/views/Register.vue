@@ -120,10 +120,16 @@
           <code :style="{color: 'red'}">{{`${networkname}/${conditionId}`}}</code>.</p>
         <p>Now to make your salary calculation work (if you don't, you are not to receive a salary),
           you need to enter the following data.
+        <!-- Causes damaging the URL fragment. -->
+        <!--ul>
+          <li><a href="#orcidData" @click="scroll">For scientists</a></li>
+          <li><a href="#githubData" @click="scroll">For software developers</a></li>
+          <li><a href="#wikidata" @click="scroll">For organizations</a></li>
+        </ul-->
         <ul>
-          <li><a href="#orcidData">For scientists</a></li>
-          <li><a href="#githubData">For software developers</a></li>
-          <li><a href="#wikidata">For organizations</a></li>
+          <li>For scientists</li>
+          <li>For software developers</li>
+          <li>For organizations</li>
         </ul>
         <h2 id="orcidData">ORCID</h2>
         <p>If you are a scientist, enter the following data as <strong>Funding</strong>
@@ -530,6 +536,13 @@ export default {
     },
     showRegistrationData() {
       this.$vm2.open('registeredDialog');
+    },
+    scroll(event) {
+      const href = event.target.getAttribute('href');
+      const elt = document.getElementById(href.replace(/^#/, ''));
+      const parent = document.querySelector('.vm2_body')
+      parent.scrollTop = elt.top // Why `parent.scrollTop == 0` always?!
+      event.preventDefault()
     },
     updateSalary() {
       const time = Date.now();

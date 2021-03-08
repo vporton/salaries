@@ -178,7 +178,6 @@ export default {
             null);
           const txData = await tx;
           this.$vm2.close('oracleBeingCreated');
-          console.log(txData)
           self.currentOracleId = txData.events.OracleCreated.returnValues.oracleId;
           console.log('oracleId:', self.oracleId);
         }
