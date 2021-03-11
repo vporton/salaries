@@ -16,10 +16,10 @@
         href="https://docs.binance.org/smart-chain/wallet/metamask.html"
       >BSC</a>
     </strong>
-    networks
+    networks.
+    You currently need to use xDai for the common goods crowdfunding.
     <span :style="{display: this.showStyle}">
-      (switch to it)
-      (<a target="_blank" rel="noopener noreferrer" href="https://metamask.io/download">Install MetaMask to connect!</a>).
+      <a target="_blank" rel="noopener noreferrer" href="https://metamask.io/download">Install MetaMask to connect!</a>
     </span>
   </p>
 </template>
