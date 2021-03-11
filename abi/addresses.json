@@ -212,7 +212,6 @@
         "SalaryWithDAO": {
             "address": "0x27b1f241Ec8F1C506b31365044727F232075488D"
         },
-        "oracleId": "1",
         "ERC1155OverERC20": {
             "address": "0xf7Bd05C7Faa8EEECbf714DD44DdC899B1ae2c9c3"
         },
