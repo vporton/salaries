@@ -143,7 +143,7 @@ export default {
       const self = this
       async function doIt() {
         const abis = await self.myGetAddresses(self.prefix)
-        self.mainOracleId = abis ? abis.oracleId : null
+        self.currentOracleId = self.mainOracleId = abis ? abis.oracleId : null
       }
       doIt()
     },
