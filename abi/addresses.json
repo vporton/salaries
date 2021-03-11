@@ -204,5 +204,32 @@
         "NFTRestoreContract": {
             "address": "0xFF6049B87215476aBf744eaA3a476cBAd46fB1cA"
         }
+    },
+    "bsc": {
+        "NFTRestoreContract": {
+            "address": "0xB0504Bffd2c78357eecD1d7d28a3d4F7A77F9A6C"
+        },
+        "SalaryWithDAO": {
+            "address": "0x27b1f241Ec8F1C506b31365044727F232075488D"
+        },
+        "oracleId": "1",
+        "ERC1155OverERC20": {
+            "address": "0xf7Bd05C7Faa8EEECbf714DD44DdC899B1ae2c9c3"
+        },
+        "ERC1155LockedETH": {
+            "address": "0x390bEcA29911362dC6A8d9FDa44ec55E3f0bD157"
+        },
+        "DonateETH": {
+            "address": "0x53f6bA5136fE1772f55cd866C3001bCF7fDcCd1E"
+        },
+        "UnitedSalaryTokenWrapper": {
+            "address": "0xB3fA45C89D0e9364D91356579092DE5D984Ad33E"
+        },
+        "ERC1155OverERC721": {
+            "address": "0xD315338C1F9b8251C54a30BD32e89ABa9f08A87e"
+        },
+        "LockAggregator": {
+            "address": "0xB05Bd63027E3643AF341A7a8c879a4a9dCfD107B"
+        }
     }
 }

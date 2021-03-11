@@ -39,21 +39,23 @@ module.exports = async function(deployer, network, accounts) {
 
   const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", restoreContract, `urn:uuid:${uuid}`);
 
-  ({ logs } = await science.createOracle(process.env.DAO_ADDRESS));
-  const oracleId = logs[0].args.oracleId;
-  
-  // TODO: duplicate code
-  {
-    const addressesFileName = `abi/addresses.json`;
-    let json;
-    try {
-        const text = fs.readFileSync(addressesFileName);
-        json = JSON.parse(text);
+  if (process.env.DAO_ADDRESS) {
+    ({ logs } = await science.createOracle(process.env.DAO_ADDRESS));
+    const oracleId = logs[0].args.oracleId;
+    
+    // TODO: duplicate code
+    {
+      const addressesFileName = `abi/addresses.json`;
+      let json;
+      try {
+          const text = fs.readFileSync(addressesFileName);
+          json = JSON.parse(text);
+      }
+      catch(_) {
+          json = {};
+      }
+      updateAddress(json, network, 'oracleId', oracleId);
+      fs.writeFileSync(addressesFileName, JSON.stringify(json, null, 4));
     }
-    catch(_) {
-        json = {};
-    }
-    updateAddress(json, network, 'oracleId', oracleId);
-    fs.writeFileSync(addressesFileName, JSON.stringify(json, null, 4));
   }
 };
