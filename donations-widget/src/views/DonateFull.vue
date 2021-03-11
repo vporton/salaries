@@ -148,7 +148,7 @@ export default {
       doIt()
     },
     async myGetAddresses(PREFIX) {
-      return await getAddresses(PREFIX, this.networkname)
+      return await getAddresses(PREFIX, this.currentNetworkname)
     },
     async createOracleDialog() {
       const web3 = await this.getWeb3();
