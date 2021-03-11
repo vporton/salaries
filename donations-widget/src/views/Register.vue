@@ -12,7 +12,6 @@
         </a>
       </small>
     </p>
-    <NetworkInfo :chainid="chainid" :networkname="networkname" :web3="web3"/>
     <p>
         <small>
             Free software authors, scientists/inventors, science/software publishers, carbon accounters,
@@ -186,7 +185,6 @@ import Vue from 'vue'
 import Modal from "@burhanahmeed/vue-modal-2"
 import { isUint256Valid, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import Uint256 from '@/components/Uint256.vue'
-import NetworkInfo from '@/components/NetworkInfo.vue'
 
 const BN = Web3.utils.BN
 
@@ -205,7 +203,6 @@ export default {
   ],
   components: {
     Uint256,
-    NetworkInfo,
   },
   data() {
     const conditionId = this.initialconditionid === undefined || this.initialconditionid === ''

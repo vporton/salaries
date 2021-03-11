@@ -3,13 +3,16 @@
     <div style="float: right; margin: 8px">
       <Connect
         ref="connector"
-        :networkname="this.networkname"
+        :networkname="this.currentNetworkname"
         :providerurl="this.providerurl"
         @changenetworkname="onChangeNetworkName($event)"
       />
     </div>
     <div style="float: left">
       <DonateForApp/>
+    </div>
+    <div style="clear: both">
+      <NetworkInfo :chainid="chainid" :networkname="networkname" :web3="web3"/>
     </div>
     <p :style="{clear: 'both'}">
         <router-link to="/">Donate/bequest for science, free software, or climate.</router-link>
@@ -34,6 +37,7 @@
 import Register from './Register';
 import Connect from '@/components/Connect.vue'
 import DonateForApp from '@/components/DonateForApp.vue'
+import NetworkInfo from '@/components/NetworkInfo.vue'
 
 export default {
   name: 'RegisterFull',
@@ -55,6 +59,7 @@ export default {
     Register,
     Connect,
     DonateForApp,
+    NetworkInfo,
   },
   methods: {
     async web3Getter() {
@@ -63,8 +68,13 @@ export default {
       return this.$refs.connector.web3
     },
     onChangeNetworkName($event) {
-      this.currentNetworkname = $event
-      this.$emit('changenetworkname', $event);
+      const self = this
+      self.currentNetworkname = $event
+      async function doIt() {
+        self.web3 = await self.web3Getter()
+      }
+      doIt()
+      self.$emit('changenetworkname', self.networkname);
     },
   },
 }

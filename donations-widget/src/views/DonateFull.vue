@@ -3,13 +3,16 @@
     <div style="float: right">
       <Connect
         ref="connector"
-        :networkname="this.networkname"
+        :networkname="this.currentNetworkname"
         :providerurl="this.providerurl"
         @changenetworkname="onChangeNetworkName($event)"
       />
     </div>
     <div style="float: left">
       <DonateForApp/>
+    </div>
+    <div style="clear: both">
+      <NetworkInfo :chainid="chainid" :networkname="networkname" :web3="web3"/>
     </div>
     <p :style="{clear: 'both'}">
       <small>Free software authors, scientists/inventors, science/software publishers,
@@ -96,6 +99,7 @@ import Connect from '@/components/Connect.vue'
 import DonateForApp from '@/components/DonateForApp.vue'
 import EthAddress from '@/components/EthAddress.vue'
 import validators from '../utils/validators'
+import NetworkInfo from '@/components/NetworkInfo.vue'
 import { mySend, getABIs, getAccounts } from '../utils/AppLib'
 
 export default {
@@ -121,6 +125,7 @@ export default {
     Connect,
     DonateForApp,
     EthAddress,
+    NetworkInfo,
   },
   created() {
     this.updateMainOracleId()
@@ -133,7 +138,6 @@ export default {
     },
     onChangeNetworkName($event) {
       this.currentNetworkname = $event
-      this.$emit('changenetworkname', $event);
     },
     updateMainOracleId() {
       const self = this
@@ -166,7 +170,6 @@ export default {
         if (!addresses) return;
         const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO;
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-        console.log('xxx', self.oracleOwner)
         try {
           self.$vm2.open('oracleBeingCreated');
           const tx = await mySend(
@@ -205,7 +208,13 @@ export default {
       this.$emit('changeoracleid', this.currentOracleId)
     },
     currentNetworkname() {
-      this.updateMainOracleId()
+      const self = this
+      self.updateMainOracleId()
+      async function doIt() {
+        self.web3 = await self.web3Getter()
+      }
+      doIt()
+      self.$emit('changenetworkname', self.networkname);
     },
 //    oracleOwner() {
 //      // This doesn't work due to a @burhanahmeed/vue-modal-2 bug:

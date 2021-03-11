@@ -64,7 +64,6 @@ export default {
       return await getAddresses(PREFIX, this.currentNetworkname)
     },
     updateNetworkname(name) {
-      console.log('pppppp', name)
       this.currentNetworkname = name
     }
   },

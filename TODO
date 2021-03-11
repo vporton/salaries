@@ -24,3 +24,5 @@
 - Code for changing oracle ID in the app is superfluous except of in donations.
 - refs.txt
 - UniDAO?
+- NetworkInfo doesn't watch network switching well.
+

@@ -16,7 +16,6 @@
       This is <strong>the</strong> donation app. <em>Donate and/or bequest</em> here for the software and the free
       market to choose the best donation recipients.
     </p>
-    <NetworkInfo :chainid="chainid" :networkname="networkname" :web3="web3"/>
     <p>
       <label>
         <input
@@ -168,7 +167,6 @@ import { compositeTokenHash } from '@vporton/wrap-tokens/lib/tokens-ethers'
 import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 import Amount from '@/components/Amount.vue'
-import NetworkInfo from '@/components/NetworkInfo.vue'
 import { mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 
 import erc1155Abi from '../utils/ERC1155Abi';
@@ -191,7 +189,6 @@ export default {
     EthAddress,
     Uint256,
     Amount,
-    NetworkInfo,
   },
   watch: {
     oracleid() {

@@ -1,6 +1,6 @@
 <template>
-  <p :style="{display: this.showStyle, color: 'red'}">
-    Currently Future Salaries supports only
+  <p :style="{color: 'red'}">
+    This app supports
     <strong>
       <a
         target="_blank"
@@ -8,8 +8,19 @@
         href="https://www.xdaichain.com/for-users/wallets/metamask/metamask-setup"
       >xDai</a>
     </strong>
-    network (<a target="_blank" rel="noopener noreferrer" href="https://metamask.io/download">Install!</a>),
-    switch to it! (also <strong>Mumbai</strong> or <strong>BSC testnet</strong> for testing).
+    and
+    <strong>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://docs.binance.org/smart-chain/wallet/metamask.html"
+      >BSC</a>
+    </strong>
+    networks
+    <span :style="{display: this.showStyle}">
+      (switch to it)
+      (<a target="_blank" rel="noopener noreferrer" href="https://metamask.io/download">Install MetaMask to connect!</a>).
+    </span>
   </p>
 </template>
 
@@ -19,7 +30,7 @@ export default {
   props: ['networkname', 'web3'],
   data() {
     return {
-      showStyle: 'none',
+      showStyle: 'inline',
     }
   },
   created() {
@@ -38,20 +49,22 @@ export default {
       const self = this
       if (self.web3) {
         self.web3.eth.net.getId().then(netId => {
+          console.log('ppp', netId)
           switch (netId) {
             case 100: // xDai
             case 4: // rinkeby
+            case 56: // BSC
             case 97: // BSC Testnet
             case 80001: // Mumbai
               self.showStyle = 'none'
               break
             default:
-              self.showStyle = 'block'
+              self.showStyle = 'inline'
               break
           }
         })
       } else {
-        self.showStyle = 'block'
+        self.showStyle = 'inline'
       }
     }
   }
