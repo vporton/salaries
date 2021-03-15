@@ -49,7 +49,14 @@
           @click="register"
         >Register for a salary (create condition ID)</button>
         <span :style="{display: alreadyRegisterStyle, textAlign: 'left'}">
-          <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code> <br/>
+          <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code>
+          {{' '}}
+          <button>Change...</button>
+          <br/>
+          <label>Controlled by notary:</label> <small>(you control yourself)</small>
+          {{' '}}
+          <button>Make managed...</button>
+          <br/>
           <label>On account:</label> {{amountOnAccountFormatted}} personal tokens. <br/>
           <label>Registration date:</label> {{new Date(registrationDate*1000)}}. <br/>
           <label>Last withdrawal date:</label> {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}}. <br/>
