@@ -49,13 +49,19 @@
           @click="register"
         >Register for a salary (create condition ID)</button>
         <span :style="{display: alreadyRegisterStyle, textAlign: 'left'}">
+          <label><input type="checkbox" v-model="advancedMode"/> <small>Show advanced dangerous controls</small></label>
+          <br/>
           <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code>
-          {{' '}}
-          <button>Change...</button>
+          <span :style="{display : advancedMode ? 'inline' : 'none'}">
+            {{' '}}
+            <button>Change...</button>
+          </span>
           <br/>
           <label>Controlled by notary:</label> <small>(you control yourself)</small>
-          {{' '}}
-          <button>Make managed...</button>
+          <span :style="{display : advancedMode ? 'inline' : 'none'}">
+            {{' '}}
+            <button>Make managed...</button>
+          </span>
           <br/>
           <label>On account:</label> {{amountOnAccountFormatted}} personal tokens. <br/>
           <label>Registration date:</label> {{new Date(registrationDate*1000)}}. <br/>
@@ -236,6 +242,7 @@ export default {
       amountOnAccountFormatted: '',
       salaryRecipientEvents: [],
       tokenIdEvents: [],
+      advancedMode: false,
     }
   },
   watch: {
