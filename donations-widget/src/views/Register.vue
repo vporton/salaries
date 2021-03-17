@@ -389,7 +389,7 @@ export default {
             const wrapperAbi = (await getABIs(self.prefix)).UnitedSalaryTokenWrapper;
             const wrapper = new web3.eth.Contract(wrapperAbi, addresses.UnitedSalaryTokenWrapper.address);
 
-            if (self.salaryRecipient === undefined || /^0x0+/.test(self.salaryRecipient)) {
+            if (self.salaryRecipient === undefined || /^0x0+$/.test(self.salaryRecipient)) {
               self.lastSalaryDate = undefined
               self.amountOnAccount = undefined
             } else {
@@ -448,7 +448,6 @@ export default {
       this.updateRegisteredStatus()
     },
     updateRegistrationStyles() {
-      console.log('this.registrationDate', this.registrationDate)
       if (!this.networkname || this.registrationDate === undefined) {
         // TODO: For a non-supported Ethereum network use 'none'.
         this.noSuchConditionStyle = this.conditionId !== undefined ? 'inline' : 'none'
@@ -517,7 +516,6 @@ export default {
           const txData = await tx;
           this.$vm2.close('registeringDialog');
           self.conditionId = txData.events.ConditionCreated.returnValues.condition;
-          console.log('conditionId:', self.conditionId);
           self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
           this.$emit('conditionCreated', self.conditionId);
           self.showRegistrationData();
