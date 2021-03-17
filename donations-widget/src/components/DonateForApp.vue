@@ -1,4 +1,5 @@
 <template>
+<div>
   <p style="margin: 7px; line-height: 70%">
     <small>
       Donate for app development and marketing:
@@ -14,8 +15,18 @@
         @click.prevent="initCardAppDonation"
         style="margin: 5px; color: red"
       >by credit card</a>
+      ||
+      <strong>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://revolution.portonvictor.org"
+          style="margin: 5px; color: red"
+        >Революция в России</a>
+      </strong>
     </small>
   </p>
+</div>
 </template>
 
 <script>
