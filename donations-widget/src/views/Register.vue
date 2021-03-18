@@ -54,7 +54,7 @@
           <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code>
           <span :style="{display : advancedMode ? 'inline' : 'none'}">
             {{' '}}
-            <button>Change...</button>
+            <button @onclick="changeRecipient">Change...</button>
           </span>
           <br/>
           <label>Controlled by notary:</label> <small>(you control yourself)</small>
@@ -381,6 +381,12 @@ export default {
         } 
       }
       doIt();
+    },
+    async changeRecipient() {
+      const web3 = await self.getWeb3();
+      const account = (await getAccounts(web3))[0];
+      const ???
+      ???web3.methods.restoreFunds(account, address _newAccount, this.conditionId).send();
     },
     updateAmountOnAccount() {
       const self = this
