@@ -1,6 +1,13 @@
 <template>
   <div id="app">
     <header class="App-header">
+      <p style="color: red">
+        The system will be redeployed. <strong>Don't register! Don't donate!</strong>
+        Users registered before 2021 Mar 18 12:00 Israel Time will need to re-register.
+        This is because I invented a new technology not used by anybody else to improve this system.
+        This sounds awful but it isn't: Just 8 users need to re-register and they lose just a few not yet valuable tokens.
+        Sorry for this small inconvenience.
+      </p>
       <router-view
         :networkname="this.currentNetworkname"
         @changenetworkname="updateNetworkname($event)"
