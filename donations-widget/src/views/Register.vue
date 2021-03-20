@@ -54,7 +54,7 @@
           <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code>
           <span :style="{display : advancedMode ? 'inline' : 'none'}">
             {{' '}}
-            <button @onclick="changeRecipient">Change...</button>
+            <button @click="changeRecipient">Change...</button>
           </span>
           <br/>
           <label>Controlled by notary:</label> <small>(you control yourself)</small>
@@ -104,6 +104,47 @@
         },
         btn1OnClick: () => {
           $vm2.close('registeringDialog');
+        },
+      }"
+    >
+      <p>Don't close the window.</p> <!-- TODO: Prevent closing browser window. -->
+    </vue-modal-2>
+    <vue-modal-2
+      name="salaryRecipientAddressDialog"
+      @on-close="closeSalaryRecipientAddressDialog"
+      :headerOptions="{
+        title: 'Enter new salary recipient account.',
+      }"
+      :footerOptions="{
+        btn2: 'OK',
+        btn1Style: {
+          display: 'none',
+        },
+        btn2OnClick: () => {
+          if (this.$refs.newSalaryRecipientWidget.isValid()) {
+            this.doChangeRecipient()
+          } else {
+            this.enterValidAddressWarning()
+          }
+        },
+      }"
+    >
+      <p style="color: red">This operation is not reversible!!</p>
+      <p>New salary recipient: <EthAddress ref="newSalaryRecipientWidget" v-model="newSalaryRecipient"/>.</p>
+    </vue-modal-2>
+    <vue-modal-2
+      name="mintingTakeSalaryDialog"
+      @on-close="closeMintingTakeSalaryDialog"
+      :headerOptions="{
+        title: 'Salary owner\'s token minting...',
+      }"
+      :footerOptions="{
+        btn1: 'Close',
+        btn2Style: {
+          display: 'none',
+        },
+        btn1OnClick: () => {
+          $vm2.close('closeMintingTakeSalaryDialog');
         },
       }"
     >
@@ -197,6 +238,7 @@ import Web3 from 'web3'
 import Vue from 'vue'
 import Modal from "@burhanahmeed/vue-modal-2"
 import { isUint256Valid, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
+import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 
 const BN = Web3.utils.BN
@@ -215,6 +257,7 @@ export default {
     'web3Getter',
   ],
   components: {
+    EthAddress,
     Uint256,
   },
   data() {
@@ -243,6 +286,7 @@ export default {
       salaryRecipientEvents: [],
       tokenIdEvents: [],
       advancedMode: false,
+      newSalaryRecipient: '',
     }
   },
   watch: {
@@ -356,6 +400,9 @@ export default {
     async myGetAddresses(PREFIX) {
       return await getAddresses(PREFIX, this.networkname)
     },
+    enterValidAddressWarning() {
+      global.alert('Enter valid address!')
+    },
     withdraw() {
       const self = this
       async function doIt() {
@@ -383,10 +430,56 @@ export default {
       doIt();
     },
     async changeRecipient() {
-      const web3 = await self.getWeb3();
+      const web3 = await this.getWeb3();
+      const addresses = await this.myGetAddresses(this.prefix);
+      if (!addresses) return;
       const account = (await getAccounts(web3))[0];
-      const ???
-      ???web3.methods.restoreFunds(account, address _newAccount, this.conditionId).send();
+      try {
+        const ourAbi = (await getABIs(this.prefix)).NFTRestoreContract;
+        const nft = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
+        try {
+          await nft.methods.ownerOf(account).call({from: account})
+        }
+        catch(e) {
+          this.$vm2.open('mintingTakeSalaryDialog');
+          try {
+            const tx = await mySend(
+              await this.getWeb3(), nft,
+              nft.methods.mintRestoreRight,
+              [[]],
+              {from: account},
+              null)
+            await tx
+          }
+          finally {
+            this.$vm2.close('mintingTakeSalaryDialog');
+          }
+        }
+        this.$vm2.open('salaryRecipientAddressDialog');
+      }
+      catch(e) {
+        alert(e.message);
+      }
+    },
+    async doChangeRecipient() {
+      const web3 = await this.getWeb3();
+      const addresses = await this.myGetAddresses(this.prefix);
+      if (!addresses) return;
+      const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO
+      const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address)
+      const account = (await getAccounts(web3))[0];
+      try {
+        const tx = await mySend(
+          await this.getWeb3(), science,
+          science.methods.restoreFunds,
+          [this.salaryRecipient, this.newSalaryRecipient, account],
+          {from: account},
+          null)
+        await tx
+      }
+      finally {
+        this.$vm2.close('salaryRecipientAddressDialog');
+      }
     },
     updateAmountOnAccount() {
       const self = this
@@ -520,6 +613,12 @@ export default {
     },
     closeRegisteredDialog() {
       this.$vm2.close('registeredDialog')
+    },
+    closeSalaryRecipientAddressDialog() {
+      this.$vm2.close('salaryRecipientAddressDialog')
+    },
+    closeMintingTakeSalaryDialog() {
+      this.$vm2.close('mintingTakeSalaryDialog')
     },
     async register() {
       const self = this
