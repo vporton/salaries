@@ -468,6 +468,7 @@ export default {
       const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO
       const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address)
       const account = (await getAccounts(web3))[0];
+      console.log('qqq', [this.salaryRecipient, this.newSalaryRecipient, account])
       try {
         const tx = await mySend(
           await this.getWeb3(), science,
