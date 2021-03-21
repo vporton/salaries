@@ -133,6 +133,24 @@
       <p>New salary recipient: <EthAddress ref="newSalaryRecipientWidget" v-model="newSalaryRecipient"/>.</p>
     </vue-modal-2>
     <vue-modal-2
+      name="movingSalaryDialog"
+      @on-close="closeMovingSalaryDialog"
+      :headerOptions="{
+        title: 'Moving salary to another account...',
+      }"
+      :footerOptions="{
+        btn1: 'Close',
+        btn2Style: {
+          display: 'none',
+        },
+        btn1OnClick: () => {
+          $vm2.close('movingSalaryDialog');
+        },
+      }"
+    >
+      <p>Don't close the window.</p> <!-- TODO: Prevent closing browser window. -->
+    </vue-modal-2>
+    <vue-modal-2
       name="mintingTakeSalaryDialog"
       @on-close="closeMintingTakeSalaryDialog"
       :headerOptions="{
@@ -430,6 +448,9 @@ export default {
       doIt();
     },
     async changeRecipient() {
+      this.$vm2.open('salaryRecipientAddressDialog');
+    },
+    async doChangeRecipient() {
       const web3 = await this.getWeb3();
       const addresses = await this.myGetAddresses(this.prefix);
       if (!addresses) return;
@@ -437,49 +458,16 @@ export default {
       try {
         const ourAbi = (await getABIs(this.prefix)).NFTRestoreContract;
         const nft = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
-        try {
-          await nft.methods.ownerOf(account).call({from: account})
-        }
-        catch(e) {
-          this.$vm2.open('mintingTakeSalaryDialog');
-          try {
-            const tx = await mySend(
-              await this.getWeb3(), nft,
-              nft.methods.mintRestoreRight,
-              [[]],
-              {from: account},
-              null)
-            await tx
-          }
-          finally {
-            this.$vm2.close('mintingTakeSalaryDialog');
-          }
-        }
-        this.$vm2.open('salaryRecipientAddressDialog');
-      }
-      catch(e) {
-        alert(e.message);
-      }
-    },
-    async doChangeRecipient() {
-      const web3 = await this.getWeb3();
-      const addresses = await this.myGetAddresses(this.prefix);
-      if (!addresses) return;
-      const scienceAbi = (await getABIs(this.prefix)).SalaryWithDAO
-      const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address)
-      const account = (await getAccounts(web3))[0];
-      console.log('qqq', [this.salaryRecipient, this.newSalaryRecipient, account])
-      try {
         const tx = await mySend(
-          await this.getWeb3(), science,
-          science.methods.restoreFunds,
-          [this.salaryRecipient, this.newSalaryRecipient, account],
+          await this.getWeb3(), nft,
+          nft.methods.safeTransferFrom,
+          [account, this.newSalaryRecipient, this.conditionId],
           {from: account},
           null)
         await tx
       }
-      finally {
-        this.$vm2.close('salaryRecipientAddressDialog');
+      catch(e) {
+        alert(e.message);
       }
     },
     updateAmountOnAccount() {
@@ -541,7 +529,7 @@ export default {
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
 
           self.salaryRecipient = self.conditionId !== undefined
-            ? await science.methods.conditionOwners(self.conditionId).call()
+            ? await science.methods.salaryReceivers(self.conditionId).call()
             : undefined;
         }
       }
@@ -621,6 +609,9 @@ export default {
     closeMintingTakeSalaryDialog() {
       this.$vm2.close('mintingTakeSalaryDialog')
     },
+    closeMovingSalaryDialog() {
+      this.$vm2.close('movingSalaryDialog')
+    },
     async register() {
       const self = this
       const web3 = await this.getWeb3();
@@ -635,6 +626,7 @@ export default {
           const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, []], {from: account}, null);
           const txData = await tx;
           this.$vm2.close('registeringDialog');
+          console.log('txData.events', txData.events)
           self.conditionId = txData.events.ConditionCreated.returnValues.condition;
           self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
           this.$emit('conditionCreated', self.conditionId);
