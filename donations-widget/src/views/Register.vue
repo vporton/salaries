@@ -572,14 +572,18 @@ export default {
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+          const ourAbi = (await getABIs(self.prefix)).NFTSalary;
+          const nftSalary = new web3.eth.Contract(ourAbi, addresses.NFTSalary.address);
           const maxConditionId = await science.methods.maxConditionId().call()
           // TODO: Should watch events for change of `self.salaryRecipient`
           if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) {
+            console.log(111);
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] =
               await Promise.all([
-                science.methods.conditionOwners(self.conditionId).call(),
+                nftSalary.methods.ownerOf(self.conditionId).call(),
                 science.methods.conditionCreationDates(self.conditionId).call(),
-                science.methods.lastSalaryDates(self.conditionId).call()])
+                science.methods.lastSalaryDates(self.conditionId).call()]);
+            console.log(222);
           } else {
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
           }

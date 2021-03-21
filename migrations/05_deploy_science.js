@@ -40,8 +40,7 @@ module.exports = async function(deployer, network, accounts) {
 
   const nftSalary = await myDeploy(deployer, network, accounts, "NFTSalary");
   const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", restoreContract, nftSalary.address, `urn:uuid:${uuid}`);
-  await nftSalary.transferOwnership(science.address);
-  console.log('OWNER', nftSalary.owner())
+  await await nftSalary.transferOwnership(science.address);
 
   if (process.env.DAO_ADDRESS) {
     ({ logs } = await science.createOracle(process.env.DAO_ADDRESS));
