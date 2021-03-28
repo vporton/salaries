@@ -456,8 +456,10 @@ export default {
       if (!addresses) return;
       const account = (await getAccounts(web3))[0];
       try {
-        const ourAbi = (await getABIs(this.prefix)).NFTRestoreContract;
-        const nft = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
+        const ourAbi = (await getABIs(this.prefix)).NFTSalary;
+        const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalary.address);
+        console.log('xx', await nft.methods.ownerOf(this.conditionId).call(), account)
+        console.log('yy', [account, this.newSalaryRecipient, this.conditionId])
         const tx = await mySend(
           await this.getWeb3(), nft,
           nft.methods.safeTransferFrom,
