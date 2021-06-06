@@ -854,9 +854,9 @@
     "@ethersproject/properties" "^5.0.7"
     "@ethersproject/strings" "^5.0.8"
 
-"@gnosis.pm/safe-contracts@^1.2.0", "@gnosis.pm/safe-contracts@git+ssh://git@github.com/vporton/safe-contracts.git#bequest":
+"@gnosis.pm/safe-contracts@^1.2.0", "@gnosis.pm/safe-contracts@git+ssh://git@github.com/vporton/safe-contracts.git#master":
   version "1.2.0"
-  resolved "git+ssh://git@github.com/vporton/safe-contracts.git#72f071c7b94fbc5418a88a87d2343446253de9aa"
+  resolved "git+ssh://git@github.com/vporton/safe-contracts.git#131d2b4b6568166ae40ba9ce21b9c5355988765c"
   dependencies:
     "@truffle/hdwallet-provider" "^1.0.0"
     dotenv "^8.0.0"

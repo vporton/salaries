@@ -9,7 +9,7 @@
     "compile": "truffle compile"
   },
   "dependencies": {
-    "@gnosis.pm/safe-contracts": "git+ssh://git@github.com/vporton/safe-contracts.git#bequest",
+    "@gnosis.pm/safe-contracts": "git+ssh://git@github.com/vporton/safe-contracts.git#master",
     "@truffle/config": "^1.2.34",
     "@truffle/contract": "^4.3.3",
     "@truffle/deployer": "^3.2.5",
