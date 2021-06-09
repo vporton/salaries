@@ -6,7 +6,7 @@ const { myDeploy, updateAddress } = require('../lib/default-deployer');
 module.exports = async function(deployer, network, accounts) {
   const uuid = '4a4552a6-4644-11eb-a830-3f3c92c66629';
 
-  const NFTRestoreContract = artifacts.require("NFTRestoreContract");
+  // const NFTRestoreContract = artifacts.require("NFTRestoreContract");
   // const Migrations = artifacts.require("Migrations");
   // const DefaultDAOInterface = artifacts.require("DefaultDAOInterface");
   // const ProxyAdmin = artifacts.require("ProxyAdmin");
@@ -36,10 +36,9 @@ module.exports = async function(deployer, network, accounts) {
   json = JSON.parse(text);
 
   const j = json[network === 'development' ? 'local' : network];
-  const restoreContract = j.NFTRestoreContract.address;
-
-  const nftRestoreContract = await myDeploy(deployer, network, accounts, "NFTRestoreContract");
-  const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", nftRestoreContract.address, `urn:uuid:${uuid}`);
+  const nftRestoreContract = j.NFTRestoreContract.address;
+  console.log(nftRestoreContract, `urn:uuid:${uuid}`)
+  const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", nftRestoreContract, `urn:uuid:${uuid}`);
 
   if (process.env.DAO_ADDRESS) {
     ({ logs } = await science.createOracle(process.env.DAO_ADDRESS));
