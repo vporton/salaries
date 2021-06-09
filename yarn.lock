@@ -2746,10 +2746,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/global-this/-/global-this-0.4.4.tgz#8a1b2cfcd3e26e079a847daba879308c924dd695"
   integrity sha512-mHkm6FvepJECMNthFuIgpAEFmPOk71UyXuIxYfjytvFTnSDBIz7jmViO+LfHI/AjrazWije0PnSP3+/NlwzqtA==
 
-"@vporton/future-contracts@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@vporton/future-contracts/-/future-contracts-1.4.0.tgz#693202173180eeae5c89e005ccb28c377a9720bf"
-  integrity sha512-Rl+Han0nxFQSmRW2OD/B/jFe+6S56gz9WyVY4JVnmtp53ukIejnkGWERuMecCf+BseluYG+3cVxzrRFvUTNbsA==
+"@vporton/future-contracts@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vporton/future-contracts/-/future-contracts-1.4.1.tgz#894988482e0d7c973beeb567943ef1d87542075c"
+  integrity sha512-q56Bb4UFWX841sSlPTsiwF1pj4JAq0o+XmHYDUzjX5h8GPcNzfQIc0yeYapZQUsWDqF+hcI6onWTZ9p3kJJ7TA==
   dependencies:
     "@openzeppelin/contracts" "^3.3.0"
     "@vporton/safe-bequest-module" "^0.0.1"

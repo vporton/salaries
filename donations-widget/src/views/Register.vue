@@ -57,10 +57,10 @@
             <button @click="changeRecipient">Change...</button>
           </span>
           <br/>
-          <label>Controlled by notary:</label> <small>(you control yourself)</small>
+          <label>Controlled by notary:</label> <code class="ethereumAddress">{{notary}}</code>
           <span :style="{display : advancedMode ? 'inline' : 'none'}">
             {{' '}}
-            <button>Make managed...</button>
+            <button @click="changeNotary">Make managed...</button>
           </span>
           <br/>
           <label>On account:</label> {{amountOnAccountFormatted}} personal tokens. <br/>
@@ -131,6 +131,29 @@
     >
       <p style="color: red">This operation is not reversible!!</p>
       <p>New salary recipient: <EthAddress ref="newSalaryRecipientWidget" v-model="newSalaryRecipient"/>.</p>
+    </vue-modal-2>
+    <vue-modal-2
+      name="notaryAddressDialog"
+      @on-close="closeNotaryAddressDialog"
+      :headerOptions="{
+        title: 'Enter account of your new notary.',
+      }"
+      :footerOptions="{
+        btn2: 'OK',
+        btn1Style: {
+          display: 'none',
+        },
+        btn2OnClick: () => {
+          if (this.$refs.newNotaryWidget.isValid()) {
+            this.doChangeNotary()
+          } else {
+            this.enterValidAddressWarning()
+          }
+        },
+      }"
+    >
+      <p style="color: red">This operation is not reversible!!</p>
+      <p>Your new notary notary: <EthAddress ref="newNotaryWidget" v-model="newNotary"/>.</p>
     </vue-modal-2>
     <vue-modal-2
       name="movingSalaryDialog"
@@ -299,12 +322,14 @@ export default {
       showResetDefault: 'none',
       timeoutHandle: null,
       salaryRecipient: undefined,
+      notary: undefined,
       amountOnAccount: undefined,
       amountOnAccountFormatted: '',
       salaryRecipientEvents: [],
       tokenIdEvents: [],
       advancedMode: false,
       newSalaryRecipient: '',
+      newNotary: '',
     }
   },
   watch: {
@@ -459,36 +484,34 @@ export default {
       const ourAbi = (await getABIs(this.prefix)).NFTSalaryRecipient;
       const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalaryRecipient.address);
       try {
-//        try { // TODO: needed?
-//        await nft.methods.ownerOf(this.conditionId).call(function(error, /*result*/) {
-//          async function doIt() {
-//            if (/query for nonexistent token/.test(String(error))) {
-//              try {
-//                const tx = await mySend(
-//                  await self.getWeb3(), nft,
-//                  nft.methods.mintRestoreRight,
-//                  [[]],
-//                  {from: account},
-//                  null)
-//                await tx
-//              }
-//              catch(err) {
-//                //alert(err)
-//              }
-//            } else {
-//              // TODO
-//            }
-//          }
-//          doIt()
-//        })
-//        }
-//        catch(_) {
-//          // empty
-//        }
         const tx = await mySend(
           await this.getWeb3(), nft,
           nft.methods.safeTransferFrom,
           [account, this.newSalaryRecipient, self.conditionId],
+          {from: account},
+          null)
+        await tx
+      }
+      catch(e) {
+        alert(e.message);
+      }
+    },
+    async changeNotary() {
+      this.$vm2.open('notaryAddressDialog');
+    },
+    async doChangeNotary() {
+      const self = this;
+      const web3 = await this.getWeb3();
+      const addresses = await this.myGetAddresses(this.prefix);
+      if (!addresses) return;
+      const account = (await getAccounts(web3))[0];
+      const ourAbi = (await getABIs(this.prefix)).NFTRestoreContract;
+      const nft = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
+      try {
+        const tx = await mySend(
+          await this.getWeb3(), nft,
+          nft.methods.safeTransferFrom,
+          [account, this.newNotary, self.conditionId],
           {from: account},
           null)
         await tx
@@ -547,6 +570,7 @@ export default {
 //        this.timeoutHandle = null
 //      }
       const self = this
+      // TODO: Watch salary recipient and notary change events.
       async function doIt() {
         const web3 = await self.getWeb3();
         if (web3) {
@@ -554,15 +578,18 @@ export default {
           if (!addresses) return undefined;
           const nftSalaryRecipientAbi = (await getABIs(self.prefix)).NFTSalaryRecipient;
           const nftSalaryRecipient = new web3.eth.Contract(nftSalaryRecipientAbi, addresses.NFTSalaryRecipient.address);
+          const nftNotaryAbi = (await getABIs(self.prefix)).NFTRestoreContract;
+          const nftNotary = new web3.eth.Contract(nftNotaryAbi, addresses.NFTRestoreContract.address);
 
-          return self.conditionId !== undefined
+          self.salaryRecipient = self.conditionId !== undefined
             ? await nftSalaryRecipient.methods.ownerOf(self.conditionId).call() // FIXME: If it reverts?
+            : undefined;
+          self.notary = self.conditionId !== undefined
+            ? await nftNotary.methods.ownerOf(self.conditionId).call() // FIXME: If it reverts?
             : undefined;
         }
       }
-      doIt().then(newSalaryRecipient => {
-        self.salaryRecipient = newSalaryRecipient; 
-      });
+      doIt();
       this.isDefaultID = this.conditionId == this.initialconditionid && this.conditionId !== undefined ? 'inline': 'none'
       this.showGoToDefault =
         this.conditionId !== this.initialconditionid &&
@@ -609,11 +636,14 @@ export default {
           // TODO: Rename.
           const ourAbi = (await getABIs(self.prefix)).NFTSalaryRecipient;
           const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalaryRecipient.address);
+          const ourAbi2 = (await getABIs(self.prefix)).NFTRestoreContract;
+          const nft2 = new web3.eth.Contract(ourAbi2, addresses.NFTRestoreContract.address);
 
           if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // TODO: big numbers
-            [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] =
+            [self.salaryRecipient, self.notary, self.registrationDate, self.lastSalaryDate] =
               await Promise.all([
                 nft.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
+                nft2.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
                 science.methods.conditionCreationDates(self.conditionId).call(),
                 science.methods.lastSalaryDates(self.conditionId).call()]);
           } else {
@@ -641,6 +671,9 @@ export default {
     },
     closeSalaryRecipientAddressDialog() {
       this.$vm2.close('salaryRecipientAddressDialog')
+    },
+    closeNotaryDialog() {
+      this.$vm2.close('notaryAddressDialog')
     },
     closeMintingTakeSalaryDialog() {
       this.$vm2.close('mintingTakeSalaryDialog')

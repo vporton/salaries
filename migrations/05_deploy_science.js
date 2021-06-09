@@ -38,14 +38,15 @@ module.exports = async function(deployer, network, accounts) {
   const text = fs.readFileSync(addressesFileName);
   json = JSON.parse(text);
 
-  const nftRestoreContract = await myDeploy(deployer, network, accounts, "NFTRestoreContract");
   const nftSalaryRecipient = await myDeploy(deployer, network, accounts, "NFTSalaryRecipient");
+  const nftRestoreContract = await myDeploy(deployer, network, accounts, "NFTRestoreContract");
 
   const j = json[network === 'development' ? 'local' : network];
   const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", nftSalaryRecipient.address, nftRestoreContract.address, `urn:uuid:${uuid}`);
 
   await nftSalaryRecipient.transferOwnership(science.address);
-  assert((await nftSalaryRecipient.owner()).toLowerCase() === science.address.toLowerCase());
+  await nftRestoreContract.transferOwnership(science.address);
+  // assert((await nftSalaryRecipient.owner()).toLowerCase() === science.address.toLowerCase());
 
   if (process.env.DAO_ADDRESS) {
     ({ logs } = await science.createOracle(process.env.DAO_ADDRESS));
