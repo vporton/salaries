@@ -49,7 +49,20 @@
           @click="register"
         >Register for a salary (create condition ID)</button>
         <span :style="{display: alreadyRegisterStyle, textAlign: 'left'}">
-          <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code> <br/>
+          <label><input type="checkbox" v-model="advancedMode"/> <small>Show advanced dangerous controls</small></label>
+          <br/>
+          <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code>
+          <span :style="{display : advancedMode ? 'inline' : 'none'}">
+            {{' '}}
+            <button @click="changeRecipient">Change...</button>
+          </span>
+          <br/>
+          <label>Controlled by notary:</label> <small>(you control yourself)</small>
+          <span :style="{display : advancedMode ? 'inline' : 'none'}">
+            {{' '}}
+            <button>Make managed...</button>
+          </span>
+          <br/>
           <label>On account:</label> {{amountOnAccountFormatted}} personal tokens. <br/>
           <label>Registration date:</label> {{new Date(registrationDate*1000)}}. <br/>
           <label>Last withdrawal date:</label> {{lastSalaryDate !== registrationDate ? new Date(lastSalaryDate*1000) : "not yet"}}. <br/>
@@ -91,6 +104,65 @@
         },
         btn1OnClick: () => {
           $vm2.close('registeringDialog');
+        },
+      }"
+    >
+      <p>Don't close the window.</p> <!-- TODO: Prevent closing browser window. -->
+    </vue-modal-2>
+    <vue-modal-2
+      name="salaryRecipientAddressDialog"
+      @on-close="closeSalaryRecipientAddressDialog"
+      :headerOptions="{
+        title: 'Enter new salary recipient account.',
+      }"
+      :footerOptions="{
+        btn2: 'OK',
+        btn1Style: {
+          display: 'none',
+        },
+        btn2OnClick: () => {
+          if (this.$refs.newSalaryRecipientWidget.isValid()) {
+            this.doChangeRecipient()
+          } else {
+            this.enterValidAddressWarning()
+          }
+        },
+      }"
+    >
+      <p style="color: red">This operation is not reversible!!</p>
+      <p>New salary recipient: <EthAddress ref="newSalaryRecipientWidget" v-model="newSalaryRecipient"/>.</p>
+    </vue-modal-2>
+    <vue-modal-2
+      name="movingSalaryDialog"
+      @on-close="closeMovingSalaryDialog"
+      :headerOptions="{
+        title: 'Moving salary to another account...',
+      }"
+      :footerOptions="{
+        btn1: 'Close',
+        btn2Style: {
+          display: 'none',
+        },
+        btn1OnClick: () => {
+          $vm2.close('movingSalaryDialog');
+        },
+      }"
+    >
+      <p>Don't close the window.</p> <!-- TODO: Prevent closing browser window. -->
+    </vue-modal-2>
+    <vue-modal-2
+      name="mintingTakeSalaryDialog"
+      @on-close="closeMintingTakeSalaryDialog"
+      :headerOptions="{
+        title: 'Salary owner\'s token minting...',
+      }"
+      :footerOptions="{
+        btn1: 'Close',
+        btn2Style: {
+          display: 'none',
+        },
+        btn1OnClick: () => {
+          $vm2.close('closeMintingTakeSalaryDialog');
         },
       }"
     >
@@ -184,6 +256,7 @@ import Web3 from 'web3'
 import Vue from 'vue'
 import Modal from "@burhanahmeed/vue-modal-2"
 import { isUint256Valid, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
+import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
 
 const BN = Web3.utils.BN
@@ -202,6 +275,7 @@ export default {
     'web3Getter',
   ],
   components: {
+    EthAddress,
     Uint256,
   },
   data() {
@@ -229,6 +303,8 @@ export default {
       amountOnAccountFormatted: '',
       salaryRecipientEvents: [],
       tokenIdEvents: [],
+      advancedMode: false,
+      newSalaryRecipient: '',
     }
   },
   watch: {
@@ -342,6 +418,9 @@ export default {
     async myGetAddresses(PREFIX) {
       return await getAddresses(PREFIX, this.networkname)
     },
+    enterValidAddressWarning() {
+      global.alert('Enter valid address!')
+    },
     withdraw() {
       const self = this
       async function doIt() {
@@ -367,6 +446,31 @@ export default {
         } 
       }
       doIt();
+    },
+    async changeRecipient() {
+      this.$vm2.open('salaryRecipientAddressDialog');
+    },
+    async doChangeRecipient() {
+      const web3 = await this.getWeb3();
+      const addresses = await this.myGetAddresses(this.prefix);
+      if (!addresses) return;
+      const account = (await getAccounts(web3))[0];
+      try {
+        const ourAbi = (await getABIs(this.prefix)).NFTSalary;
+        const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalary.address);
+        console.log('xx', await nft.methods.ownerOf(this.conditionId).call(), account)
+        console.log('yy', [account, this.newSalaryRecipient, this.conditionId])
+        const tx = await mySend(
+          await this.getWeb3(), nft,
+          nft.methods.safeTransferFrom,
+          [account, this.newSalaryRecipient, this.conditionId],
+          {from: account},
+          null)
+        await tx
+      }
+      catch(e) {
+        alert(e.message);
+      }
     },
     updateAmountOnAccount() {
       const self = this
@@ -427,7 +531,7 @@ export default {
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
 
           self.salaryRecipient = self.conditionId !== undefined
-            ? await science.methods.conditionOwners(self.conditionId).call()
+            ? await science.methods.salaryReceivers(self.conditionId).call()
             : undefined;
         }
       }
@@ -470,14 +574,18 @@ export default {
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+          const ourAbi = (await getABIs(self.prefix)).NFTSalary;
+          const nftSalary = new web3.eth.Contract(ourAbi, addresses.NFTSalary.address);
           const maxConditionId = await science.methods.maxConditionId().call()
           // TODO: Should watch events for change of `self.salaryRecipient`
           if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) {
+            console.log(111);
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] =
               await Promise.all([
-                science.methods.conditionOwners(self.conditionId).call(),
+                nftSalary.methods.ownerOf(self.conditionId).call(),
                 science.methods.conditionCreationDates(self.conditionId).call(),
-                science.methods.lastSalaryDates(self.conditionId).call()])
+                science.methods.lastSalaryDates(self.conditionId).call()]);
+            console.log(222);
           } else {
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
           }
@@ -501,6 +609,15 @@ export default {
     closeRegisteredDialog() {
       this.$vm2.close('registeredDialog')
     },
+    closeSalaryRecipientAddressDialog() {
+      this.$vm2.close('salaryRecipientAddressDialog')
+    },
+    closeMintingTakeSalaryDialog() {
+      this.$vm2.close('mintingTakeSalaryDialog')
+    },
+    closeMovingSalaryDialog() {
+      this.$vm2.close('movingSalaryDialog')
+    },
     async register() {
       const self = this
       const web3 = await this.getWeb3();
@@ -512,9 +629,10 @@ export default {
         const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
         try {
           self.$vm2.open('registeringDialog');
-          const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, true, []], {from: account}, null);
+          const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, []], {from: account}, null);
           const txData = await tx;
           this.$vm2.close('registeringDialog');
+          console.log('txData.events', txData.events)
           self.conditionId = txData.events.ConditionCreated.returnValues.condition;
           self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
           this.$emit('conditionCreated', self.conditionId);

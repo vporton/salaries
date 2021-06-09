@@ -96,6 +96,9 @@ export default {
     isEthAddressValid(value) {
       return validators.isEthAddressValid(value)
     },
+    isValid() {
+      return this.isEthAddressValid(this.value)
+    },
   },
   watch: {
     value(v) {

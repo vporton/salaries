@@ -174,35 +174,38 @@
     },
     "local": {
         "SalaryWithDAO": {
-            "address": "0x970e8f18ebfEa0B08810f33a5A40438b9530FBCF"
+            "address": "0xD833215cBcc3f914bD1C9ece3EE7BF8B14f841bb"
         },
         "ERC1155LockedETH": {
-            "address": "0x4bf3A7dFB3b76b5B3E169ACE65f888A4b4FCa5Ee"
+            "address": "0x6eD79Aa1c71FD7BdBC515EfdA3Bd4e26394435cC"
         },
         "DonateETH": {
-            "address": "0x4339316e04CFfB5961D1c41fEF8E44bfA2A7fBd1"
+            "address": "0xFC628dd79137395F3C9744e33b1c5DE554D94882"
         },
         "ERC1155OverERC20": {
-            "address": "0xEC5d4F247aF81A843612eb1371CBCfa88b762119"
+            "address": "0x0290FB167208Af455bB137780163b7B7a9a10C16"
         },
         "UnitedSalaryTokenWrapper": {
-            "address": "0xf19A2A01B70519f67ADb309a994Ec8c69A967E8b"
+            "address": "0x21a59654176f2689d12E828B77a783072CD26680"
         },
         "ERC1155OverERC721": {
-            "address": "0xc0b3B62DD0400E4baa721DdEc9B8A384147b23fF"
+            "address": "0x4bf749ec68270027C5910220CEAB30Cc284c7BA2"
         },
         "oracleId": "1",
         "ERC1155Mock": {
-            "address": "0x0290FB167208Af455bB137780163b7B7a9a10C16"
+            "address": "0xA57B8a5584442B467b4689F1144D269d096A3daF"
         },
         "MockCoin": {
-            "address": "0x2612Af3A521c2df9EAF28422Ca335b04AdF3ac66"
+            "address": "0x0E696947A06550DEf604e82C26fd9E493e576337"
         },
         "LockAggregator": {
-            "address": "0x47a2Db5D68751EeAdFBC44851E84AcDB4F7299Cc"
+            "address": "0x7C728214be9A0049e6a86f2137ec61030D0AA964"
         },
         "NFTRestoreContract": {
-            "address": "0xFF6049B87215476aBf744eaA3a476cBAd46fB1cA"
+            "address": "0xCfEB869F69431e42cdB54A4F4f105C19C080A601"
+        },
+        "NFTSalary": {
+            "address": "0xC89Ce4735882C9F0f0FE26686c53074E09B0D550"
         }
     },
     "bsc": {
