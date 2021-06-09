@@ -451,6 +451,7 @@ export default {
       this.$vm2.open('salaryRecipientAddressDialog');
     },
     async doChangeRecipient() {
+      const self = this;
       const web3 = await this.getWeb3();
       const addresses = await this.myGetAddresses(this.prefix);
       if (!addresses) return;
@@ -458,27 +459,40 @@ export default {
       try {
         const ourAbi = (await getABIs(this.prefix)).NFTRestoreContract;
         const nft = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
-        nft.methods.ownerOf(this.conditionId).call(async function(error, /*result*/) {
-          console.log(error)
-          if (/ERC721: operator query for nonexistent token/.test(error)) {
-            const tx = await mySend(
-              await this.getWeb3(), nft,
-              nft.methods.mintRestoreRight,
-              [[]],
-              {from: account},
-              null)
-            await tx
-          } else {
-            // TODO
+        try { // TODO: needed?
+        await nft.methods.ownerOf(this.conditionId).call(function(error, /*result*/) {
+          async function doIt() {
+            if (/query for nonexistent token/.test(String(error))) {
+              //alert(['a ', /query for nonexistent token/.test(String(error)), String(error)])
+              try {
+                const tx = await mySend(
+                  await self.getWeb3(), nft,
+                  nft.methods.mintRestoreRight,
+                  [[]],
+                  {from: account},
+                  null)
+                await tx
+              }
+              catch(err) {
+                //alert(err)
+              }
+            } else {
+              // TODO
+            }
           }
+          doIt()
         })
-//        const tx = await mySend(
-//          await this.getWeb3(), nft,
-//          nft.methods.safeTransferFrom,
-//          [account, this.newSalaryRecipient, this.conditionId],
-//          {from: account},
-//          null)
-//        await tx
+        }
+        catch(_) {
+          // empty
+        }
+        const tx = await mySend(
+          await this.getWeb3(), nft,
+          nft.methods.safeTransferFrom,
+          [account, this.newSalaryRecipient, account],
+          {from: account},
+          null)
+        await tx
       }
       catch(e) {
         alert(e.message);
