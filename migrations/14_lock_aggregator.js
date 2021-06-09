@@ -12,6 +12,5 @@ module.exports = async function(deployer, network, accounts) {
     const erc1155LockedETH = j.ERC1155LockedETH.address;
     const ERC1155OverERC20 = j.ERC1155OverERC20.address;
     const ERC1155OverERC721 = j.ERC1155OverERC721.address;
-    console.log(locker, erc1155LockedETH, ERC1155OverERC20, ERC1155OverERC721)
     await myDeploy(deployer, network, accounts, "LockAggregator", locker, erc1155LockedETH, ERC1155OverERC20, ERC1155OverERC721);
 };

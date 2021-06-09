@@ -7,6 +7,7 @@ import { ProxyAdmin } from "@openzeppelin/contracts/proxy/ProxyAdmin.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/TransparentUpgradeableProxy.sol";
 
 import { SalaryWithDAO } from "@vporton/future-contracts/contracts/SalaryWithDAO.sol";
+import { NFTSalaryRecipient } from "@vporton/future-contracts/contracts/NFTSalaryRecipient.sol";
 import { NFTRestoreContract } from "@vporton/future-contracts/contracts/NFTRestoreContract.sol";
 
 import { ERC1155OverERC20 } from "@vporton/wrap-tokens/contracts/ERC1155OverERC20.sol";
