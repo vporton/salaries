@@ -1,5 +1,5 @@
+const { assert } = require('console');
 const ethers = require('ethers')
-// const assert = require('assert');
 const fs = require('fs');
 const { myDeploy, updateAddress } = require('../lib/default-deployer');
 
@@ -42,9 +42,10 @@ module.exports = async function(deployer, network, accounts) {
   const nftSalaryRecipient = await myDeploy(deployer, network, accounts, "NFTSalaryRecipient");
 
   const j = json[network === 'development' ? 'local' : network];
-  const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", nftRestoreContract.address, nftSalaryRecipient.address, `urn:uuid:${uuid}`);
+  const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", nftSalaryRecipient.address, nftRestoreContract.address, `urn:uuid:${uuid}`);
 
-  nftSalaryRecipient.transferOwnership(science.address);
+  await nftSalaryRecipient.transferOwnership(science.address);
+  assert((await nftSalaryRecipient.owner()).toLowerCase() === science.address.toLowerCase());
 
   if (process.env.DAO_ADDRESS) {
     ({ logs } = await science.createOracle(process.env.DAO_ADDRESS));

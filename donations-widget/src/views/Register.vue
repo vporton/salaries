@@ -456,40 +456,39 @@ export default {
       const addresses = await this.myGetAddresses(this.prefix);
       if (!addresses) return;
       const account = (await getAccounts(web3))[0];
+      const ourAbi = (await getABIs(this.prefix)).NFTSalaryRecipient;
+      const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalaryRecipient.address);
       try {
-        const ourAbi = (await getABIs(this.prefix)).NFTRestoreContract;
-        const nft = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
-        try { // TODO: needed?
-        await nft.methods.ownerOf(this.conditionId).call(function(error, /*result*/) {
-          async function doIt() {
-            if (/query for nonexistent token/.test(String(error))) {
-              //alert(['a ', /query for nonexistent token/.test(String(error)), String(error)])
-              try {
-                const tx = await mySend(
-                  await self.getWeb3(), nft,
-                  nft.methods.mintRestoreRight,
-                  [[]],
-                  {from: account},
-                  null)
-                await tx
-              }
-              catch(err) {
-                //alert(err)
-              }
-            } else {
-              // TODO
-            }
-          }
-          doIt()
-        })
-        }
-        catch(_) {
-          // empty
-        }
+//        try { // TODO: needed?
+//        await nft.methods.ownerOf(this.conditionId).call(function(error, /*result*/) {
+//          async function doIt() {
+//            if (/query for nonexistent token/.test(String(error))) {
+//              try {
+//                const tx = await mySend(
+//                  await self.getWeb3(), nft,
+//                  nft.methods.mintRestoreRight,
+//                  [[]],
+//                  {from: account},
+//                  null)
+//                await tx
+//              }
+//              catch(err) {
+//                //alert(err)
+//              }
+//            } else {
+//              // TODO
+//            }
+//          }
+//          doIt()
+//        })
+//        }
+//        catch(_) {
+//          // empty
+//        }
         const tx = await mySend(
           await this.getWeb3(), nft,
           nft.methods.safeTransferFrom,
-          [account, this.newSalaryRecipient, account],
+          [account, this.newSalaryRecipient, self.conditionId],
           {from: account},
           null)
         await tx
@@ -552,16 +551,18 @@ export default {
         const web3 = await self.getWeb3();
         if (web3) {
           const addresses = await self.myGetAddresses(self.prefix);
-          if (!addresses) return;
-          const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
-          const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
+          if (!addresses) return undefined;
+          const nftSalaryRecipientAbi = (await getABIs(self.prefix)).NFTSalaryRecipient;
+          const nftSalaryRecipient = new web3.eth.Contract(nftSalaryRecipientAbi, addresses.NFTSalaryRecipient.address);
 
-          self.salaryRecipient = self.conditionId !== undefined
-            ? await science.methods.salaryReceivers(self.conditionId).call()
+          return self.conditionId !== undefined
+            ? await nftSalaryRecipient.methods.ownerOf(self.conditionId).call() // FIXME: If it reverts?
             : undefined;
         }
       }
-      doIt()
+      doIt().then(newSalaryRecipient => {
+        self.salaryRecipient = newSalaryRecipient; 
+      });
       this.isDefaultID = this.conditionId == this.initialconditionid && this.conditionId !== undefined ? 'inline': 'none'
       this.showGoToDefault =
         this.conditionId !== this.initialconditionid &&
@@ -604,13 +605,17 @@ export default {
           //const nftSalary = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
           const maxConditionId = await science.methods.maxConditionId().call()
           // TODO: Should watch events for change of `self.salaryRecipient`
+
+          // TODO: Rename.
+          const ourAbi = (await getABIs(self.prefix)).NFTSalaryRecipient;
+          const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalaryRecipient.address);
+
           if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // TODO: big numbers
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] =
               await Promise.all([
-                science.methods.conditionOwners(self.conditionId).call(),
+                nft.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
                 science.methods.conditionCreationDates(self.conditionId).call(),
                 science.methods.lastSalaryDates(self.conditionId).call()]);
-            console.log(222);
           } else {
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
           }

@@ -174,41 +174,41 @@
     },
     "local": {
         "SalaryWithDAO": {
-            "address": "0xFF6049B87215476aBf744eaA3a476cBAd46fB1cA"
+            "address": "0x9a74f110586971345A396C74228094A04f5A5eA6"
         },
         "ERC1155LockedETH": {
-            "address": "0x4339316e04CFfB5961D1c41fEF8E44bfA2A7fBd1"
+            "address": "0x74E33B80BC77cdB5d49861a53913A8301CB72B4D"
         },
         "DonateETH": {
-            "address": "0xf19A2A01B70519f67ADb309a994Ec8c69A967E8b"
+            "address": "0x9e8efB8C27f3012493ce315974A64CAcDE6f4ccC"
         },
         "ERC1155OverERC20": {
-            "address": "0x5b9b42d6e4B2e4Bf8d42Eba32D46918e10899B66"
+            "address": "0xBc53027c52B0Ee6ad90347b8D03A719f30d9d7aB"
         },
         "UnitedSalaryTokenWrapper": {
-            "address": "0xc0b3B62DD0400E4baa721DdEc9B8A384147b23fF"
+            "address": "0x768b5Faed6DC69816f33377d214ffaf00dcDd0cf"
         },
         "ERC1155OverERC721": {
-            "address": "0x47a2Db5D68751EeAdFBC44851E84AcDB4F7299Cc"
+            "address": "0x72440269630E393d38975Db7fA7Cb4D14e7eC061"
         },
         "oracleId": "1",
         "ERC1155Mock": {
-            "address": "0x1b88Bdb8269A1aB1372459F5a4eC3663D6f5cCc4"
+            "address": "0x8E225686FdDB86DA290860C764Cf178ba02FDA0B"
         },
         "MockCoin": {
-            "address": "0xB9bdBAEc07751F6d54d19A6B9995708873F3DE18"
+            "address": "0x70eE878D560D7E17a986872f54B7C58f564B2784"
         },
         "LockAggregator": {
-            "address": "0xeea2Fc1D255Fd28aA15c6c2324Ad40B03267f9c5"
+            "address": "0xFA64858C14345C0a3aD805E0da64900C4d7ec5e6"
         },
         "NFTRestoreContract": {
-            "address": "0x5017A545b09ab9a30499DE7F431DF0855bCb7275"
+            "address": "0x77D32f6f5F454Fa76f93859f49f9431CeA8c225F"
         },
         "NFTSalary": {
             "address": "0xC89Ce4735882C9F0f0FE26686c53074E09B0D550"
         },
         "NFTSalaryRecipient": {
-            "address": "0x86072CbFF48dA3C1F01824a6761A03F105BCC697"
+            "address": "0x6AB47d47cF45C4aaA5c7F33c6632390674EfA294"
         }
     },
     "bsc": {
