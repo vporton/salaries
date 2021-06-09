@@ -456,8 +456,8 @@ export default {
       if (!addresses) return;
       const account = (await getAccounts(web3))[0];
       try {
-        const ourAbi = (await getABIs(this.prefix)).NFTSalary;
-        const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalary.address);
+        const ourAbi = (await getABIs(this.prefix)).NFTRestoreContract;
+        const nft = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
         console.log('xx', await nft.methods.ownerOf(this.conditionId).call(), account)
         console.log('yy', [account, this.newSalaryRecipient, this.conditionId])
         const tx = await mySend(
@@ -574,15 +574,14 @@ export default {
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
-          const ourAbi = (await getABIs(self.prefix)).NFTSalary;
-          const nftSalary = new web3.eth.Contract(ourAbi, addresses.NFTSalary.address);
+          //const ourAbi = (await getABIs(self.prefix)).NFTRestoreContract;
+          //const nftSalary = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
           const maxConditionId = await science.methods.maxConditionId().call()
           // TODO: Should watch events for change of `self.salaryRecipient`
-          if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) {
-            console.log(111);
+          if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // TODO: big numbers
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] =
               await Promise.all([
-                nftSalary.methods.ownerOf(self.conditionId).call(),
+                science.methods.conditionOwners(self.conditionId).call(),
                 science.methods.conditionCreationDates(self.conditionId).call(),
                 science.methods.lastSalaryDates(self.conditionId).call()]);
             console.log(222);
