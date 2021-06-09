@@ -458,15 +458,27 @@ export default {
       try {
         const ourAbi = (await getABIs(this.prefix)).NFTRestoreContract;
         const nft = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
-        console.log('xx', await nft.methods.ownerOf(this.conditionId).call(), account)
-        console.log('yy', [account, this.newSalaryRecipient, this.conditionId])
-        const tx = await mySend(
-          await this.getWeb3(), nft,
-          nft.methods.safeTransferFrom,
-          [account, this.newSalaryRecipient, this.conditionId],
-          {from: account},
-          null)
-        await tx
+        nft.methods.ownerOf(this.conditionId).call(async function(error, /*result*/) {
+          console.log(error)
+          if (/ERC721: operator query for nonexistent token/.test(error)) {
+            const tx = await mySend(
+              await this.getWeb3(), nft,
+              nft.methods.mintRestoreRight,
+              [[]],
+              {from: account},
+              null)
+            await tx
+          } else {
+            // TODO
+          }
+        })
+//        const tx = await mySend(
+//          await this.getWeb3(), nft,
+//          nft.methods.safeTransferFrom,
+//          [account, this.newSalaryRecipient, this.conditionId],
+//          {from: account},
+//          null)
+//        await tx
       }
       catch(e) {
         alert(e.message);
