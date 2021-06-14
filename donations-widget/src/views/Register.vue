@@ -156,7 +156,7 @@
       }"
     >
       <p style="color: red">This operation is not reversible!!</p>
-      <p>Your new notary notary: <EthAddress ref="newNotaryWidget" v-model="newNotary"/>.</p>
+      <p>Your new notary: <EthAddress ref="newNotaryWidget" v-model="newNotary"/>.</p>
     </vue-modal-2>
     <vue-modal-2
       name="movingSalaryDialog"
