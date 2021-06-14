@@ -625,34 +625,40 @@ export default {
         const account = (await getAccounts(web3))[0];
         if (web3 && account !== undefined) {
           const addresses = await self.myGetAddresses(self.prefix);
+          console.log("addresses", addresses)
           if (!addresses) return;
           const scienceAbi = (await getABIs(self.prefix)).SalaryWithDAO;
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
           //const ourAbi = (await getABIs(self.prefix)).NFTRestoreContract;
           //const nftSalary = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
-          const maxConditionId = await science.methods.maxConditionId().call()
-          // TODO: Should watch events for change of `self.salaryRecipient`
+          console.log("RRR")
+          try {
+            const maxConditionId = await science.methods.maxConditionId().call()
+            console.log("maxConditionId", maxConditionId)
+            // TODO: Should watch events for change of `self.salaryRecipient`
 
-          // TODO: Rename.
-          const ourAbi = (await getABIs(self.prefix)).NFTSalaryRecipient;
-          const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalaryRecipient.address);
-          const ourAbi2 = (await getABIs(self.prefix)).NFTRestoreContract;
-          const nft2 = new web3.eth.Contract(ourAbi2, addresses.NFTRestoreContract.address);
+            // TODO: Rename.
+            const ourAbi = (await getABIs(self.prefix)).NFTSalaryRecipient;
+            const nft = new web3.eth.Contract(ourAbi, addresses.NFTSalaryRecipient.address);
+            const ourAbi2 = (await getABIs(self.prefix)).NFTRestoreContract;
+            const nft2 = new web3.eth.Contract(ourAbi2, addresses.NFTRestoreContract.address);
 
-          if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // TODO: big numbers
-            console.log("GGG");
-            [self.salaryRecipient, self.notary, self.registrationDate, self.lastSalaryDate] =
-              await Promise.all([
-                nft.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
-                nft2.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
-                science.methods.conditionCreationDates(self.conditionId).call(),
-                science.methods.lastSalaryDates(self.conditionId).call()]);
-            console.log([self.salaryRecipient, self.notary, self.registrationDate, self.lastSalaryDate]);
-          } else {
-            [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
+            if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // TODO: big numbers
+              [self.salaryRecipient, self.notary, self.registrationDate, self.lastSalaryDate] =
+                await Promise.all([
+                  nft.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
+                  nft2.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
+                  science.methods.conditionCreationDates(self.conditionId).call(),
+                  science.methods.lastSalaryDates(self.conditionId).call()]);
+            } else {
+              [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
+            }
+            self.updateAmountOnAccount()
+            self.updateRegistrationStyles()
           }
-          self.updateAmountOnAccount()
-          self.updateRegistrationStyles()
+          catch(e) { // FIXME
+            alert(e)
+          }
         } 
       }
       if (self.networkname && self.conditionId !== undefined && isUint256Valid(self.conditionId)) {
