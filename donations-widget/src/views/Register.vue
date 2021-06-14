@@ -57,9 +57,12 @@
             <button @click="changeRecipient">Change...</button>
           </span>
           <br/>
-          <label>Controlled by notary:</label> <code class="ethereumAddress">{{notary}}</code>
+          <label>Controlled by notary:</label>
+          {{' '}}
+          <code class="ethereumAddress">{{notary}}</code>
+          <small :style="{display: notary ? 'none' : 'inline'}">(none)</small>
+          {{' '}}
           <span :style="{display : advancedMode ? 'inline' : 'none'}">
-            {{' '}}
             <button @click="changeNotary">Make managed...</button>
           </span>
           <br/>
@@ -631,7 +634,6 @@ export default {
           const science = new web3.eth.Contract(scienceAbi, addresses.SalaryWithDAO.address);
           //const ourAbi = (await getABIs(self.prefix)).NFTRestoreContract;
           //const nftSalary = new web3.eth.Contract(ourAbi, addresses.NFTRestoreContract.address);
-          console.log("RRR")
           try {
             const maxConditionId = await science.methods.maxConditionId().call()
             console.log("maxConditionId", maxConditionId)
@@ -644,12 +646,18 @@ export default {
             const nft2 = new web3.eth.Contract(ourAbi2, addresses.NFTRestoreContract.address);
 
             if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // TODO: big numbers
-              [self.salaryRecipient, self.notary, self.registrationDate, self.lastSalaryDate] =
+              // TODO: Run this in parallel:
+              [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] =
                 await Promise.all([
                   nft.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
-                  nft2.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
                   science.methods.conditionCreationDates(self.conditionId).call(),
                   science.methods.lastSalaryDates(self.conditionId).call()]);
+              try {
+                self.notary = await nft2.methods.ownerOf(self.conditionId).call(); // TODO: It is called two times when user inputs condition ID.
+              } catch(e) {
+                console.log(String(e));
+                self.notary = undefined;
+              }
             } else {
               [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
             }
