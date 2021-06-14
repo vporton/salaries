@@ -688,7 +688,7 @@ export default {
     closeSalaryRecipientAddressDialog() {
       this.$vm2.close('salaryRecipientAddressDialog')
     },
-    closeNotaryDialog() {
+    closeNotaryAddressDialog() {
       this.$vm2.close('notaryAddressDialog')
     },
     closeMintingTakeSalaryDialog() {
