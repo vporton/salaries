@@ -49,7 +49,6 @@ export default {
       const self = this
       if (self.web3) {
         self.web3.eth.net.getId().then(netId => {
-          console.log('ppp', netId)
           switch (netId) {
             case 100: // xDai
             case 4: // rinkeby

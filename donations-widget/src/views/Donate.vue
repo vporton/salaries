@@ -507,7 +507,6 @@ export default {
       const self = this
       async function doIt() {
         const abis = await self.myGetAddresses(self.prefix);
-        console.log("QQ", abis.gnosisBequestApp)
         self.$copyText(abis.gnosisBequestApp).then(() => window.alert('URL copied to clipboard.'))
       }
       doIt()

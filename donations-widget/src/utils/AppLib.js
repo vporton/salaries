@@ -30,7 +30,6 @@ async function fetchOnceJsonPromise(url) {
 export async function fetchOnceJson(url) {
   let json = _fetched.get(url);
   if (json) {
-    console.log(json);
     return json;
   } else {
     json = await fetchOnceJsonPromise(url);
