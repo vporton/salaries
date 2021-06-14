@@ -640,12 +640,14 @@ export default {
           const nft2 = new web3.eth.Contract(ourAbi2, addresses.NFTRestoreContract.address);
 
           if (Number(self.conditionId) > 0 && Number(self.conditionId) <= Number(maxConditionId)) { // TODO: big numbers
+            console.log("GGG");
             [self.salaryRecipient, self.notary, self.registrationDate, self.lastSalaryDate] =
               await Promise.all([
                 nft.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
                 nft2.methods.ownerOf(self.conditionId).call(), // TODO: Catch `revert`. // TODO: It is called two times when user inputs condition ID.
                 science.methods.conditionCreationDates(self.conditionId).call(),
                 science.methods.lastSalaryDates(self.conditionId).call()]);
+            console.log([self.salaryRecipient, self.notary, self.registrationDate, self.lastSalaryDate]);
           } else {
             [self.salaryRecipient, self.registrationDate, self.lastSalaryDate] = [undefined, undefined, undefined]
           }
@@ -695,7 +697,7 @@ export default {
           const tx = await mySend(await self.getWeb3(), science, science.methods.registerCustomer, [account, []], {from: account}, null);
           const txData = await tx;
           this.$vm2.close('registeringDialog');
-          console.log('txData.events', txData.events)
+          console.log('txData', txData)
           self.conditionId = txData.events.ConditionCreated.returnValues.condition;
           self.updateRegisteredStatus(); // Call it even if self.conditionId didn't change.
           this.$emit('conditionCreated', self.conditionId);
@@ -734,7 +736,7 @@ export default {
       return this.web3 = this.web3Getter ? await this.web3Getter() : window.web3 // Duplicate code
     },
     onConditionChange() {
-      // this.updateRegisteredStatus()
+      this.updateRegisteredStatus()
 
       const self = this
       async function doIt() {

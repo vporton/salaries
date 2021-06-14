@@ -45,7 +45,8 @@ module.exports = async function(deployer, network, accounts) {
   const science = await myDeploy(deployer, network, accounts, "SalaryWithDAO", nftSalaryRecipient.address, nftRestoreContract.address, `urn:uuid:${uuid}`);
 
   await nftSalaryRecipient.transferOwnership(science.address);
-  await nftRestoreContract.transferOwnership(science.address);
+  await nftSalaryRecipient.setNotaries(nftRestoreContract.address);
+  await nftRestoreContract.setRecipients(nftSalaryRecipient.address);
   // assert((await nftSalaryRecipient.owner()).toLowerCase() === science.address.toLowerCase());
 
   if (process.env.DAO_ADDRESS) {
