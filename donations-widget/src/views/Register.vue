@@ -51,7 +51,8 @@
         <span :style="{display: alreadyRegisterStyle, textAlign: 'left'}">
           <label><input type="checkbox" v-model="advancedMode"/> <small>Show advanced dangerous controls</small></label>
           <br/>
-          <label>Salary recipient:</label> <code class="ethereumAddress">{{salaryRecipient}}</code>
+          <label>Salary recipient:</label>
+          <ERC721Holder :web3="web3" :contract="recipientsContract" :tokenid="conditionId"/>
           <span :style="{display : advancedMode ? 'inline' : 'none'}">
             {{' '}}
             <button @click="changeRecipient">Change...</button>
@@ -59,8 +60,7 @@
           <br/>
           <label>Controlled by notary:</label>
           {{' '}}
-          <code class="ethereumAddress">{{notary}}</code>
-          <small :style="{display: notary ? 'none' : 'inline'}">(none)</small>
+          <ERC721Holder :web3="web3" :contract="notariesContract" :tokenid="conditionId"/>
           {{' '}}
           <span :style="{display : advancedMode ? 'inline' : 'none'}">
             <button @click="changeNotary">Make managed...</button>
@@ -284,6 +284,7 @@ import Modal from "@burhanahmeed/vue-modal-2"
 import { isUint256Valid, mySend, getABIs, getAccounts, getAddresses } from '../utils/AppLib'
 import EthAddress from '@/components/EthAddress.vue'
 import Uint256 from '@/components/Uint256.vue'
+import ERC721Holder from '@/components/ERC721Holder.vue'
 
 const BN = Web3.utils.BN
 
@@ -303,6 +304,7 @@ export default {
   components: {
     EthAddress,
     Uint256,
+    ERC721Holder,
   },
   data() {
     const conditionId = this.initialconditionid === undefined || this.initialconditionid === ''
@@ -333,6 +335,8 @@ export default {
       advancedMode: false,
       newSalaryRecipient: '',
       newNotary: '',
+      notariesContract: undefined,
+      recipientsContract: undefined,
     }
   },
   watch: {
@@ -415,6 +419,12 @@ export default {
         self.web3 = self.web3Getter ? await self.web3Getter() : window.web3 // Duplicate code
         const abis = await self.myGetAddresses(self.prefix);
         self.currentOracleId = abis ? abis.oracleId : null
+        if (self.web3) {
+          const addresses = await self.myGetAddresses(self.prefix);
+          if (!addresses) return undefined;
+          self.recipientsContract = (await getABIs(self.prefix)).NFTSalaryRecipient;
+          self.notariesContract = (await getABIs(self.prefix)).NFTRestoreContract;
+        }
       }
       doIt()
       if (!self.networkname) {
@@ -572,27 +582,7 @@ export default {
 //        clearTimeout(this.timeoutHandle);
 //        this.timeoutHandle = null
 //      }
-      const self = this
       // TODO: Watch salary recipient and notary change events.
-      async function doIt() {
-        const web3 = await self.getWeb3();
-        if (web3) {
-          const addresses = await self.myGetAddresses(self.prefix);
-          if (!addresses) return undefined;
-          const nftSalaryRecipientAbi = (await getABIs(self.prefix)).NFTSalaryRecipient;
-          const nftSalaryRecipient = new web3.eth.Contract(nftSalaryRecipientAbi, addresses.NFTSalaryRecipient.address);
-          const nftNotaryAbi = (await getABIs(self.prefix)).NFTRestoreContract;
-          const nftNotary = new web3.eth.Contract(nftNotaryAbi, addresses.NFTRestoreContract.address);
-
-          self.salaryRecipient = self.conditionId !== undefined
-            ? await nftSalaryRecipient.methods.ownerOf(self.conditionId).call() // FIXME: If it reverts?
-            : undefined;
-          self.notary = self.conditionId !== undefined
-            ? await nftNotary.methods.ownerOf(self.conditionId).call() // FIXME: If it reverts?
-            : undefined;
-        }
-      }
-      doIt();
       this.isDefaultID = this.conditionId == this.initialconditionid && this.conditionId !== undefined ? 'inline': 'none'
       this.showGoToDefault =
         this.conditionId !== this.initialconditionid &&
