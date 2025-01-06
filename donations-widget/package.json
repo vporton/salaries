@@ -32,7 +32,7 @@
     "@vporton/future-contracts": "^1.3.6",
     "@vue/web-component-wrapper": "^1.2.0",
     "authereum": "^0.1.0",
-    "core-js": "^3.6.5",
+    "core-js": "^3.39.0",
     "eth-provider": "^0.5.3",
     "luxon": "^1.25.0",
     "vue": "^2.6.11",
