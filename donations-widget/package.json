@@ -33,7 +33,7 @@
     "@vue/web-component-wrapper": "^1.2.0",
     "authereum": "^0.1.0",
     "core-js": "^3.6.5",
-    "eth-provider": "^0.5.3",
+    "eth-provider": "^0.13.7",
     "luxon": "^1.25.0",
     "vue": "^2.6.11",
     "vue-clipboard2": "^0.3.1",
