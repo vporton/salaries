@@ -4112,10 +4112,10 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-authereum@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/authereum/-/authereum-0.1.0.tgz#0888fa71df3527ba327d3a23d54e4d135c673975"
-  integrity sha512-4dLJM9Nm1CqHhrliBHc/7NAq8oRegOedOlL8oDLRYztowh76RvcIrWIU+jHQfw36y/NFTlDr5bJLjeNfVApcSA==
+authereum@^0.1.13:
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/authereum/-/authereum-0.1.14.tgz#5655e543b296d899136e350d09f9cfe4c12fbc38"
+  integrity sha512-o1lsXXGg+oYDAEutZ8Ak1Qn2Dnk+qSyQ2ZokyLHRSYGJj6HpEHaSlQA6W3VTHD5r68Q+W0JD/BN9hDSF2xyshQ==
   dependencies:
     async "3.2.0"
     bn.js "5.1.2"
